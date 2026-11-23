@@ -1,6 +1,6 @@
 # My Flashcards
 
-A simple, dark-mode flashcard app inspired by Knowt and Quizlet, built for personal practice (not commercial). One self-contained `index.html` — no build step, no server, with an individual account to save progress/flashcards.
+A simple, dark-mode flashcard app inspired by Knowt and Quizlet, built for personal practice (not commercial). One self-contained `index.html` — no build step, no server, no account.
 
 ## Features
 
@@ -24,12 +24,13 @@ A simple, dark-mode flashcard app inspired by Knowt and Quizlet, built for perso
 
 Wrong answers can always be overridden with **I was correct**.
 
-## Accounts & storage
+## Accounts & cloud sync
 
-- **Sign up / Log in** with a username and password. Each account keeps its own sets, stars, progress and settings.
-- Everything is stored **only in this browser on this device** (`localStorage`), encrypted with the account's password (PBKDF2 + AES-GCM). Nothing is sent to a server, and accounts are never shared between devices.
-- There is **no password reset**: a forgotten password means that account's data can't be opened. Use **Export all** to download a `.json` backup, and **Import** to restore it (also on another device).
+- **Sign up / Log in** with a username (or an email, if you want "Forgot password?" to work) and a password of at least 6 characters.
+- Sets, stars, progress and settings are saved to the signed-in user's account in **Firebase (Cloud Firestore)**, so the same account shows the same cards in every browser and on every device. Clearing browser data doesn't delete them.
+- Firestore security rules (`firestore.rules`) only let each user read and write their own data.
+- **Export all** downloads a `.json` backup; **Import** loads it back.
 
 ## Run it
 
-Visit the GitHub Pages site for this repo (accounts need https), or open `index.html` locally in Chrome/Edge.
+Visit the GitHub Pages site for this repo.
