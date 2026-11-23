@@ -1,5 +1,7 @@
 # Flashcard RV
 
+Try it: bellacyc.github.io/Flashcard-RV/
+
 A simple, dark-mode flashcard app inspired by Knowt and Quizlet, built for personal practice (not commercial). One self-contained `index.html` — no build step, no server, with an independent account to save progress.
 
 N0 ADS
