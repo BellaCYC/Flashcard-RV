@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>My Flashcards</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style id="css">
+:root{--bg:#101112;--panel:#1c1e1f;--panel2:#252829;--line:#33373a;--line2:#454a4e;--text:#f1f3f4;--muted:#9ea4a9;--acc:#41d1c1;--accbg:rgba(65,209,193,.12);--good:#3ccf8a;--goodbg:rgba(60,207,138,.12);--bad:#ff6b6b;--badbg:rgba(255,107,107,.12);--warn:#f4b740;--r:18px}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--text);font-family:'Nunito',system-ui,-apple-system,sans-serif;-webkit-font-smoothing:antialiased}
+button{font:inherit;color:inherit;cursor:pointer;border:0;background:none;padding:0}
+input,textarea,select{font:inherit;color:var(--text)}
+::selection{background:rgba(65,209,193,.35)}
+.top{display:flex;align-items:center;gap:10px;padding:12px 22px;border-bottom:1px solid var(--line);position:sticky;top:0;background:rgba(16,17,18,.92);backdrop-filter:blur(10px);z-index:30;min-height:62px}
+.brand{font-weight:900;font-size:19px;display:flex;align-items:center;gap:9px;letter-spacing:-.2px}
+.brand i{width:24px;height:24px;border-radius:7px;background:linear-gradient(135deg,var(--acc),#2a9d91);display:inline-block}
+.brand.sm{font-size:15px;font-weight:700;color:var(--muted)}
+.sp{flex:1}
+.wrap{max-width:940px;margin:0 auto;padding:30px 22px 140px}
+.wrap.narrow{max-width:780px}
+h1{font-size:32px;margin:0 0 6px;font-weight:900;letter-spacing:-.4px}
+h2{font-size:20px;margin:0 0 16px;font-weight:800}
+h3{font-size:19px;margin:0 0 12px;font-weight:800}
+.muted{color:var(--muted)} .sm{font-size:14px} .xs{font-size:12.5px}
+.btn{padding:10px 18px;border-radius:999px;font-weight:800;font-size:14px;background:var(--panel2);border:1px solid var(--line);transition:.15s;white-space:nowrap}
+.btn:hover{border-color:var(--line2);background:#2c3032}
+.btn.primary{background:var(--acc);color:#05231f;border-color:var(--acc)}
+.btn.primary:hover{background:#62e0d2}
+.btn.ghost{background:transparent}
+.btn.danger{color:var(--bad)}
+.btn.sm{padding:7px 13px;font-size:13px}
+.btn.big{padding:14px 30px;font-size:16px}
+.icon{min-width:38px;height:38px;border-radius:50%;display:inline-grid;place-items:center;font-size:17px;color:var(--muted);transition:.15s}
+.icon:hover{background:var(--panel2);color:var(--text)}
+.icon.on{color:var(--acc);background:var(--accbg)}
+.icon.sm{min-width:30px;height:30px;font-size:14px}
+.link{color:var(--acc);font-weight:800;font-size:14px}
+.link:hover{text-decoration:underline}
+.row-between{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.center{text-align:center}
+#status .chip{font-size:12px;font-weight:800;padding:6px 11px;border-radius:999px;border:1px solid var(--line);color:var(--muted)}
+#status .chip.warn{color:var(--warn);border-color:rgba(244,183,64,.4);cursor:pointer}
+#status .chip.ok{color:var(--good);border-color:rgba(60,207,138,.35)}
+/* home */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px}
+.tile{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:18px 18px 16px;text-align:left;transition:.15s;display:flex;flex-direction:column;gap:6px}
+.tile:hover{border-color:var(--acc);transform:translateY(-2px)}
+.tile-t{font-weight:800;font-size:17px;line-height:1.3}
+.pbar{height:6px;border-radius:9px;background:var(--panel2);overflow:hidden;margin-top:8px}
+.pbar i{display:block;height:100%;background:var(--good);border-radius:9px}
+.empty{background:var(--panel);border:1px dashed var(--line2);border-radius:var(--r);padding:40px;text-align:center}
+.note{margin-top:34px;background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:18px 20px}
+.note ul{margin:8px 0 0;padding-left:20px;color:var(--muted);line-height:1.7;font-size:14px}
+/* set page */
+.meta{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:14px 0 22px}
+.modes{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px}
+.mode{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:16px;display:flex;align-items:center;gap:12px;font-weight:800;font-size:16px;transition:.15s}
+.mode:hover{border-color:var(--acc);background:#202324}
+.mode svg{width:26px;height:26px;color:var(--acc);flex:none}
+.opts-row{display:flex;flex-wrap:wrap;align-items:center;gap:16px;background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:12px 16px;margin-bottom:18px;font-size:14px;font-weight:700}
+select{background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:7px 10px;font-weight:700;font-size:14px;outline:none}
+.tog{display:inline-flex;align-items:center;gap:9px;cursor:pointer;user-select:none}
+.tog input{display:none}
+.tog span{width:38px;height:22px;border-radius:99px;background:var(--line);position:relative;transition:.2s;flex:none}
+.tog span:after{content:'';position:absolute;top:3px;left:3px;width:16px;height:16px;border-radius:50%;background:#fff;transition:.2s}
+.tog input:checked+span{background:var(--acc)}
+.tog input:checked+span:after{left:19px}
+.lprog{margin:4px 0 22px}
+.seg{height:8px;border-radius:9px;background:var(--panel2);overflow:hidden;display:flex}
+.seg i{display:block;height:100%;transition:width .4s}
+.seg i.g{background:var(--good)} .seg i.t{background:var(--acc);opacity:.6}
+.lg{display:flex;gap:16px;margin-top:8px;font-size:13px;color:var(--muted);font-weight:700;flex-wrap:wrap}
+.dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:6px;vertical-align:0}
+.dot.g{background:var(--good)} .dot.t{background:var(--acc);opacity:.6} .dot.n{background:var(--line2)}
+.terms{display:flex;flex-direction:column;gap:10px}
+.term{display:grid;grid-template-columns:minmax(120px,1fr) 2fr auto;gap:18px;align-items:center;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px 12px 14px 18px}
+.term .tt{font-weight:700;border-right:1px solid var(--line);padding-right:16px;white-space:pre-wrap}
+.term .td{white-space:pre-wrap;color:#dfe3e5}
+.starb svg{width:20px;height:20px}
+.starb.on{color:var(--warn)}
+/* editor */
+.fld{position:relative;display:flex;flex-direction:column-reverse;gap:6px;flex:1}
+.fld label{font-size:11px;font-weight:800;letter-spacing:.8px;color:var(--muted)}
+.fld input,.fld textarea{background:transparent;border:0;border-bottom:2px solid var(--line2);padding:8px 2px;outline:none;font-size:16px;resize:none;overflow:hidden;line-height:1.4;width:100%}
+.fld input:focus,.fld textarea:focus{border-bottom-color:var(--acc)}
+.fld input:focus+label,.fld textarea:focus+label{color:var(--acc)}
+.fld.big input{font-size:22px;font-weight:800}
+.fld.inline{flex:0 0 190px}
+.fld.inline input{font-size:15px;letter-spacing:2px}
+.ehead{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:20px 22px;display:flex;flex-direction:column;gap:18px}
+.ed-tools{display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap;margin:18px 0 12px}
+.sticky-acc{position:sticky;top:62px;z-index:10;background:var(--bg);padding:8px 0}
+.erow{background:var(--panel);border:1px solid var(--line);border-radius:16px;margin-bottom:12px}
+.erow:focus-within{border-color:#3c4245}
+.erow-h{display:flex;align-items:center;gap:4px;padding:8px 10px 0 18px;color:var(--muted);font-weight:800}
+.erow-b{display:flex;gap:28px;padding:6px 18px 18px}
+.addrow{width:100%;padding:22px;border-radius:16px;background:var(--panel);border:1px dashed var(--line2);font-weight:900;letter-spacing:1px;color:var(--muted);transition:.15s}
+.addrow:hover{color:var(--acc);border-color:var(--acc)}
+.ed-foot{display:flex;justify-content:flex-end;margin-top:20px}
+.paste{background:var(--panel);border:1px solid var(--acc);border-radius:16px;padding:18px;margin-bottom:14px}
+.paste textarea{width:100%;background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:12px;margin:12px 0;outline:none;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:13px;resize:vertical}
+.pgrid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:12px;font-size:14px}
+.pgrid .lbl{font-weight:800;margin-bottom:6px}
+.pgrid label{display:flex;align-items:center;gap:7px;margin:4px 0;cursor:pointer}
+.pgrid input[type=text]{background:var(--panel2);border:1px solid var(--line);border-radius:8px;padding:4px 8px;width:90px}
+.pgrid input[type=radio]{accent-color:var(--acc)}
+/* accent bar */
+.accbar{display:flex;flex-wrap:wrap;gap:8px}
+.acc-btn{width:36px;height:36px;border-radius:50%;border:1px solid var(--line2);display:grid;place-items:center;font-size:16px;font-weight:700;transition:.12s;background:var(--bg)}
+.acc-btn:hover{border-color:var(--acc);color:var(--acc)}
+.acc-btn:active{transform:scale(.92)}
+.acc-btn.shift{color:var(--muted)}
+.acc-btn.shift.on{background:var(--acc);color:#05231f;border-color:var(--acc)}
+/* study */
+.st-mode{font-weight:900;font-size:17px}
+.st-sub{font-weight:700;font-size:14px;margin-left:6px}
+.st-title{font-weight:700;font-size:14px;max-width:34vw;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.fc-bar{height:4px;background:var(--panel2);border-radius:9px;overflow:hidden;margin-bottom:18px}
+.fc-bar i{display:block;height:100%;background:var(--acc);transition:width .3s}
+.flash{perspective:1800px;height:min(54vh,430px);cursor:pointer;user-select:none;-webkit-user-select:none}
+.flash .inner{position:relative;width:100%;height:100%;transition:transform .5s cubic-bezier(.3,.75,.3,1);transform-style:preserve-3d}
+.flash.flipped .inner{transform:rotateX(180deg)}
+.flash.noanim .inner{transition:none}
+.face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;background:var(--panel);border:1px solid var(--line);border-radius:24px;display:flex;align-items:center;justify-content:center;padding:50px 40px;text-align:center;box-shadow:0 18px 40px rgba(0,0,0,.35)}
+.face.back{transform:rotateX(180deg)}
+.face .side{position:absolute;top:18px;left:22px;font-size:13px;color:var(--muted);font-weight:800}
+.face .starb{position:absolute;top:10px;right:12px}
+.ftxt{font-size:32px;font-weight:700;line-height:1.35;white-space:pre-wrap;max-height:100%;overflow:auto}
+.ftxt.sm{font-size:23px} .ftxt.xs{font-size:17px}
+.fc-ctrl{display:flex;align-items:center;gap:12px;margin-top:20px}
+.circ{width:58px;height:46px;border-radius:999px;border:1px solid var(--line2);font-size:20px;display:grid;place-items:center;transition:.15s}
+.circ:hover{border-color:var(--acc);color:var(--acc)}
+.trk{display:flex;align-items:center;gap:10px;padding:10px 18px;border-radius:999px;font-weight:800;border:1px solid var(--line2);transition:.15s}
+.trk .cnt{min-width:30px;height:26px;padding:0 8px;border-radius:99px;display:grid;place-items:center;font-size:13px}
+.trk.no{color:#ffa1a1}.trk.no .cnt{background:var(--badbg);color:var(--bad)}
+.trk.yes{color:#8fe7bd}.trk.yes .cnt{background:var(--goodbg);color:var(--good)}
+.trk.no:hover{border-color:var(--bad)}.trk.yes:hover{border-color:var(--good)}
+.hint{text-align:center;color:var(--muted);font-size:13px;margin-top:18px}
+.qcard{background:var(--panel);border:1px solid var(--line);border-radius:22px;padding:28px 30px;margin-bottom:18px}
+.qlabel{font-size:13px;font-weight:800;color:var(--muted)}
+.qtext{font-size:26px;font-weight:700;margin:14px 0 40px;white-space:pre-wrap;line-height:1.35}
+.qtext.sm{font-size:21px;margin-bottom:28px}.qtext.xs{font-size:17px;margin:8px 0 16px}
+.qsub{font-weight:800;font-size:15px;margin-bottom:12px}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.opt{display:flex;align-items:center;gap:12px;text-align:left;padding:16px 18px;border-radius:14px;border:2px solid var(--line);font-weight:700;font-size:16px;transition:.12s;white-space:pre-wrap;line-height:1.3}
+.opt:hover:not([disabled]){border-color:var(--line2);background:#222527}
+.opt .num{flex:none;width:26px;height:26px;border-radius:50%;background:var(--panel2);display:grid;place-items:center;font-size:13px;color:var(--muted)}
+.opt.sel{border-color:var(--acc);background:var(--accbg)}
+.opt.right{border-color:var(--good);background:var(--goodbg)}
+.opt.wrong{border-color:var(--bad);background:var(--badbg)}
+.opt[disabled]{cursor:default}
+.opt.dim{opacity:.45}
+.ans{width:100%;margin-top:14px;background:transparent;border:1.5px solid var(--acc);border-radius:16px;padding:20px 18px;font-size:17px;font-weight:600;outline:none}
+.ans:focus{box-shadow:0 0 0 4px var(--accbg)}
+.ans[disabled]{border-color:var(--line2);opacity:.85}
+.qfoot{display:flex;align-items:center;gap:12px;margin-top:16px}
+.fb{margin-top:18px;border-radius:16px;padding:16px 18px;border:1px solid}
+.fb.ok{background:var(--goodbg);border-color:rgba(60,207,138,.4)}
+.fb.no{background:var(--badbg);border-color:rgba(255,107,107,.4)}
+.fb.warn{background:rgba(244,183,64,.1);border-color:rgba(244,183,64,.4)}
+.fb-t{font-weight:900;font-size:16px}
+.fb.ok .fb-t{color:var(--good)}.fb.no .fb-t{color:var(--bad)}.fb.warn .fb-t{color:var(--warn)}
+.fb-row{margin-top:12px}
+.fb-row .l{font-size:12px;font-weight:800;color:var(--muted);letter-spacing:.5px;text-transform:uppercase;margin-bottom:4px}
+.fb-row .v{font-size:17px;font-weight:700;white-space:pre-wrap}
+mark{background:none;color:inherit;border-radius:4px;padding:0 1px}
+mark.bad{background:rgba(255,107,107,.3);color:#ffd0d0;text-decoration:line-through;text-decoration-thickness:2px}
+mark.miss{background:rgba(60,207,138,.3);color:#c9ffe5;text-decoration:underline}
+.fbfoot{display:flex;align-items:center;gap:10px;margin-top:16px;flex-wrap:wrap}
+.rlist{text-align:left;margin:18px 0 24px;display:flex;flex-direction:column;gap:8px}
+.rr{display:flex;gap:12px;align-items:flex-start;padding:12px 14px;border-radius:12px;background:var(--panel2)}
+.rr .mk{font-weight:900;width:20px}
+.rr.ok .mk{color:var(--good)}.rr.no .mk{color:var(--bad)}
+.srow{display:flex;align-items:center;justify-content:space-between;padding:14px 0;border-bottom:1px solid var(--line);font-weight:700}
+.srow input[type=number]{width:80px;background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:7px 10px;font-weight:800;outline:none}
+.tf-shown{background:var(--panel2);border-radius:14px;padding:12px 16px;margin:-20px 0 16px}
+.tq.res-ok{border-color:rgba(60,207,138,.5)}.tq.res-no{border-color:rgba(255,107,107,.5)}
+.tag{font-size:11px;font-weight:900;letter-spacing:.6px;padding:3px 9px;border-radius:99px;background:var(--panel2);color:var(--muted)}
+.tag.ok{background:var(--goodbg);color:var(--good)}.tag.no{background:var(--badbg);color:var(--bad)}
+.score{display:flex;align-items:center;gap:26px}
+.ring{width:110px;height:110px;border-radius:50%;display:grid;place-items:center;flex:none}
+.ring b{width:86px;height:86px;border-radius:50%;background:var(--panel);display:grid;place-items:center;font-size:24px;font-weight:900}
+.fixed-acc{position:fixed;left:50%;bottom:16px;transform:translateX(-50%);background:rgba(28,30,31,.96);border:1px solid var(--line);border-radius:999px;padding:8px 10px;z-index:25;box-shadow:0 10px 30px rgba(0,0,0,.45)}
+.mgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.mtile{min-height:120px;padding:14px;border-radius:16px;background:var(--panel);border:2px solid var(--line);font-weight:700;font-size:15px;line-height:1.3;transition:border-color .12s,background .12s,opacity .3s,transform .3s;white-space:pre-wrap;word-break:break-word}
+.mtile:hover{border-color:var(--line2)}
+.mtile.sel{border-color:var(--acc);background:var(--accbg)}
+.mtile.ok{border-color:var(--good);background:var(--goodbg)}
+.mtile.bad{border-color:var(--bad);background:var(--badbg);animation:shake .35s}
+.mtile.gone{opacity:0;transform:scale(.9);pointer-events:none}
+@keyframes shake{25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+#clock{font-variant-numeric:tabular-nums}
+/* modal + toast */
+.ov{position:fixed;inset:0;background:rgba(0,0,0,.6);display:grid;place-items:center;z-index:100;padding:20px;animation:fade .15s}
+.mdl{background:var(--panel);border:1px solid var(--line);border-radius:22px;padding:24px;width:min(520px,100%);max-height:88vh;overflow:auto}
+.mdl .srow:last-of-type{border-bottom:0}
+.mfoot{display:flex;justify-content:flex-end;gap:10px;margin-top:20px}
+.mopt{display:flex;gap:14px;align-items:flex-start;padding:14px 0;border-bottom:1px solid var(--line)}
+.mopt .tog{margin-top:2px}
+.mopt b{display:block;margin-bottom:2px}
+textarea.code{width:100%;height:240px;background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:12px;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12px;outline:none}
+#toast{position:fixed;left:50%;bottom:28px;transform:translate(-50%,20px);background:#2b2f31;border:1px solid var(--line2);padding:11px 18px;border-radius:999px;font-weight:700;font-size:14px;opacity:0;pointer-events:none;transition:.25s;z-index:200}
+#toast.show{opacity:1;transform:translate(-50%,0)}
+@keyframes fade{from{opacity:0}}
+@media(max-width:720px){
+ .modes{grid-template-columns:1fr 1fr}.opts{grid-template-columns:1fr}.mgrid{grid-template-columns:repeat(3,1fr)}
+ .erow-b{flex-direction:column;gap:14px}.term{grid-template-columns:1fr auto}.term .td{grid-column:1}.term .tt{border:0}
+ .pgrid{grid-template-columns:1fr}.qcard{padding:22px 18px}.ftxt{font-size:25px}.top{padding:10px 14px}.wrap{padding:22px 14px 140px}.st-title{display:none}
+}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<div id="modal-root"></div>
+<div id="toast"></div>
+<script id="store" type="application/json">{"updatedAt":0,"sets":[{"id":"sample01","title":"Spanish – Nationalities (sample)","desc":"A starter set. Edit or delete it any time.","chars":"¡¿°áéíñóúü","created":0,"updated":0,"cards":[{"id":"c1","t":"marroquí / marroquí","d":"Moroccan"},{"id":"c2","t":"español / española","d":"Spanish"},{"id":"c3","t":"francés / francesa","d":"French"},{"id":"c4","t":"alemán / alemana","d":"German"},{"id":"c5","t":"japonés / japonesa","d":"Japanese"},{"id":"c6","t":"estadounidense","d":"American (from the U.S.)"},{"id":"c7","t":"¿De dónde eres?","d":"Where are you from?"},{"id":"c8","t":"el pasaporte","d":"the passport"}]}]}</script>
+<script id="appjs">
+(function(){
+'use strict';
+/* ---------- helpers ---------- */
+var $=function(s,r){return (r||document).querySelector(s)};
+var $$=function(s,r){return Array.prototype.slice.call((r||document).querySelectorAll(s))};
+var esc=function(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})};
+var uid=function(){var s='';while(s.length<8)s+=Math.random().toString(36).slice(2);return s.slice(0,8)};
+var shuffle=function(a){a=a.slice();for(var i=a.length-1;i>0;i--){var j=Math.random()*(i+1)|0;var t=a[i];a[i]=a[j];a[j]=t}return a};
+var ls={get:function(k,d){try{var v=localStorage.getItem(k);return v==null?d:JSON.parse(v)}catch(e){return d}},set:function(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}},del:function(k){try{localStorage.removeItem(k)}catch(e){}}};
+var DEFAULT_CHARS='¡¿°áéíñóúü';
+var FONT='<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">';
+var STAR='<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.8l2.8 5.9 6.4.8-4.7 4.4 1.2 6.4L12 17.2l-5.7 3.1 1.2-6.4L2.8 9.5l6.4-.8z"/></svg>';
+var STAR_O='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M12 2.8l2.8 5.9 6.4.8-4.7 4.4 1.2 6.4L12 17.2l-5.7 3.1 1.2-6.4L2.8 9.5l6.4-.8z"/></svg>';
+var ICON={
+ cards:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="3" y="6" width="14" height="14" rx="3"/><path d="M7 3h11a3 3 0 0 1 3 3v11"/></svg>',
+ learn:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a9 9 0 1 0 9 9"/><path d="M21 3l-9 9"/><path d="M15 3h6v6"/></svg>',
+ test:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="18" rx="3"/><path d="M8 9l2 2 4-4M8 16h8"/></svg>',
+ match:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="3" y="3" width="7.5" height="7.5" rx="2"/><rect x="13.5" y="3" width="7.5" height="7.5" rx="2"/><rect x="3" y="13.5" width="7.5" height="7.5" rx="2"/><rect x="13.5" y="13.5" width="7.5" height="7.5" rx="2"/></svg>'
+};
+function toast(msg){var t=$('#toast');t.textContent=msg;t.classList.add('show');clearTimeout(toast._t);toast._t=setTimeout(function(){t.classList.remove('show')},2400)}
+function sizeCls(s){s=String(s||'');return s.length>180?'xs':s.length>80?'sm':''}
+function today(){return new Date().toISOString().slice(0,10)}
+
+/* ---------- store ---------- */
+var DB=null;
+try{DB=JSON.parse($('#store').textContent)}catch(e){}
+if(!DB||!Array.isArray(DB.sets))DB={updatedAt:0,sets:[]};
+var unsynced=false;
+var localDB=ls.get('fc_db',null);
+if(localDB&&Array.isArray(localDB.sets)&&(localDB.updatedAt||0)>(DB.updatedAt||0)){DB=localDB;unsynced=true}
+function getSet(id){for(var i=0;i<DB.sets.length;i++)if(DB.sets[i].id===id)return DB.sets[i];return null}
+var DEF_SL={stars:[],learn:{},dir:'def',learnTypes:'mixed',starredOnly:false,front:'term',track:true,matchBest:null,testCfg:null};
+function SL(id){var o=ls.get('fc_s_'+id,{});var r={};for(var k in DEF_SL)r[k]=o[k]!==undefined?o[k]:JSON.parse(JSON.stringify(DEF_SL[k]));return r}
+function SLsave(id,o){ls.set('fc_s_'+id,o)}
+var DEF_P={strictAccents:true,typos:true,anyPart:true,ignoreArticles:false,caseSensitive:false};
+function P(){var o=ls.get('fc_prefs',{}),r={};for(var k in DEF_P)r[k]=o[k]!==undefined?o[k]:DEF_P[k];return r}
+function studyCards(s,sl){if(sl.starredOnly){var f=s.cards.filter(function(c){return sl.stars.indexOf(c.id)>=0});if(f.length)return f}return s.cards.slice()}
+
+/* capabilities (page storage + file download) */
+function cap(name){return new Promise(function(res){var n=0;(function w(){if(window.claude&&typeof window.claude.use==='function'){Promise.resolve().then(function(){return window.claude.use(name)}).then(res,function(){res(null)})}else if(n++<40)setTimeout(w,100);else res(null)})()})}
+var artP=cap('artifact'),dlP=cap('downloads'),canPublish=null;
+artP.then(function(a){canPublish=!!a;updateStatus()});
+function buildDoc(){
+ var json=JSON.stringify(DB).replace(/</g,'\\u003c');
+ return '<!DOCTYPE html>\n<html lang="en">\n<head>\n<meta charset="utf-8">\n<meta name="viewport" content="width=device-width,initial-scale=1">\n<title>My Flashcards</title>\n'+FONT+'\n<style id="css">'+$('#css').textContent+'</style>\n</head>\n<body>\n<div id="app"></div>\n<div id="modal-root"></div>\n<div id="toast"></div>\n<script id="store" type="application/json">'+json+'</scr'+'ipt>\n<script id="appjs">'+$('#appjs').textContent+'</scr'+'ipt>\n</body>\n</html>\n';
+}
+function persist(){
+ DB.updatedAt=Date.now();ls.set('fc_db',DB);unsynced=true;updateStatus();
+ return artP.then(function(a){
+  if(!a){toast('Saved in this browser');return}
+  return a.publish(buildDoc()).then(function(){unsynced=false;updateStatus()},function(e){
+   var c=(e&&(e.code||e.message))||'error';
+   if(/conflict/i.test(c))return;
+   toast(/not_writer|not_granted/.test(c)?'Read-only view: saved in this browser only':'Saved in this browser only ('+c+')');
+  });
+ });
+}
+function updateStatus(){var el=$('#status');if(!el)return;
+ if(canPublish===null){el.innerHTML='';return}
+ if(unsynced&&canPublish)el.innerHTML='<span class="chip warn" data-a="sync" title="Click to save into the page">● Unsaved – click to save</span>';
+ else if(canPublish)el.innerHTML='<span class="chip ok">✓ Saved</span>';
+ else el.innerHTML='<span class="chip" title="Use Export to keep a file">Browser storage</span>';
+}
+
+/* ---------- smart grading ---------- */
+var ARTICLES=['el','la','los','las','lo','un','una','unos','unas','the','a','an','to','le','les','l\'','der','die','das'];
+function fold(s){return s.normalize('NFD').replace(/[\u0300-\u036f]/g,'')}
+function clean(s,cs){s=String(s).normalize('NFC');if(!cs)s=s.toLowerCase();return s.replace(/[¡!¿?.,;:"“”‘’«»…*_]/g,' ').replace(/[‐-―]/g,'-').replace(/\s+/g,' ').trim()}
+function stripArt(s){var w=s.split(' ');if(w.length>1&&ARTICLES.indexOf(w[0])>=0)return w.slice(1).join(' ');if(/^l'/.test(s))return s.slice(2);return s}
+function lev(a,b){if(a===b)return 0;var m=a.length,n=b.length;if(!m)return n;if(!n)return m;var p=[],q;for(var j=0;j<=n;j++)p[j]=j;for(var i=1;i<=m;i++){q=[i];for(j=1;j<=n;j++)q[j]=Math.min(p[j]+1,q[j-1]+1,p[j-1]+(a[i-1]===b[j-1]?0:1));p=q}return p[n]}
+function variants(raw){var a=raw.replace(/\s*\([^)]*\)\s*/g,' ').trim(),b=raw.replace(/[()]/g,'').trim();return a===b?[raw.trim()]:[a,b]}
+function candidates(raw,p){var out=[],seen={};function add(x){x=x.trim();var c=clean(x,p.caseSensitive);if(c&&!seen[c]){seen[c]=1;out.push({raw:x,c:c})}}
+ variants(raw).forEach(function(v){add(v);var parts=v.split(p.anyPart?/\s*(?:\/|;|,|\bor\b)\s*/i:/\s*\/\s*/);if(parts.length>1&&(p.anyPart||parts.every(function(x){return clean(x,p.caseSensitive)===clean(parts[0],p.caseSensitive)})))parts.forEach(add)});
+ return out}
+function cmp(u,c,p){
+ if(u===c)return{rank:0,ok:true,kind:'exact'};
+ var fu=fold(u),fc=fold(c);
+ var ua=stripArt(u),ca=stripArt(c);
+ if(ua&&ca&&(ua!==u||ca!==c)){
+  if(ua===ca)return p.ignoreArticles?{rank:1,ok:true,kind:'article',note:'Correct — article ignored'}:{rank:5,ok:false,kind:'article',note:'Almost — check the article'};
+  if(fold(ua)===fold(ca)&&p.ignoreArticles)return p.strictAccents?{rank:4,ok:false,kind:'accent',note:'Accent mistake'}:{rank:2,ok:true,kind:'accent',note:'Correct — but watch the accents'};
+ }
+ if(fu===fc)return p.strictAccents?{rank:2.5,ok:false,kind:'accent',note:'So close — accent mistake'}:{rank:2,ok:true,kind:'accent',note:'Correct — but watch the accents'};
+ var L=fc.length,tol=L<=3?0:L<=7?1:2;
+ if(p.typos&&tol){var df=lev(fu,fc);if(df<=tol){if(p.strictAccents&&lev(u,c)>df)return{rank:4,ok:false,kind:'accent',note:'Check the spelling and accents'};return{rank:3,ok:true,kind:'typo',note:'Correct — small typo'}}}
+ if(u.length>=3&&(c.indexOf(u)>=0)&&u.length>=c.length*0.4)return{rank:6,ok:false,kind:'partial',note:'Incomplete answer'};
+ return{rank:9,ok:false,kind:'wrong'};
+}
+function grade(user,answer,p){
+ p=p||P();var u=clean(user,p.caseSensitive);
+ if(!u)return{ok:false,kind:'blank',target:answer,full:answer};
+ var cs=candidates(answer,p),best={rank:99,ok:false,kind:'wrong'};
+ cs.forEach(function(c){var r=cmp(u,c.c,p);if(r.rank<best.rank){best=r;best.target=c.raw}});
+ // all parts given, any order ("francesa / francés")
+ if(best.rank>0){var up=String(user).split(/\s*(?:\/|;|,)\s*/).map(function(x){return clean(x,p.caseSensitive)}).filter(Boolean);
+  if(up.length>1){var set=cs.map(function(c){return c.c});if(up.every(function(x){return set.indexOf(x)>=0}))best={rank:0,ok:true,kind:'exact',target:answer}}}
+ if(!best.target)best.target=cs.length?cs[0].raw:answer;
+ best.full=answer;return best;
+}
+function diffHTML(a,b,cs){ // a=user, b=target -> [userHTML,targetHTML]
+ if(a.length>220||b.length>220)return[esc(a),esc(b)];
+ var eq=function(x,y){return cs?x===y:x.toLowerCase()===y.toLowerCase()};
+ var m=a.length,n=b.length,D=[],i,j;
+ for(i=0;i<=m;i++){D[i]=[];for(j=0;j<=n;j++)D[i][j]=i===0?j:j===0?i:0}
+ for(i=1;i<=m;i++)for(j=1;j<=n;j++)D[i][j]=Math.min(D[i-1][j]+1,D[i][j-1]+1,D[i-1][j-1]+(eq(a[i-1],b[j-1])?0:1));
+ var ua=[],tb=[];i=m;j=n;
+ while(i>0||j>0){
+  if(i>0&&j>0&&D[i][j]===D[i-1][j-1]+(eq(a[i-1],b[j-1])?0:1)){var same=eq(a[i-1],b[j-1]);ua.unshift(same?esc(a[i-1]):'<mark class="bad">'+esc(a[i-1])+'</mark>');tb.unshift(same?esc(b[j-1]):'<mark class="miss">'+esc(b[j-1])+'</mark>');i--;j--}
+  else if(i>0&&D[i][j]===D[i-1][j]+1){ua.unshift('<mark class="bad">'+esc(a[i-1])+'</mark>');i--}
+  else{tb.unshift('<mark class="miss">'+esc(b[j-1])+'</mark>');j--}
+ }
+ return[ua.join('').replace(/<\/mark><mark class="bad">/g,''),tb.join('').replace(/<\/mark><mark class="miss">/g,'')];
+}
+var PRAISE=['Nice work!','Great job!','Correct!','You got it!','Awesome!','Perfect!'];
+function fbHTML(g,user){
+ var p=P(),cls=g.ok?(g.kind==='exact'?'ok':'warn'):'no';
+ var title=g.ok?(g.kind==='exact'?PRAISE[Math.random()*PRAISE.length|0]:g.note):(g.kind==='blank'?'No worries — here\'s the answer':(g.note||'Not quite — you\'re still learning!'));
+ var h='<div class="fb '+cls+'"><div class="fb-t">'+esc(title)+'</div>';
+ if(g.kind==='blank'){h+='<div class="fb-row"><div class="l">Correct answer</div><div class="v">'+esc(g.full)+'</div></div>'}
+ else if(!(g.ok&&g.kind==='exact')){var d=diffHTML(String(user).trim(),g.target,p.caseSensitive);
+  h+='<div class="fb-row"><div class="l">Your answer</div><div class="v">'+d[0]+'</div></div><div class="fb-row"><div class="l">Correct answer</div><div class="v">'+d[1]+'</div></div>';
+  if(g.target.trim()!==String(g.full).trim())h+='<div class="fb-row"><div class="l">Full answer</div><div class="v">'+esc(g.full)+'</div></div>';}
+ return h+'</div>';
+}
+function qa(c,dir){var d=dir==='both'?(Math.random()<.5?'def':'term'):dir;return d==='term'?{q:c.d,a:c.t,qLabel:'Definition',aLabel:'Term',side:'t'}:{q:c.t,a:c.d,qLabel:'Term',aLabel:'Definition',side:'d'}}
+function mcOpts(c,q,pool){var others=[],seen={};seen[q.a]=1;shuffle(pool).forEach(function(x){var v=x[q.side];if(x.id!==c.id&&v&&!seen[v]&&others.length<3){seen[v]=1;others.push(v)}});return shuffle(others.concat([q.a]))}
+
+/* ---------- accent bar ---------- */
+var shiftOn=false,lastInput=null;
+function accBar(chars){chars=chars||DEFAULT_CHARS;return '<div class="accbar">'+Array.from(chars).filter(function(c){return c.trim()}).map(function(c){return '<button type="button" class="acc-btn" tabindex="-1" data-ch="'+esc(c)+'">'+esc(shiftOn?c.toUpperCase():c)+'</button>'}).join('')+'<button type="button" class="acc-btn shift'+(shiftOn?' on':'')+'" tabindex="-1" data-shift="1" title="Uppercase">⇧</button></div>'}
+document.addEventListener('focusin',function(e){var t=e.target;if(t&&(t.tagName==='TEXTAREA'||(t.tagName==='INPUT'&&/^(text|search|)$/.test(t.type||''))))lastInput=t});
+document.addEventListener('mousedown',function(e){if(e.target.closest&&e.target.closest('.acc-btn'))e.preventDefault()});
+document.addEventListener('click',function(e){var b=e.target.closest&&e.target.closest('.acc-btn');if(!b)return;
+ if(b.dataset.shift){shiftOn=!shiftOn;$$('.accbar').forEach(function(bar){$$('.acc-btn[data-ch]',bar).forEach(function(x){x.textContent=shiftOn?x.dataset.ch.toUpperCase():x.dataset.ch});$('.shift',bar).classList.toggle('on',shiftOn)});return}
+ var ch=shiftOn?b.dataset.ch.toUpperCase():b.dataset.ch,el=lastInput;
+ if(!el||!document.contains(el)||el.disabled){el=$('#app input.ans:not([disabled])');if(!el)return}
+ var s=el.selectionStart!=null?el.selectionStart:el.value.length,en=el.selectionEnd!=null?el.selectionEnd:s;
+ el.value=el.value.slice(0,s)+ch+el.value.slice(en);el.focus();el.selectionStart=el.selectionEnd=s+ch.length;
+ el.dispatchEvent(new Event('input',{bubbles:true}));
+});
+
+/* ---------- modal ---------- */
+function modal(html,handlers,init){handlers=handlers||{};var root=$('#modal-root');root.innerHTML='<div class="ov"><div class="mdl">'+html+'</div></div>';var ov=root.firstChild;
+ ov.addEventListener('click',function(e){if(e.target===ov)return closeModal();var b=e.target.closest('[data-m]');if(!b)return;var k=b.dataset.m;if(k==='close')return closeModal();if(handlers[k])handlers[k](b)});if(init)init(ov)}
+function closeModal(){$('#modal-root').innerHTML=''}
+function confirmBox(title,text,okLabel,fn,danger){modal('<h3>'+esc(title)+'</h3><p class="muted">'+esc(text)+'</p><div class="mfoot"><button class="btn" data-m="close">Cancel</button><button class="btn '+(danger?'danger':'primary')+'" data-m="ok">'+esc(okLabel)+'</button></div>',{ok:function(){closeModal();fn()}})}
+function togHTML(id,checked,attrs){return '<label class="tog"><input type="checkbox" '+(id?'id="'+id+'" ':'')+(attrs||'')+(checked?' checked':'')+'><span></span></label>'}
+function gradingModal(){var p=P();
+ function row(k,t,d){return '<div class="mopt">'+togHTML('',p[k],'data-k="'+k+'"')+'<div><b>'+t+'</b><span class="muted sm">'+d+'</span></div></div>'}
+ modal('<h3>Smart grading</h3>'+
+ row('strictAccents','Accents count','“marroqui” ≠ “marroquí”. Turn off to accept missing accents (you\'ll still be reminded).')+
+ row('typos','Forgive small typos','1 wrong letter for answers up to 7 letters, 2 for longer ones.')+
+ row('anyPart','Accept any one alternative','For “a / b”, “a, b”, “a; b” or “a or b”, typing one is enough. Typing all of them in any order always counts.')+
+ row('ignoreArticles','Ignore articles','Accept “casa” for “la casa” (el, la, los, las, un, una, the, a, to…).')+
+ row('caseSensitive','Case sensitive','Capital letters must match.')+
+ '<p class="muted xs" style="margin-top:14px">Always ignored: extra spaces and punctuation (¡ ! ¿ ? . , ;). Text in (parentheses) is optional. After a wrong answer you can always press <b>Override: I was correct</b>.</p><div class="mfoot"><button class="btn primary" data-m="close">Done</button></div>',{},
+ function(ov){ov.addEventListener('change',function(e){var k=e.target.dataset.k;if(k){var q=P();q[k]=e.target.checked;ls.set('fc_prefs',q)}})});
+}
+
+/* ---------- files: export / import ---------- */
+function saveFile(name,text){
+ dlP.then(function(d){
+  if(d)return d.save({filename:name,data:text}).then(function(){toast('Saved '+name)},function(e){var c=e&&e.code;if(c==='declined'||c==='rate_limited')return;showCopy(name,text)});
+  try{var u=URL.createObjectURL(new Blob([text],{type:'application/json'})),l=document.createElement('a');l.href=u;l.download=name;document.body.appendChild(l);l.click();l.remove();setTimeout(function(){URL.revokeObjectURL(u)},4000);toast('Downloaded '+name)}catch(e){showCopy(name,text)}
+ });
+}
+function showCopy(name,text){modal('<h3>Copy your file</h3><p class="muted sm">Downloads aren\'t available in this view. Copy the text below and save it as <b>'+esc(name)+'</b>.</p><textarea class="code" readonly>'+esc(text)+'</textarea><div class="mfoot"><button class="btn" data-m="close">Close</button><button class="btn primary" data-m="copy">Copy</button></div>',{copy:function(){var ta=$('#modal-root textarea');ta.select();try{navigator.clipboard.writeText(text).then(function(){toast('Copied')},function(){toast('Press Ctrl+C to copy')})}catch(e){toast('Press Ctrl+C to copy')}}})}
+function exportAll(){var local={};DB.sets.forEach(function(s){local[s.id]=SL(s.id)});saveFile('flashcards-backup-'+today()+'.json',JSON.stringify({app:'my-flashcards',version:1,exported:new Date().toISOString(),sets:DB.sets,local:local,prefs:P()},null,2))}
+function exportSet(s){var name=(s.title||'set').replace(/[^\w\- ]+/g,'').trim().replace(/\s+/g,'-')||'set';saveFile(name+'.json',JSON.stringify({app:'my-flashcards',version:1,sets:[s],local:(function(){var o={};o[s.id]=SL(s.id);return o})()},null,2))}
+var fileIn=document.createElement('input');fileIn.type='file';fileIn.accept='.json,.txt,.csv,.tsv';fileIn.style.display='none';document.body.appendChild(fileIn);
+fileIn.addEventListener('change',function(){var f=fileIn.files&&fileIn.files[0];fileIn.value='';if(!f)return;f.text().then(function(t){handleImport(t,f.name)})});
+function normSet(s){if(!s||!Array.isArray(s.cards))return null;var cards=s.cards.map(function(c){return{id:/^[a-z0-9]+$/i.test(c.id||'')?String(c.id):uid(),t:String(c.t!=null?c.t:c.term!=null?c.term:''),d:String(c.d!=null?c.d:c.definition!=null?c.definition:'')}}).filter(function(c){return c.t||c.d});
+ return{id:/^[a-z0-9]+$/.test(s.id||'')?s.id:uid(),title:String(s.title||'Imported set'),desc:String(s.desc||''),chars:String(s.chars||DEFAULT_CHARS),created:s.created||Date.now(),updated:Date.now(),cards:cards}}
+var pendingImport=null;
+function handleImport(text,name){var j=null;try{j=JSON.parse(text)}catch(e){}
+ if(j&&(Array.isArray(j.sets)||Array.isArray(j.cards))){var list=Array.isArray(j.sets)?j.sets:[j],add=0,upd=0,last=null;
+  list.forEach(function(raw){var s=normSet(raw);if(!s)return;var ex=getSet(s.id);if(ex){DB.sets[DB.sets.indexOf(ex)]=s;upd++}else{DB.sets.push(s);add++}last=s;if(j.local&&j.local[raw.id])SLsave(s.id,j.local[raw.id])});
+  if(j.prefs)ls.set('fc_prefs',j.prefs);
+  if(!last)return toast('No cards found in that file');
+  toast((add?add+' set'+(add>1?'s':'')+' added':'')+(add&&upd?', ':'')+(upd?upd+' updated':''));
+  location.hash=list.length===1?'set-'+last.id:'';render();persist();return}
+ var cards=parseText(text,'auto','\n');
+ if(!cards.length)return toast('Couldn\'t find any cards in that file');
+ pendingImport={title:name.replace(/\.\w+$/,''),cards:cards};go('edit-new');
+}
+function parseText(text,ts,cs){
+ text=String(text).replace(/\r\n?/g,'\n');
+ if(ts==='auto')ts=/\t/.test(text)?'\t':/ - /.test(text)?' - ':',';
+ if(!cs)cs='\n';
+ return text.split(cs).map(function(ch){if(!ch.trim())return null;var i=ch.indexOf(ts);var t,d;if(i<0){t=ch;d=''}else{t=ch.slice(0,i);d=ch.slice(i+ts.length)}
+  var unq=function(x){x=x.trim();return /^".*"$/.test(x)?x.slice(1,-1).replace(/""/g,'"'):x};return{t:unq(t),d:unq(d)}}).filter(function(c){return c&&(c.t||c.d)});
+}
+
+/* ---------- router ---------- */
+var app=$('#app'),A={},viewKey=null,timers=[];
+app.addEventListener('click',function(e){var b=e.target.closest('[data-a]');if(!b||!app.contains(b))return;var f=A[b.dataset.a]||(b.dataset.a==='sync'?function(){persist()}:null);if(f)f(b,e)});
+app.addEventListener('input',function(e){if(A._input)A._input(e)});
+document.addEventListener('keydown',function(e){if($('#modal-root .ov')){if(e.key==='Escape')closeModal();return}if(viewKey)viewKey(e)});
+function go(h){if(location.hash.slice(1)===h)render();else location.hash=h}
+window.addEventListener('hashchange',render);
+function render(){A={};viewKey=null;timers.forEach(function(t){clearInterval(t);clearTimeout(t)});timers=[];closeModal();window.scrollTo(0,0);
+ var h=location.hash.slice(1),m=h.match(/^(set|edit|cards|learn|test|match)-([a-z0-9]+)$/);
+ if(m){if(m[1]==='edit'&&m[2]==='new')return viewEdit(null);var s=getSet(m[2]);if(s)return({set:viewSet,edit:viewEdit,cards:viewCards,learn:viewLearn,test:viewTest,match:viewMatch})[m[1]](s)}
+ viewHome();
+}
+function studyTop(s,name,sub,gear){return '<header class="top"><button class="icon" data-a="close" title="Close">✕</button><div class="st-mode">'+name+'</div><div class="st-sub muted">'+(sub||'')+'</div><div class="sp"></div><div class="st-title muted">'+esc(s.title)+'</div>'+(gear?'<button class="icon" data-a="opts" title="Options">⚙</button>':'')+'</header>'}
+function dirSelect(id,v){return '<select id="'+id+'"><option value="def"'+(v==='def'?' selected':'')+'>Definition</option><option value="term"'+(v==='term'?' selected':'')+'>Term</option><option value="both"'+(v==='both'?' selected':'')+'>Both</option></select>'}
+function tooFew(s,n,what){app.innerHTML=studyTop(s,what)+'<main class="wrap narrow"><div class="qcard center"><h2>Add more cards</h2><p class="muted">'+what+' needs at least '+n+' cards.</p><button class="btn primary" data-a="edit">Edit set</button></div></main>';A.close=function(){go('set-'+s.id)};A.edit=function(){go('edit-'+s.id)}}
+
+/* ---------- home ---------- */
+function viewHome(){
+ var sets=DB.sets.slice().sort(function(a,b){return(b.updated||0)-(a.updated||0)});
+ app.innerHTML='<header class="top"><div class="brand"><i></i>My Flashcards</div><div class="sp"></div><span id="status"></span><button class="icon" data-a="grading" title="Grading settings">⚙</button><button class="btn ghost sm" data-a="import">Import</button><button class="btn ghost sm" data-a="backup">Export all</button><button class="btn primary sm" data-a="new">+ Create</button></header>'+
+ '<main class="wrap"><div class="row-between"><h2>Your sets</h2><span class="muted sm">'+sets.length+' set'+(sets.length===1?'':'s')+'</span></div>'+
+ (sets.length?'<div class="grid">'+sets.map(function(s){var sl=SL(s.id),n=s.cards.length,m=s.cards.filter(function(c){return(sl.learn[c.id]||0)>=2}).length;return '<button class="tile" data-a="open" data-id="'+s.id+'"><div class="tile-t">'+esc(s.title)+'</div><div class="muted sm">'+n+' term'+(n===1?'':'s')+'</div><div class="pbar"><i style="width:'+(n?m/n*100:0)+'%"></i></div><div class="muted xs">'+m+' / '+n+' mastered</div></button>'}).join('')+'</div>'
+ :'<div class="empty"><p class="muted">No sets yet.</p><button class="btn primary" data-a="new">+ Create your first set</button></div>')+
+ '<div class="note"><b>How your cards are stored</b><ul><li>Saving a set writes it into this page, so it\'s here next time you open it.</li><li><b>Export all</b> saves a <code>.json</code> backup file (sets, stars, progress, settings). <b>Import</b> loads it back — or a <code>.txt/.csv</code> list with one “term⇥definition” per line.</li></ul></div></main>';
+ updateStatus();
+ A.new=function(){go('edit-new')};A.open=function(b){go('set-'+b.dataset.id)};A.import=function(){fileIn.click()};A.backup=exportAll;A.grading=gradingModal;
+}
+
+/* ---------- set page ---------- */
+function viewSet(s){
+ var sl=SL(s.id),n=s.cards.length,lv=function(c){return sl.learn[c.id]||0};
+ var m=s.cards.filter(function(c){return lv(c)>=2}).length,f=s.cards.filter(function(c){return lv(c)===1}).length;
+ var mode=function(k,t){return '<button class="mode" data-a="mode" data-m2="'+k+'">'+ICON[k]+t+'</button>'};
+ app.innerHTML='<header class="top"><button class="icon" data-a="home" title="Back">←</button><div class="brand sm">Your sets</div><div class="sp"></div><span id="status"></span></header>'+
+ '<main class="wrap"><h1>'+esc(s.title)+'</h1>'+(s.desc?'<p class="muted" style="margin:4px 0 0">'+esc(s.desc)+'</p>':'')+
+ '<div class="meta"><span class="muted sm">'+n+' term'+(n===1?'':'s')+'</span><div class="sp"></div><button class="btn sm" data-a="edit">Edit</button><button class="btn sm" data-a="export">Export</button><button class="btn sm danger" data-a="delete">Delete</button></div>'+
+ '<div class="modes">'+mode('cards','Flashcards')+mode('learn','Learn')+mode('test','Test')+mode('match','Match')+'</div>'+
+ '<div class="opts-row"><span>Answer with '+dirSelect('o-dir',sl.dir)+'</span><label class="tog"><input type="checkbox" id="o-star"'+(sl.starredOnly?' checked':'')+'><span></span>Starred only (<b id="nstar">'+sl.stars.filter(function(id){return s.cards.some(function(c){return c.id===id})}).length+'</b>)</label><div class="sp"></div><button class="btn sm ghost" data-a="grading">Grading settings</button></div>'+
+ '<div class="lprog"><div class="seg"><i class="g" style="width:'+(n?m/n*100:0)+'%"></i><i class="t" style="width:'+(n?f/n*100:0)+'%"></i></div><div class="lg"><span><b class="dot g"></b>'+m+' mastered</span><span><b class="dot t"></b>'+f+' familiar</span><span><b class="dot n"></b>'+(n-m-f)+' not studied</span></div></div>'+
+ '<h2>Terms in this set ('+n+')</h2><div class="terms">'+s.cards.map(function(c){var on=sl.stars.indexOf(c.id)>=0;return '<div class="term"><div class="tt">'+esc(c.t)+'</div><div class="td">'+esc(c.d)+'</div><button class="icon starb'+(on?' on':'')+'" data-a="star" data-id="'+c.id+'" title="Star">'+(on?STAR:STAR_O)+'</button></div>'}).join('')+'</div></main>';
+ updateStatus();
+ A.home=function(){go('')};A.edit=function(){go('edit-'+s.id)};A.export=function(){exportSet(s)};A.grading=gradingModal;
+ A.mode=function(b){go(b.dataset.m2+'-'+s.id)};
+ A.delete=function(){confirmBox('Delete this set?','“'+s.title+'” and its progress will be removed. This can\'t be undone unless you have an exported file.','Delete',function(){DB.sets.splice(DB.sets.indexOf(s),1);ls.del('fc_s_'+s.id);location.hash='';render();persist()},true)};
+ A.star=function(b){var id=b.dataset.id,i=sl.stars.indexOf(id);if(i>=0)sl.stars.splice(i,1);else sl.stars.push(id);SLsave(s.id,sl);var on=i<0;b.classList.toggle('on',on);b.innerHTML=on?STAR:STAR_O;$('#nstar').textContent=sl.stars.length};
+ A._input=function(e){if(e.target.id==='o-dir'){sl.dir=e.target.value;SLsave(s.id,sl)}if(e.target.id==='o-star'){sl.starredOnly=e.target.checked;SLsave(s.id,sl);if(sl.starredOnly&&!sl.stars.length)toast('Star some terms first — studying all for now')}};
+}
+
+/* ---------- editor ---------- */
+function viewEdit(set){
+ var isNew=!set,dirty=false,showPaste=false;
+ var blank=function(){return{id:uid(),t:'',d:''}};
+ var draft=set?{title:set.title,desc:set.desc||'',chars:set.chars||DEFAULT_CHARS,cards:set.cards.map(function(c){return{id:c.id,t:c.t,d:c.d}})}
+  :{title:pendingImport?pendingImport.title:'',desc:'',chars:DEFAULT_CHARS,cards:pendingImport?pendingImport.cards.map(function(c){return{id:uid(),t:c.t,d:c.d}}):[blank(),blank(),blank(),blank()]};
+ if(pendingImport)dirty=true;pendingImport=null;
+ var rowHTML=function(c,i){return '<div class="erow"><div class="erow-h">'+(i+1)+'<div class="sp"></div><button class="icon sm" data-a="up" data-i="'+i+'" title="Move up">↑</button><button class="icon sm" data-a="del" data-i="'+i+'" title="Delete card">✕</button></div><div class="erow-b"><div class="fld"><textarea rows="1" data-f="t" data-i="'+i+'" placeholder="Enter term" spellcheck="false">'+esc(c.t)+'</textarea><label>TERM</label></div><div class="fld"><textarea rows="1" data-f="d" data-i="'+i+'" placeholder="Enter definition" spellcheck="false">'+esc(c.d)+'</textarea><label>DEFINITION</label></div></div></div>'};
+ var autosize=function(el){el.style.height='auto';el.style.height=el.scrollHeight+'px'};
+ function drawRows(focus){$('#rows').innerHTML=draft.cards.map(rowHTML).join('');$$('#rows textarea').forEach(autosize);if(focus)focus()}
+ app.innerHTML='<header class="top"><button class="icon" data-a="cancel" title="Back">←</button><div class="st-mode">'+(isNew?'Create a new flashcard set':'Edit set')+'</div><div class="sp"></div><button class="btn primary" data-a="save">'+(isNew?'Create':'Save')+'</button></header>'+
+ '<main class="wrap"><div class="ehead"><div class="fld big"><input id="f-title" placeholder="Enter a title, like “Spanish 2 – Nationalities”" value="'+esc(draft.title)+'"><label>TITLE</label></div><div class="fld"><textarea id="f-desc" rows="1" placeholder="Add a description…">'+esc(draft.desc)+'</textarea><label>DESCRIPTION</label></div></div>'+
+ '<div class="ed-tools"><button class="btn sm" data-a="paste">+ Import</button><button class="btn sm" data-a="swap">⇄ Swap terms and definitions</button><div class="sp"></div><div class="fld inline"><input id="f-chars" value="'+esc(draft.chars)+'" spellcheck="false"><label>ACCENT KEYS</label></div></div>'+
+ '<div id="paste"></div><div class="sticky-acc">'+accBar(draft.chars)+'</div><div id="rows"></div><button class="addrow" data-a="add">+ ADD CARD</button><div class="ed-foot"><button class="btn primary big" data-a="save">'+(isNew?'Create':'Save')+'</button></div></main>';
+ drawRows();autosize($('#f-desc'));
+ if(isNew&&!draft.title)$('#f-title').focus();
+ function focusField(i,f){var el=$('#rows textarea[data-i="'+i+'"][data-f="'+f+'"]');if(el){el.focus();el.scrollIntoView({block:'center',behavior:'smooth'})}}
+ function addRow(){draft.cards.push(blank());dirty=true;var i=draft.cards.length-1;$('#rows').insertAdjacentHTML('beforeend',rowHTML(draft.cards[i],i));focusField(i,'t')}
+ function drawPaste(){var el=$('#paste');if(!showPaste){el.innerHTML='';return}
+  el.innerHTML='<div class="paste"><div class="row-between"><b>Import your data</b><span class="muted xs">Paste from Word, Excel, Google Docs, Quizlet/Knowt export…</span></div><textarea id="p-text" rows="7" placeholder="Word 1&#9;Definition 1&#10;Word 2&#9;Definition 2&#10;Word 3&#9;Definition 3"></textarea>'+
+  '<div class="pgrid"><div><div class="lbl">Between term and definition</div><label><input type="radio" name="ps" value="\t" checked>Tab</label><label><input type="radio" name="ps" value=",">Comma</label><label><input type="radio" name="ps" value=" - ">Dash ( - )</label><label><input type="radio" name="ps" value="custom"><input type="text" id="ps-c" placeholder="Custom"></label></div>'+
+  '<div><div class="lbl">Between cards</div><label><input type="radio" name="pc" value="\n" checked>New line</label><label><input type="radio" name="pc" value=";">Semicolon</label><label><input type="radio" name="pc" value="custom"><input type="text" id="pc-c" placeholder="Custom"></label></div></div>'+
+  '<div class="row-between"><span id="p-count" class="muted sm">Preview: 0 cards</span><div><button class="btn sm ghost" data-a="pcancel">Cancel</button> <button class="btn sm primary" data-a="pimport">Import</button></div></div></div>';
+  $('#p-text').focus()}
+ function pasteSeps(){var ps=$('input[name=ps]:checked').value,pc=$('input[name=pc]:checked').value;if(ps==='custom')ps=$('#ps-c').value||'\t';if(pc==='custom')pc=$('#pc-c').value||'\n';return[ps,pc]}
+ function pastePreview(){var sp=pasteSeps();var n=parseText($('#p-text').value,sp[0],sp[1]).length;$('#p-count').textContent='Preview: '+n+' card'+(n===1?'':'s')}
+ A._input=function(e){var t=e.target;
+  if(t.dataset.f){draft.cards[+t.dataset.i][t.dataset.f]=t.value;autosize(t);dirty=true}
+  else if(t.id==='f-title'){draft.title=t.value;dirty=true}
+  else if(t.id==='f-desc'){draft.desc=t.value;autosize(t);dirty=true}
+  else if(t.id==='f-chars'){draft.chars=t.value;$('.sticky-acc').innerHTML=accBar(draft.chars||DEFAULT_CHARS);dirty=true}
+  else if(showPaste&&t.closest('#paste'))pastePreview();
+ };
+ viewKey=function(e){var t=e.target;if(!t.dataset||!t.dataset.f)return;
+  if((e.key==='Enter'&&!e.shiftKey)||(e.key==='Tab'&&!e.shiftKey)){var i=+t.dataset.i;
+   if(t.dataset.f==='t'){e.preventDefault();focusField(i,'d')}
+   else if(i===draft.cards.length-1){e.preventDefault();addRow()}
+   else{e.preventDefault();focusField(i+1,'t')}}
+ };
+ A.add=addRow;
+ A.del=function(b){var i=+b.dataset.i;draft.cards.splice(i,1);if(!draft.cards.length)draft.cards.push(blank());dirty=true;drawRows()};
+ A.up=function(b){var i=+b.dataset.i;if(!i)return;var t=draft.cards[i];draft.cards[i]=draft.cards[i-1];draft.cards[i-1]=t;dirty=true;drawRows()};
+ A.swap=function(){draft.cards.forEach(function(c){var t=c.t;c.t=c.d;c.d=t});dirty=true;drawRows();toast('Swapped terms and definitions')};
+ A.paste=function(){showPaste=!showPaste;drawPaste()};
+ A.pcancel=function(){showPaste=false;drawPaste()};
+ A.pimport=function(){var sp=pasteSeps(),cards=parseText($('#p-text').value,sp[0],sp[1]);if(!cards.length)return toast('Nothing to import');
+  draft.cards=draft.cards.filter(function(c){return c.t.trim()||c.d.trim()}).concat(cards.map(function(c){return{id:uid(),t:c.t,d:c.d}}));dirty=true;showPaste=false;drawPaste();drawRows();toast('Imported '+cards.length+' cards')};
+ A.save=function(){var cards=draft.cards.map(function(c){return{id:c.id||uid(),t:c.t.trim(),d:c.d.trim()}}).filter(function(c){return c.t||c.d});
+  if(!cards.length)return toast('Add at least one card');
+  var s=set;if(!s){s={id:uid(),created:Date.now()};DB.sets.push(s)}
+  s.title=draft.title.trim()||'Untitled set';s.desc=draft.desc.trim();s.chars=draft.chars||DEFAULT_CHARS;s.cards=cards;s.updated=Date.now();
+  location.hash='set-'+s.id;persist();
+ };
+ A.cancel=function(){var back=function(){go(set?'set-'+set.id:'')};if(dirty)confirmBox('Discard changes?','Your unsaved edits will be lost.','Discard',back,true);else back()};
+}
+
+/* ---------- flashcards ---------- */
+function viewCards(s){
+ var sl=SL(s.id),order=studyCards(s,sl),i=0,flipped=false,know={},learning={},shuffled=false;
+ if(!order.length)return tooFew(s,1,'Flashcards');
+ function cnt(o){return Object.keys(o).length}
+ function draw(){
+  if(i>=order.length)return drawEnd();
+  var c=order[i],front=sl.front==='term'?c.t:c.d,back=sl.front==='term'?c.d:c.t,on=sl.stars.indexOf(c.id)>=0;
+  var star='<button class="icon starb'+(on?' on':'')+'" data-a="star">'+(on?STAR:STAR_O)+'</button>';
+  app.innerHTML=studyTop(s,'Flashcards',(i+1)+' / '+order.length,true)+'<main class="wrap narrow"><div class="fc-bar"><i style="width:'+(i/order.length*100)+'%"></i></div>'+
+  '<div class="flash noanim'+(flipped?' flipped':'')+'" data-a="flip"><div class="inner"><div class="face front"><span class="side">'+(sl.front==='term'?'Term':'Definition')+'</span>'+star+'<div class="ftxt '+sizeCls(front)+'">'+esc(front)+'</div></div><div class="face back"><span class="side">'+(sl.front==='term'?'Definition':'Term')+'</span>'+star+'<div class="ftxt '+sizeCls(back)+'">'+esc(back)+'</div></div></div></div>'+
+  '<div class="fc-ctrl"><button class="icon'+(shuffled?' on':'')+'" data-a="shuffle" title="Shuffle">⤮</button><div class="sp"></div>'+
+  (sl.track?'<button class="trk no" data-a="no"><span class="cnt">'+cnt(learning)+'</span>Still learning</button><button class="icon" data-a="undo" title="Undo"'+(i?'':' disabled style="opacity:.3"')+'>↶</button><button class="trk yes" data-a="yes">Know<span class="cnt">'+cnt(know)+'</span></button>'
+  :'<button class="circ" data-a="prev">←</button><button class="circ" data-a="next">→</button>')+
+  '<div class="sp"></div><label class="tog sm" title="Track progress">'+'<input type="checkbox" id="trk"'+(sl.track?' checked':'')+'><span></span></label></div>'+
+  '<p class="hint">Space / click to flip · '+(sl.track?'← still learning · → know':'← → to navigate')+' · Track progress toggle on the right</p></main>';
+  requestAnimationFrame(function(){var f=$('.flash');if(f)f.classList.remove('noanim')});
+ }
+ function drawEnd(){
+  var k=cnt(know),l=cnt(learning);
+  app.innerHTML=studyTop(s,'Flashcards','',true)+'<main class="wrap narrow"><div class="qcard center"><h2>'+(sl.track?'Way to go! You\'ve reviewed all the cards.':'You\'ve reviewed all '+order.length+' cards.')+'</h2>'+
+  (sl.track?'<div class="score" style="justify-content:center;margin:20px 0">'+ring(order.length?k/order.length:0)+'<div style="text-align:left"><div class="trk yes" style="border:0;padding:4px 0">Know<span class="cnt">'+k+'</span></div><div class="trk no" style="border:0;padding:4px 0">Still learning<span class="cnt">'+l+'</span></div></div></div>':'')+
+  '<div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">'+(sl.track&&l?'<button class="btn primary" data-a="again">Keep reviewing '+l+' term'+(l>1?'s':'')+'</button>':'')+'<button class="btn" data-a="restart">Restart flashcards</button><button class="btn" data-a="learn">Practice in Learn</button></div></div></main>';
+ }
+ function step(mark){if(i>=order.length)return;var c=order[i];if(mark==='yes'){know[c.id]=1;delete learning[c.id]}else if(mark==='no'){learning[c.id]=1;delete know[c.id]}i++;flipped=false;draw()}
+ function flip(){flipped=!flipped;var f=$('.flash');if(f)f.classList.toggle('flipped',flipped)}
+ function blur(){if(document.activeElement&&document.activeElement.blur)document.activeElement.blur()}
+ A.close=function(){go('set-'+s.id)};
+ A.flip=flip;
+ A.star=function(b,e){e.stopPropagation();var c=order[i],k=sl.stars.indexOf(c.id);if(k>=0)sl.stars.splice(k,1);else sl.stars.push(c.id);SLsave(s.id,sl);$$('.flash .starb').forEach(function(x){x.classList.toggle('on',k<0);x.innerHTML=k<0?STAR:STAR_O})};
+ A.yes=function(){step('yes');blur()};A.no=function(){step('no');blur()};
+ A.next=function(){step();blur()};A.prev=function(){if(i>0){i--;flipped=false;draw()}blur()};
+ A.undo=function(){if(i>0){i--;var c=order[i];delete know[c.id];delete learning[c.id];flipped=false;draw()}};
+ A.shuffle=function(){shuffled=!shuffled;var cur=order[i];var rest=order.slice(i);rest=shuffled?shuffle(rest):studyCards(s,sl).filter(function(c){return rest.indexOf(c)>=0});order=order.slice(0,i).concat(rest);flipped=false;draw();toast(shuffled?'Shuffle on':'Shuffle off')};
+ A.again=function(){order=order.filter(function(c){return learning[c.id]});if(shuffled)order=shuffle(order);i=0;know={};learning={};flipped=false;draw()};
+ A.restart=function(){order=shuffled?shuffle(studyCards(s,sl)):studyCards(s,sl);i=0;know={};learning={};flipped=false;draw()};
+ A.learn=function(){go('learn-'+s.id)};
+ A._input=function(e){if(e.target.id==='trk'){sl.track=e.target.checked;SLsave(s.id,sl);draw()}};
+ A.opts=function(){modal('<h3>Flashcard options</h3><div class="srow"><span>Front side</span><select id="m-front"><option value="term"'+(sl.front==='term'?' selected':'')+'>Term</option><option value="def"'+(sl.front==='def'?' selected':'')+'>Definition</option></select></div><div class="srow"><span>Track progress</span>'+togHTML('m-trk',sl.track)+'</div><div class="srow"><span>Starred only</span>'+togHTML('m-star',sl.starredOnly)+'</div><div class="mfoot"><button class="btn primary" data-m="close">Done</button></div>',{},function(ov){ov.addEventListener('change',function(e){var t=e.target;if(t.id==='m-front'){sl.front=t.value;flipped=false}if(t.id==='m-trk')sl.track=t.checked;if(t.id==='m-star'){sl.starredOnly=t.checked;order=studyCards(s,sl);if(shuffled)order=shuffle(order);i=0;know={};learning={}}SLsave(s.id,sl);draw()})})};
+ viewKey=function(e){if(e.target.tagName==='INPUT'||e.target.tagName==='SELECT')return;
+  if(e.key===' '||e.key==='ArrowUp'||e.key==='ArrowDown'){e.preventDefault();if(i<order.length)flip()}
+  else if(e.key==='ArrowRight'){e.preventDefault();sl.track?step('yes'):step()}
+  else if(e.key==='ArrowLeft'){e.preventDefault();sl.track?step('no'):A.prev()}
+ };
+ draw();
+}
+function ring(f){var pc=Math.round(f*100);return '<div class="ring" style="background:conic-gradient(var(--good) '+pc+'%,var(--panel2) 0)"><b>'+pc+'%</b></div>'}
+
+/* ---------- learn ---------- */
+function viewLearn(s){
+ var sl=SL(s.id),cards=studyCards(s,sl);
+ if(!cards.length)return tooFew(s,1,'Learn');
+ var round=[],ri=0,results=[],roundNo=0,cur=null,state='q',readyAt=0,autoT=null,prevLevel=0;
+ var lv=function(c){return sl.learn[c.id]||0};
+ function progHTML(){var m=0,f=0,t=cards.length;cards.forEach(function(c){var l=lv(c);if(l>=2)m++;else if(l===1)f++});
+  return '<div class="lprog"><div class="seg"><i class="g" style="width:'+(m/t*100)+'%"></i><i class="t" style="width:'+(f/t*100)+'%"></i></div><div class="lg"><span><b class="dot g"></b>'+m+' mastered</span><span><b class="dot t"></b>'+f+' familiar</span><span><b class="dot n"></b>'+(t-m-f)+' not studied</span></div></div>'}
+ function qType(c){if(s.cards.length<2)return'w';if(sl.learnTypes==='written')return'w';if(sl.learnTypes==='mc')return'mc';return lv(c)>=1?'w':'mc'}
+ function newRound(){var rem=cards.filter(function(c){return lv(c)<2});if(!rem.length)return drawDone();roundNo++;
+  round=shuffle(shuffle(rem).sort(function(a,b){return lv(b)-lv(a)}).slice(0,7));ri=0;results=[];nextQ()}
+ function nextQ(){clearTimeout(autoT);if(ri>=round.length)return drawRoundEnd();var c=round[ri],q=qa(c,sl.dir),type=qType(c);
+  cur={c:c,q:q,type:type,opts:type==='mc'?mcOpts(c,q,s.cards):null};state='q';drawQ()}
+ function drawQ(){var q=cur.q;
+  var body=cur.type==='mc'
+   ?'<div class="qsub">Choose the matching '+q.aLabel.toLowerCase()+'</div><div class="opts">'+cur.opts.map(function(o,k){return '<button class="opt" data-a="pick" data-k="'+k+'"><span class="num">'+(k+1)+'</span><span>'+esc(o)+'</span></button>'}).join('')+'</div><div class="qfoot"><div class="sp"></div><button class="link" data-a="dk">Don\'t know?</button></div>'
+   :'<div class="qsub">Answer to the best of your ability</div>'+accBar(s.chars)+'<input id="ans" class="ans" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="Type the '+q.aLabel.toLowerCase()+'"><div class="qfoot"><button class="link" data-a="dk">Don\'t know?</button><div class="sp"></div><button class="btn primary" data-a="submit">Answer</button></div>';
+  app.innerHTML=studyTop(s,'Learn','Round '+roundNo+' · '+(ri+1)+'/'+round.length,true)+'<main class="wrap narrow">'+progHTML()+'<div class="qcard"><div class="qlabel">'+q.qLabel+'</div><div class="qtext '+sizeCls(q.q)+'">'+esc(q.q)+'</div>'+body+'<div id="fb"></div></div></main>';
+  var a=$('#ans');if(a)a.focus();
+ }
+ function answered(ok,g,user){
+  state='fb';readyAt=Date.now()+300;var c=cur.c;prevLevel=lv(c);
+  sl.learn[c.id]=ok?Math.min(2,prevLevel+1):(cur.type==='w'?Math.min(prevLevel,1):0);SLsave(s.id,sl);
+  results[ri]={c:c,ok:ok};
+  $('.lprog').outerHTML=progHTML();
+  var h='';
+  if(cur.type==='w'){var inp=$('#ans');inp.disabled=true;inp.blur();$$('.qfoot,.accbar',app).forEach(function(x){x.style.display='none'});h=fbHTML(g,user)}
+  else h='<div class="fb '+(ok?'ok':'no')+'"><div class="fb-t">'+(ok?PRAISE[Math.random()*PRAISE.length|0]:(g==='dk'?'No worries — here\'s the answer':'Not quite — you\'re still learning!'))+'</div></div>';
+  h+='<div class="fbfoot"><span class="muted xs">Press any key to continue</span><div class="sp"></div>'+(!ok&&cur.type==='w'&&g.kind!=='blank'?'<button class="btn sm ghost" data-a="override">Override: I was correct</button>':'')+'<button class="btn primary" data-a="cont">Continue</button></div>';
+  $('#fb').innerHTML=h;
+  if(document.activeElement&&document.activeElement.blur)document.activeElement.blur();
+  if(ok&&(cur.type==='mc'||g.kind==='exact')){autoT=setTimeout(cont,1100);timers.push(autoT)}
+ }
+ function cont(){clearTimeout(autoT);ri++;nextQ()}
+ function pick(k){if(state!=='q')return;var chosen=cur.opts[k],ok=chosen===cur.q.a;
+  $$('.opt').forEach(function(b,j){b.disabled=true;var o=cur.opts[j];if(o===cur.q.a)b.classList.add('right');else if(j===k)b.classList.add('wrong');else b.classList.add('dim')});
+  $('.qfoot').style.display='none';answered(ok,k<0?'dk':null)}
+ function submit(){if(state!=='q')return;var v=$('#ans').value;var g=grade(v,cur.q.a);answered(g.ok,g,v)}
+ function drawRoundEnd(){state='end';var good=results.filter(function(r){return r.ok}).length;
+  app.innerHTML=studyTop(s,'Learn','Round '+roundNo,true)+'<main class="wrap narrow"><div class="qcard center"><h2>Round '+roundNo+' complete — '+good+'/'+results.length+' correct</h2>'+progHTML()+'<div class="rlist">'+results.map(function(r){return '<div class="rr '+(r.ok?'ok':'no')+'"><span class="mk">'+(r.ok?'✓':'✕')+'</span><div><b>'+esc(r.c.t)+'</b><div class="muted sm">'+esc(r.c.d)+'</div></div></div>'}).join('')+'</div><button class="btn primary big" data-a="next">Continue</button><p class="muted xs">Press Enter to continue</p></div></main>';readyAt=Date.now()+300}
+ function drawDone(){state='done';
+  app.innerHTML=studyTop(s,'Learn','',true)+'<main class="wrap narrow"><div class="qcard center"><h2>You\'ve mastered all '+cards.length+' terms!</h2>'+progHTML()+'<p class="muted">Keep it fresh with a practice test or another round of Learn.</p><div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap"><button class="btn primary" data-a="test">Take a practice test</button><button class="btn" data-a="reset">Restart Learn</button><button class="btn" data-a="close">Back to set</button></div></div></main>'}
+ function reset(){cards.forEach(function(c){delete sl.learn[c.id]});SLsave(s.id,sl);roundNo=0;newRound()}
+ A.close=function(){go('set-'+s.id)};A.test=function(){go('test-'+s.id)};
+ A.pick=function(b){pick(+b.dataset.k)};
+ A.dk=function(){if(state!=='q')return;if(cur.type==='mc')pick(-1);else answered(false,{ok:false,kind:'blank',full:cur.q.a,target:cur.q.a},'')};
+ A.submit=submit;A.cont=cont;A.next=newRound;A.reset=reset;
+ A.override=function(){sl.learn[cur.c.id]=Math.min(2,prevLevel+1);SLsave(s.id,sl);results[ri].ok=true;toast('Counted as correct');cont()};
+ A.opts=function(){modal('<h3>Learn options</h3><div class="srow"><span>Question types</span><select id="m-types"><option value="mixed"'+(sl.learnTypes==='mixed'?' selected':'')+'>Multiple choice → Written</option><option value="written"'+(sl.learnTypes==='written'?' selected':'')+'>Written only</option><option value="mc"'+(sl.learnTypes==='mc'?' selected':'')+'>Multiple choice only</option></select></div><div class="srow"><span>Answer with</span>'+dirSelect('m-dir',sl.dir)+'</div><div class="srow"><span>Starred only</span>'+togHTML('m-star',sl.starredOnly)+'</div><div class="srow"><span>Grading</span><button class="btn sm" data-m="grading">Smart grading settings</button></div><div class="mfoot"><button class="btn danger" data-m="reset">Reset progress</button><div class="sp"></div><button class="btn primary" data-m="apply">Done</button></div>',
+  {grading:gradingModal,reset:function(){closeModal();reset()},apply:function(){closeModal();if(state==='q')nextQ()}},
+  function(ov){ov.addEventListener('change',function(e){var t=e.target;if(t.id==='m-types')sl.learnTypes=t.value;if(t.id==='m-dir')sl.dir=t.value;if(t.id==='m-star'){sl.starredOnly=t.checked;cards=studyCards(s,sl);roundNo=0;newRound()}SLsave(s.id,sl)})})};
+ viewKey=function(e){
+  if(state==='q'){if(cur.type==='mc'&&/^[1-4]$/.test(e.key)&&e.target.tagName!=='INPUT'){var k=+e.key-1;if(k<cur.opts.length)pick(k)}
+   else if(cur.type==='w'&&e.key==='Enter'&&e.target.id==='ans'){e.preventDefault();submit()}}
+  else if(state==='fb'){if(Date.now()<readyAt||/^(Shift|Control|Alt|Meta|Tab)$/.test(e.key))return;if(e.target.tagName==='BUTTON'&&e.key==='Enter')return;e.preventDefault();cont()}
+  else if(state==='end'&&e.key==='Enter'&&Date.now()>readyAt){e.preventDefault();newRound()}
+ };
+ newRound();
+}
+
+/* ---------- test ---------- */
+function viewTest(s){
+ var sl=SL(s.id),cards=studyCards(s,sl),qs=[],done=false;
+ if(!cards.length)return tooFew(s,1,'Test');
+ var cfg=sl.testCfg||{n:Math.min(20,cards.length),tf:true,mc:true,w:true,dir:sl.dir};
+ A.close=function(){go('set-'+s.id)};
+ function setup(){done=false;
+  app.innerHTML=studyTop(s,'Test')+'<main class="wrap narrow"><div class="qcard"><h2>Set up your test</h2>'+
+  '<div class="srow"><span>Questions <span class="muted">(max '+cards.length+')</span></span><input id="t-n" type="number" min="1" max="'+cards.length+'" value="'+Math.min(cfg.n,cards.length)+'"></div>'+
+  '<div class="srow"><span>Answer with</span>'+dirSelect('t-dir',cfg.dir)+'</div>'+
+  '<div class="srow"><span>True / False</span>'+togHTML('t-tf',cfg.tf)+'</div><div class="srow"><span>Multiple choice</span>'+togHTML('t-mc',cfg.mc)+'</div><div class="srow"><span>Written</span>'+togHTML('t-w',cfg.w)+'</div>'+
+  '<div class="srow" style="border:0"><button class="btn sm ghost" data-a="grading">Grading settings</button><button class="btn primary" data-a="start">Start test</button></div></div></main>';
+ }
+ A.grading=gradingModal;
+ A.start=function(){cfg={n:Math.max(1,Math.min(cards.length,+$('#t-n').value||1)),dir:$('#t-dir').value,tf:$('#t-tf').checked,mc:$('#t-mc').checked,w:$('#t-w').checked};
+  var types=['tf','mc','w'].filter(function(t){return cfg[t]});if(!types.length)return toast('Pick at least one question type');
+  sl.testCfg=cfg;SLsave(s.id,sl);
+  var pick=shuffle(cards).slice(0,cfg.n),tl=[];pick.forEach(function(_,k){tl.push(types[k%types.length])});tl=shuffle(tl);
+  qs=pick.map(function(c,k){var q=qa(c,cfg.dir),t=tl[k];if(t!=='w'&&s.cards.length<2)t='w';var o={c:c,q:q,type:t,user:null,ok:false,g:null};
+   if(t==='mc')o.opts=mcOpts(c,q,s.cards);
+   if(t==='tf'){var others=s.cards.filter(function(x){return x.id!==c.id&&x[q.side]&&x[q.side]!==q.a});o.truth=!others.length||Math.random()<.5;o.shown=o.truth?q.a:others[Math.random()*others.length|0][q.side]}
+   return o});
+  drawTest();
+ };
+ function qBody(o,k){
+  if(o.type==='w')return '<input class="ans" data-q="'+k+'" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Type the '+o.q.aLabel.toLowerCase()+'" value="'+esc(o.user||'')+'"'+(done?' disabled':'')+'>'+(done?fbHTML(o.g,o.user||'')+(o.g.kind==='blank'?'':'<div class="fbfoot"><div class="sp"></div><button class="btn sm ghost" data-a="ovr" data-q="'+k+'">'+(o.ok?'Undo override':'Override: I was correct')+'</button></div>'):'');
+  if(o.type==='mc')return '<div class="qsub">Choose the matching '+o.q.aLabel.toLowerCase()+'</div><div class="opts">'+o.opts.map(function(x,j){var cls='';if(done){if(x===o.q.a)cls=' right';else if(o.user===j)cls=' wrong';else cls=' dim'}else if(o.user===j)cls=' sel';return '<button class="opt'+cls+'" data-a="tpick" data-q="'+k+'" data-k="'+j+'"'+(done?' disabled':'')+'><span class="num">'+(j+1)+'</span><span>'+esc(x)+'</span></button>'}).join('')+'</div>';
+  var tf=function(v,l){var cls='';if(done){if(v===o.truth)cls=' right';else if(o.user===v)cls=' wrong';else cls=' dim'}else if(o.user===v)cls=' sel';return '<button class="opt'+cls+'" data-a="ttf" data-q="'+k+'" data-v="'+(v?1:0)+'"'+(done?' disabled':'')+'>'+l+'</button>'};
+  return '<div class="tf-shown"><div class="qlabel">'+o.q.aLabel+'</div><div class="qtext xs">'+esc(o.shown)+'</div></div><div class="opts">'+tf(true,'True')+tf(false,'False')+'</div>';
+ }
+ function qHTML(o,k){return '<div class="qcard tq'+(done?(o.ok?' res-ok':' res-no'):'')+'" id="tq'+k+'"><div class="row-between"><span class="qlabel">'+o.q.qLabel+'</span><span>'+(done?'<span class="tag '+(o.ok?'ok':'no')+'">'+(o.ok?'CORRECT':'INCORRECT')+'</span> ':'')+'<span class="muted xs">'+(k+1)+' of '+qs.length+'</span></span></div><div class="qtext sm">'+esc(o.q.q)+'</div>'+qBody(o,k)+'</div>'}
+ function scoreHTML(){var r=qs.filter(function(o){return o.ok}).length;return '<div class="qcard" id="score"><div class="score">'+ring(r/qs.length)+'<div><h2 style="margin:0 0 6px">'+(r===qs.length?'Perfect score!':r/qs.length>=.8?'Great job!':r/qs.length>=.5?'Keep it up!':'You\'re still learning — keep going!')+'</h2><div class="muted"><b style="color:var(--good)">'+r+' correct</b> · <b style="color:var(--bad)">'+(qs.length-r)+' incorrect</b></div><div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap"><button class="btn primary sm" data-a="retake">Retake test</button><button class="btn sm" data-a="newtest">New test</button><button class="btn sm" data-a="close">Back to set</button></div></div></div></div>'}
+ function drawTest(){
+  app.innerHTML=studyTop(s,'Test',done?'Results':qs.length+' questions')+'<main class="wrap narrow">'+(done?scoreHTML():'')+qs.map(qHTML).join('')+
+  (done?'':'<div class="center" style="margin-top:30px"><p class="muted">All done! Ready to submit your test?</p><button class="btn primary big" data-a="submit">Submit test</button></div>')+'</main>'+
+  (done||!qs.some(function(o){return o.type==='w'})?'':'<div class="fixed-acc">'+accBar(s.chars)+'</div>');
+  if(!done){var f=$('#app input.ans');if(f)f.focus()}
+ }
+ A.tpick=function(b){var o=qs[+b.dataset.q];o.user=+b.dataset.k;$$('.opt',b.parentNode).forEach(function(x,j){x.classList.toggle('sel',j===o.user)})};
+ A.ttf=function(b){var o=qs[+b.dataset.q];o.user=b.dataset.v==='1';$$('.opt',b.parentNode).forEach(function(x){x.classList.toggle('sel',x===b)})};
+ A._input=function(e){var k=e.target.dataset.q;if(k!=null&&e.target.classList.contains('ans'))qs[+k].user=e.target.value};
+ viewKey=function(e){if(e.key==='Enter'&&e.target.classList&&e.target.classList.contains('ans')&&!done){e.preventDefault();var k=+e.target.dataset.q;var nx=$$('#app input.ans').filter(function(x){return +x.dataset.q>k})[0];if(nx){nx.focus();nx.scrollIntoView({block:'center',behavior:'smooth'})}else A.submit()}};
+ function gradeAll(){var p=P();qs.forEach(function(o){if(o.type==='w'){o.g=grade(o.user||'',o.q.a,p);o.ok=o.g.ok}else if(o.type==='mc')o.ok=o.user!=null&&o.opts[o.user]===o.q.a;else o.ok=o.user===o.truth});done=true;drawTest();window.scrollTo(0,0)}
+ A.submit=function(){var un=qs.filter(function(o){return o.user==null||o.user===''}).length;if(un)confirmBox('Submit anyway?','You have '+un+' unanswered question'+(un>1?'s':'')+'.','Submit',gradeAll);else gradeAll()};
+ A.ovr=function(b){var k=+b.dataset.q,o=qs[k];o.ok=!o.ok;var el=$('#tq'+k);el.outerHTML=qHTML(o,k);$('#score').outerHTML=scoreHTML()};
+ A.retake=function(){qs.forEach(function(o){o.user=null;o.ok=false;o.g=null});qs=shuffle(qs);done=false;drawTest()};
+ A.newtest=setup;
+ setup();
+}
+
+/* ---------- match ---------- */
+function viewMatch(s){
+ var sl=SL(s.id),cards=studyCards(s,sl),tiles=[],sel=null,t0=0,pen=0,left=0,iv=null,fin=false;
+ if(cards.length<2)return tooFew(s,2,'Match');
+ var fmt=function(ms){return(ms/1000).toFixed(1)+'s'};
+ A.close=function(){go('set-'+s.id)};
+ function intro(){app.innerHTML=studyTop(s,'Match')+'<main class="wrap narrow"><div class="qcard center"><h2>Ready to play?</h2><p class="muted">Match all the terms with their definitions as fast as you can.<br>Avoid wrong matches — they add 1 second to your time.</p>'+(sl.matchBest?'<p>Your best: <b>'+fmt(sl.matchBest)+'</b></p>':'')+'<button class="btn primary big" data-a="start">Start game</button></div></main>'}
+ A.start=function(){var pick=shuffle(cards).slice(0,6);tiles=shuffle([].concat.apply([],pick.map(function(c){return[{id:c.id,txt:c.t,k:'t'},{id:c.id,txt:c.d,k:'d'}]})));sel=null;pen=0;left=pick.length;fin=false;t0=performance.now();
+  app.innerHTML=studyTop(s,'Match','<span id="clock">0.0s</span>')+'<main class="wrap"><div class="mgrid">'+tiles.map(function(t,k){return '<button class="mtile" data-a="tile" data-k="'+k+'">'+esc(t.txt)+'</button>'}).join('')+'</div></main>';
+  clearInterval(iv);iv=setInterval(function(){var c=$('#clock');if(c)c.textContent=fmt(performance.now()-t0+pen)},100);timers.push(iv)};
+ A.tile=function(b){if(fin)return;var k=+b.dataset.k,t=tiles[k];if(t.done)return;
+  if(sel===null){sel=k;b.classList.add('sel');return}
+  if(sel===k){sel=null;b.classList.remove('sel');return}
+  var a=tiles[sel],ab=$('.mtile[data-k="'+sel+'"]');sel=null;ab.classList.remove('sel');
+  if(a.id===t.id&&a.k!==t.k){a.done=t.done=true;[ab,b].forEach(function(x){x.classList.add('ok');setTimeout(function(){x.classList.add('gone')},220)});left--;if(!left)setTimeout(finish,350)}
+  else{pen+=1000;[ab,b].forEach(function(x){x.classList.add('bad');setTimeout(function(){x.classList.remove('bad')},450)})}
+ };
+ function finish(){fin=true;clearInterval(iv);var t=performance.now()-t0+pen,best=sl.matchBest,nb=!best||t<best;if(nb){sl.matchBest=t;SLsave(s.id,sl)}
+  app.innerHTML=studyTop(s,'Match')+'<main class="wrap narrow"><div class="qcard center"><h2>'+(nb?'New personal best!':'Nice work!')+'</h2><p style="font-size:40px;font-weight:900;margin:10px 0">'+fmt(t)+'</p><p class="muted">'+(pen?'Includes '+(pen/1000)+'s penalty · ':'')+'Best: '+fmt(sl.matchBest)+'</p><div style="display:flex;gap:10px;justify-content:center"><button class="btn primary" data-a="start">Play again</button><button class="btn" data-a="close">Back to set</button></div></div></main>'}
+ intro();
+}
+
+render();
+})();
+</script>
+</body>
+</html>
