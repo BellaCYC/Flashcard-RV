@@ -1,6 +1,6 @@
 # My Flashcards
 
-A simple, dark-mode flashcard app inspired by Knowt and Quizlet, built for personal practice (not commercial). One self-contained `index.html` — no build step, no server, no account.
+A simple, dark-mode flashcard app inspired by Knowt and Quizlet, built for personal practice (not commercial). One self-contained `index.html` — no build step, no server, with an individual account to save progress/flashcards.
 
 ## Features
 
@@ -24,10 +24,12 @@ A simple, dark-mode flashcard app inspired by Knowt and Quizlet, built for perso
 
 Wrong answers can always be overridden with **I was correct**.
 
-## Storage
+## Accounts & storage
 
-Sets, stars and progress are saved in your browser (`localStorage`). Use **Export all** to download a `.json` backup and **Import** to restore it on another device or browser.
+- **Sign up / Log in** with a username and password. Each account keeps its own sets, stars, progress and settings.
+- Everything is stored **only in this browser on this device** (`localStorage`), encrypted with the account's password (PBKDF2 + AES-GCM). Nothing is sent to a server, and accounts are never shared between devices.
+- There is **no password reset**: a forgotten password means that account's data can't be opened. Use **Export all** to download a `.json` backup, and **Import** to restore it (also on another device).
 
 ## Run it
 
-Open `index.html` in any browser, or visit the GitHub Pages site for this repo.
+Visit the GitHub Pages site for this repo (accounts need https), or open `index.html` locally in Chrome/Edge.
