@@ -5,6 +5,9 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>My Flashcards</title>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 <style id="css">
 :root{--bg:#101112;--panel:#1c1e1f;--panel2:#252829;--line:#33373a;--line2:#454a4e;--text:#f1f3f4;--muted:#9ea4a9;--acc:#41d1c1;--accbg:rgba(65,209,193,.12);--good:#3ccf8a;--goodbg:rgba(60,207,138,.12);--bad:#ff6b6b;--badbg:rgba(255,107,107,.12);--warn:#f4b740;--r:18px}
 *{box-sizing:border-box}
@@ -239,10 +242,10 @@ var esc=function(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){r
 var uid=function(){var s='';while(s.length<8)s+=Math.random().toString(36).slice(2);return s.slice(0,8)};
 var shuffle=function(a){a=a.slice();for(var i=a.length-1;i>0;i--){var j=Math.random()*(i+1)|0;var t=a[i];a[i]=a[j];a[j]=t}return a};
 var dev={get:function(k){try{var v=localStorage.getItem(k);return v==null?null:JSON.parse(v)}catch(e){return null}},set:function(k,v){try{localStorage.setItem(k,JSON.stringify(v));return true}catch(e){return false}},del:function(k){try{localStorage.removeItem(k)}catch(e){}}};
-var MEM=null,USER=null,KEY=null,SALT=null,saveChain=Promise.resolve();
+var MEM=null,USER=null,UID=null;
 var clone=function(v){return v===undefined?v:JSON.parse(JSON.stringify(v))};
-/* user-scoped storage: lives in memory, saved encrypted per account */
-var ls={get:function(k,d){return MEM&&MEM[k]!==undefined?clone(MEM[k]):d},set:function(k,v){if(!MEM)return;MEM[k]=clone(v);saveUser()},del:function(k){if(MEM){delete MEM[k];saveUser()}}};
+/* user-scoped storage: in memory, synced to the cloud (Firestore) */
+var ls={get:function(k,d){return MEM&&MEM[k]!==undefined?clone(MEM[k]):d},set:function(k,v){if(!MEM)return;MEM[k]=clone(v);kvWrite(k)},del:function(k){if(MEM){delete MEM[k];kvDel(k)}}};
 var DEFAULT_CHARS='¡¿°áéíñóúü';
 var STAR='<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.8l2.8 5.9 6.4.8-4.7 4.4 1.2 6.4L12 17.2l-5.7 3.1 1.2-6.4L2.8 9.5l6.4-.8z"/></svg>';
 var STAR_O='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M12 2.8l2.8 5.9 6.4.8-4.7 4.4 1.2 6.4L12 17.2l-5.7 3.1 1.2-6.4L2.8 9.5l6.4-.8z"/></svg>';
@@ -267,57 +270,94 @@ var DEF_P={strictAccents:true,typos:true,anyPart:true,ignoreArticles:false,caseS
 function P(){var o=ls.get('fc_prefs',{}),r={};for(var k in DEF_P)r[k]=o[k]!==undefined?o[k]:DEF_P[k];return r}
 function studyCards(s,sl){if(sl.starredOnly){var f=s.cards.filter(function(c){return sl.stars.indexOf(c.id)>=0});if(f.length)return f}return s.cards.slice()}
 
-/* ---------- accounts (private, per device, encrypted) ---------- */
-var te=new TextEncoder(),td=new TextDecoder();
-var hasCrypto=!!(window.crypto&&crypto.subtle);
-function b64(buf){var x='',a=new Uint8Array(buf);for(var i=0;i<a.length;i++)x+=String.fromCharCode(a[i]);return btoa(x)}
-function unb64(x){var b=atob(x),a=new Uint8Array(b.length);for(var i=0;i<b.length;i++)a[i]=b.charCodeAt(i);return a}
-function acctKey(name){return 'fc_acct_'+name.toLowerCase()}
-function deriveKey(pw,salt){return crypto.subtle.importKey('raw',te.encode(pw),'PBKDF2',false,['deriveKey']).then(function(base){return crypto.subtle.deriveKey({name:'PBKDF2',salt:salt,iterations:200000,hash:'SHA-256'},base,{name:'AES-GCM',length:256},true,['encrypt','decrypt'])})}
-function writeAccount(name,key,salt,mem){var iv=crypto.getRandomValues(new Uint8Array(12));return crypto.subtle.encrypt({name:'AES-GCM',iv:iv},key,te.encode(JSON.stringify(mem))).then(function(ct){if(!dev.set(acctKey(name),{v:1,name:name,salt:b64(salt),iv:b64(iv),data:b64(ct)}))toast('Browser storage is full — export a backup')})}
-function saveUser(){if(!USER||!KEY)return;var name=USER,key=KEY,salt=SALT,mem=MEM;saveChain=saveChain.then(function(){if(KEY!==key)return;return writeAccount(name,key,salt,mem)}).catch(function(){})}
-function decryptWith(rec,key){return crypto.subtle.decrypt({name:'AES-GCM',iv:unb64(rec.iv)},key,unb64(rec.data)).then(function(pt){return JSON.parse(td.decode(pt))})}
-function openAccount(name,pw){var rec=dev.get(acctKey(name));if(!rec)return Promise.reject('nouser');var salt=unb64(rec.salt);
- return deriveKey(pw,salt).then(function(k){return decryptWith(rec,k).then(function(mem){return{name:rec.name,key:k,salt:salt,mem:mem}},function(){throw 'badpw'})})}
-function startSession(name,key,salt,mem){USER=name;KEY=key;SALT=salt;MEM=mem||{};
- DB=MEM.fc_db&&Array.isArray(MEM.fc_db.sets)?clone(MEM.fc_db):null;if(!DB){DB=seedDB();ls.set('fc_db',DB)}
- crypto.subtle.exportKey('raw',key).then(function(raw){try{sessionStorage.setItem('fc_session',JSON.stringify({name:name,key:b64(raw),salt:b64(salt)}))}catch(e){}});
- render()}
-function restoreSession(){if(!hasCrypto)return Promise.resolve(false);var x=null;try{x=JSON.parse(sessionStorage.getItem('fc_session')||'null')}catch(e){}
- if(!x)return Promise.resolve(false);var rec=dev.get(acctKey(x.name));if(!rec)return Promise.resolve(false);
- return crypto.subtle.importKey('raw',unb64(x.key),{name:'AES-GCM'},true,['encrypt','decrypt']).then(function(k){return decryptWith(rec,k).then(function(mem){startSession(rec.name,k,unb64(rec.salt),mem);return true})}).catch(function(){return false})}
-function logout(){saveChain.then(function(){USER=KEY=SALT=MEM=null;DB={updatedAt:0,sets:[]};try{sessionStorage.removeItem('fc_session')}catch(e){}history.replaceState(null,'',location.pathname+location.search);render()})}
-function persist(){DB.updatedAt=Date.now();ls.set('fc_db',DB);return Promise.resolve()}
+/* ---------- cloud accounts (Firebase) ---------- */
+var FIREBASE_CONFIG={apiKey:"AIzaSyCwT7-cl1tKhMwCxfY30JbBpuozQNz2sQo",authDomain:"flashcard-f5dcd.firebaseapp.com",projectId:"flashcard-f5dcd",storageBucket:"flashcard-f5dcd.firebasestorage.app",messagingSenderId:"197478570894",appId:"1:197478570894:web:0ae016016948e55fad22df",measurementId:"G-QDCJ1M5KFP"};
+var USERNAME_DOMAIN='users.flashcard-f5dcd.app';
+var FB=null,auth=null,fs=null,AUTH='loading',unsubs=[],lastSynced={};
+try{FB=window.firebase;FB.initializeApp(FIREBASE_CONFIG);auth=FB.auth();fs=FB.firestore();fs.enablePersistence({synchronizeTabs:true}).catch(function(){})}catch(e){FB=null;AUTH='out'}
+function userRef(){return fs.collection('users').doc(UID)}
+function toEmail(id){id=id.trim().toLowerCase();return id.indexOf('@')>=0?id:id+'@'+USERNAME_DOMAIN}
+function nameOf(u){return u.displayName||(u.email||'').replace('@'+USERNAME_DOMAIN,'')}
+function fbErr(e){var c=(e&&e.code)||'';return({
+ 'auth/invalid-credential':'Wrong username or password','auth/wrong-password':'Wrong password','auth/user-not-found':'Wrong username or password','auth/invalid-login-credentials':'Wrong username or password',
+ 'auth/email-already-in-use':'That username is already taken','auth/weak-password':'Password needs at least 6 characters','auth/invalid-email':'Username: letters, numbers, _ . - only (or a valid email)',
+ 'auth/too-many-requests':'Too many tries — wait a minute and try again','auth/network-request-failed':'No internet connection',
+ 'auth/operation-not-allowed':'Email/Password sign-in is off in Firebase → Authentication','auth/unauthorized-domain':'Add this website in Firebase → Authentication → Settings → Authorized domains',
+ 'auth/requires-recent-login':'Please log out and log in again first','permission-denied':'Firestore rules are blocking access — check the rules'}[c])||(e&&e.message)||'Something went wrong'}
+function saveErr(e){toast('Not saved to cloud: '+fbErr(e))}
+function stamp(){return FB.firestore.FieldValue.serverTimestamp()}
+function kvWrite(k){if(!UID)return;userRef().collection('kv').doc(k).set({j:JSON.stringify(MEM[k]===undefined?null:MEM[k]),t:stamp()}).catch(saveErr)}
+function kvDel(k){if(!UID)return;userRef().collection('kv').doc(k).delete().catch(saveErr)}
+function persist(){DB.updatedAt=Date.now();if(!UID)return Promise.resolve();var col=userRef().collection('sets'),seen={};
+ DB.sets.forEach(function(x){seen[x.id]=1;var j=JSON.stringify(x);if(lastSynced[x.id]!==j){lastSynced[x.id]=j;col.doc(x.id).set({j:j,t:stamp()}).catch(saveErr)}});
+ Object.keys(lastSynced).forEach(function(id){if(!seen[id]){delete lastSynced[id];col.doc(id).delete().catch(saveErr)}});
+ return Promise.resolve()}
+/* changes from another browser: refresh the home / set page only (never interrupt studying or editing) */
+function softRender(){var h=location.hash.slice(1);if(!(h===''||/^set-/.test(h)))return;if($('#modal-root .ov'))return;var ae=document.activeElement;if(ae&&/INPUT|TEXTAREA|SELECT/.test(ae.tagName))return;var y=window.scrollY;render();window.scrollTo(0,y)}
+function onSets(snap,initial){var remote=false;snap.docChanges().forEach(function(ch){var d=ch.doc,id=d.id;if(d.metadata.hasPendingWrites&&!initial)return;remote=true;
+  if(ch.type==='removed'){delete lastSynced[id];var ex=getSet(id);if(ex)DB.sets.splice(DB.sets.indexOf(ex),1);return}
+  var j=d.data().j,data;try{data=JSON.parse(j)}catch(e){return}lastSynced[id]=j;var ex2=getSet(id);
+  if(ex2){Object.keys(ex2).forEach(function(k){delete ex2[k]});Object.assign(ex2,data)}else DB.sets.push(data)});
+ return remote}
+function onKV(snap,initial){var remote=false;snap.docChanges().forEach(function(ch){var d=ch.doc;if(d.metadata.hasPendingWrites&&!initial)return;remote=true;
+  if(ch.type==='removed'){delete MEM[d.id];return}try{MEM[d.id]=JSON.parse(d.data().j)}catch(e){}});return remote}
+var pendingName=null;
+function startCloud(user){UID=user.uid;USER=user.displayName||pendingName||nameOf(user);pendingName=null;MEM={};DB={updatedAt:0,sets:[]};lastSynced={};
+ var st={sets:0,kv:0},done=false;
+ function check(force){if(done)return;if(!(st.sets&&st.kv)&&!force)return;done=true;
+  if(st.sets===1&&st.kv===1&&!MEM.fc_meta){if(!DB.sets.length){DB=seedDB();persist()}ls.set('fc_meta',{seeded:true})}
+  AUTH='in';render()}
+ setTimeout(function(){check(true)},7000); /* offline: show cached cards */
+ function sub(name,handler){unsubs.push(userRef().collection(name).onSnapshot({includeMetadataChanges:true},function(snap){
+   var r=handler(snap,!done);if(!done){if(!snap.metadata.fromCache){st[name]=1;check()}}else if(r&&AUTH==='in')softRender()},
+  function(e){toast(fbErr(e));st[name]=2;check()}))}
+ sub('sets',onSets);sub('kv',onKV);
+}
+if(auth)auth.onAuthStateChanged(function(u){unsubs.forEach(function(f){try{f()}catch(e){}});unsubs=[];
+ if(u){AUTH='loading';render();startCloud(u)}else{UID=USER=MEM=null;DB={updatedAt:0,sets:[]};lastSynced={};AUTH='out';render()}});
+function logout(){history.replaceState(null,'',location.pathname+location.search);auth.signOut()}
+function reauth(pw){var u=auth.currentUser;return u.reauthenticateWithCredential(FB.auth.EmailAuthProvider.credential(u.email,pw))}
 function updateStatus(){var el=$('#status');if(!el)return;el.innerHTML=USER?'<button class="uchip" data-a="user" title="Account"><span class="av">'+esc(USER.charAt(0).toUpperCase())+'</span>'+esc(USER)+'</button>':''}
-function userMenu(){modal('<div class="row-between"><h3 style="margin:0">'+esc(USER)+'</h3><span class="muted xs">'+DB.sets.length+' set'+(DB.sets.length===1?'':'s')+'</span></div><p class="muted sm">Your cards are stored only on this device, encrypted with your password.</p>'+
+function userMenu(){var em=auth.currentUser&&auth.currentUser.email||'',isMail=em.indexOf('@'+USERNAME_DOMAIN)<0;
+ modal('<div class="row-between"><h3 style="margin:0">'+esc(USER)+'</h3><span class="muted xs">'+DB.sets.length+' set'+(DB.sets.length===1?'':'s')+'</span></div><p class="muted sm">☁ Synced to the cloud. Log in on any browser to see the same cards.'+(isMail?'<br>'+esc(em):'')+'</p>'+
  '<div style="display:flex;flex-direction:column;gap:10px;margin-top:16px"><button class="btn" data-m="backup">Export all (backup file)</button><button class="btn" data-m="pw">Change password</button><button class="btn primary" data-m="out">Log out</button><button class="btn ghost danger" data-m="del">Delete account</button></div>',
- {backup:function(){closeModal();exportAll()},pw:changePwModal,out:function(){closeModal();logout()},
-  del:function(){confirmBox('Delete account “'+USER+'”?','All sets and progress for this account will be erased from this device. This can\'t be undone.','Delete account',function(){var n=USER;saveChain.then(function(){dev.del(acctKey(n));logout();toast('Account deleted')})},true)}})}
+ {backup:function(){closeModal();exportAll()},pw:changePwModal,out:function(){closeModal();logout()},del:deleteModal})}
 function changePwModal(){modal('<h3>Change password</h3><div class="afld"><label>Current password</label><input id="c-old" type="password" autocomplete="current-password"></div><div class="afld"><label>New password</label><input id="c-new" type="password" autocomplete="new-password"></div><div class="afld"><label>Confirm new password</label><input id="c-new2" type="password" autocomplete="new-password"></div><div id="c-err" class="aerr"></div><div class="mfoot"><button class="btn" data-m="close">Cancel</button><button class="btn primary" data-m="ok">Change</button></div>',
- {ok:function(b){var o=$('#c-old').value,n=$('#c-new').value,n2=$('#c-new2').value,err=$('#c-err');
-  if(n.length<4)return err.textContent='New password needs at least 4 characters';if(n!==n2)return err.textContent='New passwords don\'t match';
-  b.disabled=true;saveChain.then(function(){return openAccount(USER,o)}).then(function(){var salt=crypto.getRandomValues(new Uint8Array(16));return deriveKey(n,salt).then(function(k){KEY=k;SALT=salt;return writeAccount(USER,k,salt,MEM).then(function(){return crypto.subtle.exportKey('raw',k)}).then(function(raw){try{sessionStorage.setItem('fc_session',JSON.stringify({name:USER,key:b64(raw),salt:b64(salt)}))}catch(e){}closeModal();toast('Password changed')})})},function(){b.disabled=false;err.textContent='Current password is wrong'})}})}
+ {ok:function(b){var o=$('#c-old').value,n=$('#c-new').value,err=$('#c-err');
+  if(n.length<6)return err.textContent='New password needs at least 6 characters';if(n!==$('#c-new2').value)return err.textContent='New passwords don\'t match';
+  b.disabled=true;reauth(o).then(function(){return auth.currentUser.updatePassword(n)}).then(function(){closeModal();toast('Password changed')},function(e){b.disabled=false;err.textContent=fbErr(e)})}})}
+function deleteModal(){modal('<h3>Delete account “'+esc(USER)+'”?</h3><p class="muted sm">All sets and progress in this account will be erased from the cloud and every browser. This can\'t be undone.</p><div class="afld"><label>Type your password to confirm</label><input id="d-pw" type="password" autocomplete="current-password"></div><div id="d-err" class="aerr"></div><div class="mfoot"><button class="btn" data-m="close">Cancel</button><button class="btn danger" data-m="ok">Delete account</button></div>',
+ {ok:function(b){var err=$('#d-err');b.disabled=true;
+  reauth($('#d-pw').value).then(function(){var ref=userRef();unsubs.forEach(function(f){try{f()}catch(e){}});unsubs=[];
+   return Promise.all(['sets','kv'].map(function(c){return ref.collection(c).get().then(function(q){return Promise.all(q.docs.map(function(d){return d.ref.delete()}))})}))})
+  .then(function(){return auth.currentUser.delete()}).then(function(){closeModal();history.replaceState(null,'',location.pathname+location.search);toast('Account deleted')},function(e){b.disabled=false;err.textContent=fbErr(e)})}})}
+function viewLoading(){app.innerHTML='<div class="auth"><div class="center"><div class="brand" style="justify-content:center"><i></i>My Flashcards</div><p class="muted sm">Loading your cards…</p></div></div>'}
 function viewLogin(mode){mode=mode||'login';var su=mode==='signup';
- app.innerHTML='<div class="auth"><div class="auth-card"><div class="brand" style="justify-content:center"><i></i>My Flashcards</div><p class="muted sm center" style="margin:8px 0 0">Your cards stay private on this device.</p>'+
+ app.innerHTML='<div class="auth"><div class="auth-card"><div class="brand" style="justify-content:center"><i></i>My Flashcards</div><p class="muted sm center" style="margin:8px 0 0">Your cards sync to every browser you log in on.</p>'+
  '<div class="atabs"><button class="atab'+(su?'':' on')+'" data-a="mlogin">Log in</button><button class="atab'+(su?' on':'')+'" data-a="msignup">Sign up</button></div>'+
- '<form id="af" novalidate><div class="afld"><label for="a-user">Username</label><input id="a-user" name="username" autocomplete="username" autocapitalize="off" spellcheck="false" maxlength="24"></div>'+
+ '<form id="af" novalidate><div class="afld"><label for="a-user">Username or email</label><input id="a-user" name="username" autocomplete="username" autocapitalize="off" spellcheck="false" maxlength="64"></div>'+
  '<div class="afld"><label for="a-pw">Password</label><div class="pw"><input id="a-pw" name="password" type="password" autocomplete="'+(su?'new-password':'current-password')+'"><button type="button" class="link" data-a="showpw">Show</button></div></div>'+
  (su?'<div class="afld"><label for="a-pw2">Confirm password</label><input id="a-pw2" type="password" autocomplete="new-password"></div>':'')+
  '<div id="a-err" class="aerr"></div><button id="a-go" class="btn primary big" style="width:100%" type="submit">'+(su?'Create account':'Log in')+'</button></form>'+
- (su?'<p class="muted xs" style="margin:16px 0 0">Each account\'s cards are encrypted with its password, so a forgotten password <b>can\'t be reset</b>. Use <b>Export all</b> to keep backups.</p>':'<p class="muted xs center" style="margin:16px 0 0">New here? Choose <b>Sign up</b> to make an account on this device.</p>')+
+ (su?'<p class="muted xs" style="margin:16px 0 0">Tip: sign up with an <b>email</b> if you want “Forgot password?” to work. Accounts made with just a username can\'t reset a forgotten password.</p>':'<div class="row-between" style="margin-top:16px"><button class="link" data-a="forgot">Forgot password?</button><span class="muted xs">New here? <b>Sign up</b></span></div>')+
  '</div></div>';
- var err=$('#a-err');if(!hasCrypto)err.textContent='Open this page over https (e.g. GitHub Pages) to use accounts.';
+ var err=$('#a-err');if(!auth)err.textContent='Couldn\'t load the cloud service. Check your internet connection and refresh.';
  $('#a-user').focus();
  A.mlogin=function(){viewLogin('login')};A.msignup=function(){viewLogin('signup')};
  A.showpw=function(b){$$('#af input[type=password],#af input.shown').forEach(function(i){var show=i.type==='password';i.type=show?'text':'password';i.classList.toggle('shown',show)});b.textContent=b.textContent==='Show'?'Hide':'Show'};
- $('#af').addEventListener('submit',function(e){e.preventDefault();if(!hasCrypto)return;
-  var name=$('#a-user').value.trim(),pw=$('#a-pw').value,go=$('#a-go');err.textContent='';
-  if(!/^[A-Za-z0-9_.\-]{3,24}$/.test(name))return err.textContent='Username: 3–24 letters, numbers, _ . or -';
-  if(pw.length<4)return err.textContent='Password needs at least 4 characters';
-  if(su){if(pw!==$('#a-pw2').value)return err.textContent='Passwords don\'t match';if(dev.get(acctKey(name)))return err.textContent='That username is already used on this device';}
+ A.forgot=function(){var id=$('#a-user').value.trim();err.style.color='';
+  if(id.indexOf('@')<0)return err.textContent='Type the email you signed up with, then click “Forgot password?”. (Username-only accounts can\'t be reset.)';
+  auth.sendPasswordResetEmail(id).then(function(){err.style.color='var(--good)';err.textContent='Reset email sent — check your inbox.'},function(e){err.textContent=fbErr(e)})};
+ $('#af').addEventListener('submit',function(e){e.preventDefault();if(!auth)return;err.style.color='';
+  var id=$('#a-user').value.trim(),pw=$('#a-pw').value,go=$('#a-go');err.textContent='';
+  if(id.indexOf('@')<0&&!/^[A-Za-z0-9_.\-]{3,24}$/.test(id))return err.textContent='Username: 3–24 letters, numbers, _ . or -';
+  if(pw.length<6)return err.textContent='Password needs at least 6 characters';
+  if(su&&pw!==$('#a-pw2').value)return err.textContent='Passwords don\'t match';
   go.disabled=true;go.textContent=su?'Creating…':'Logging in…';
-  if(su){var salt=crypto.getRandomValues(new Uint8Array(16));deriveKey(pw,salt).then(function(k){var mem={};return writeAccount(name,k,salt,mem).then(function(){startSession(name,k,salt,mem);toast('Welcome, '+name+'!')})}).catch(function(){go.disabled=false;go.textContent='Create account';err.textContent='Couldn\'t create the account'})}
-  else openAccount(name,pw).then(function(r){startSession(r.name,r.key,r.salt,r.mem)},function(x){go.disabled=false;go.textContent='Log in';err.textContent=x==='nouser'?'No account with that username on this device':'Wrong password'});
+  var fail=function(x){go.disabled=false;go.textContent=su?'Create account':'Log in';err.textContent=fbErr(x)};
+  if(su){if(id.indexOf('@')<0)pendingName=id;}
+  if(su)auth.createUserWithEmailAndPassword(toEmail(id),pw).then(function(c){if(id.indexOf('@')<0)return c.user.updateProfile({displayName:id}).then(function(){USER=id;updateStatus()})}).then(function(){toast('Welcome, '+id.split('@')[0]+'!')},fail);
+  else auth.signInWithEmailAndPassword(toEmail(id),pw).catch(fail);
  });
 }
 
@@ -455,7 +495,7 @@ document.addEventListener('keydown',function(e){if($('#modal-root .ov')){if(e.ke
 function go(h){if(location.hash.slice(1)===h)render();else location.hash=h}
 window.addEventListener('hashchange',render);
 function render(){A={};viewKey=null;timers.forEach(function(t){clearInterval(t);clearTimeout(t)});timers=[];closeModal();window.scrollTo(0,0);
- if(!USER)return viewLogin();
+ if(AUTH!=='in')return AUTH==='loading'?viewLoading():viewLogin();
  var h=location.hash.slice(1),m=h.match(/^(set|edit|cards|learn|test|match)-([a-z0-9]+)$/);
  if(m){if(m[1]==='edit'&&m[2]==='new')return viewEdit(null);var s=getSet(m[2]);if(s)return({set:viewSet,edit:viewEdit,cards:viewCards,learn:viewLearn,test:viewTest,match:viewMatch})[m[1]](s)}
  viewHome();
@@ -471,7 +511,7 @@ function viewHome(){
  '<main class="wrap"><div class="row-between"><h2>Your sets</h2><span class="muted sm">'+sets.length+' set'+(sets.length===1?'':'s')+'</span></div>'+
  (sets.length?'<div class="grid">'+sets.map(function(s){var sl=SL(s.id),n=s.cards.length,m=s.cards.filter(function(c){return(sl.learn[c.id]||0)>=2}).length;return '<button class="tile" data-a="open" data-id="'+s.id+'"><div class="tile-t">'+esc(s.title)+'</div><div class="muted sm">'+n+' term'+(n===1?'':'s')+'</div><div class="pbar"><i style="width:'+(n?m/n*100:0)+'%"></i></div><div class="muted xs">'+m+' / '+n+' mastered</div></button>'}).join('')+'</div>'
  :'<div class="empty"><p class="muted">No sets yet.</p><button class="btn primary" data-a="new">+ Create your first set</button></div>')+
- '<div class="note"><b>How your cards are stored</b><ul><li>Each account\'s sets, stars and progress are saved <b>only in this browser on this device</b>, encrypted with that account\'s password. Other accounts can\'t see them.</li><li><b>Export all</b> downloads a <code>.json</code> backup; <b>Import</b> loads it back (also on another device), or a <code>.txt/.csv</code> list with one “term⇥definition” per line.</li><li>Clearing this browser\'s site data erases the cards, so keep a backup.</li></ul></div></main>';
+ '<div class="note"><b>How your cards are stored</b><ul><li>Your sets, stars and progress are saved to <b>your account in the cloud</b>. Log in on any browser or device to get the same cards. Clearing browser data doesn\'t delete them.</li><li>Only you can read your account\'s cards.</li><li><b>Export all</b> downloads a <code>.json</code> backup; <b>Import</b> loads one back, or a <code>.txt/.csv</code> list with one “term⇥definition” per line.</li></ul></div></main>';
  updateStatus();
  A.new=function(){go('edit-new')};A.open=function(b){go('set-'+b.dataset.id)};A.import=function(){fileIn.click()};A.backup=exportAll;A.grading=gradingModal;
 }
@@ -732,7 +772,7 @@ function viewMatch(s){
  intro();
 }
 
-restoreSession().then(function(ok){if(!ok)render()});
+render();
 })();
 </script>
 </body>
