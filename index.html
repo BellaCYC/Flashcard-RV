@@ -206,6 +206,9 @@ textarea.code{width:100%;height:240px;background:var(--panel2);border:1px solid 
 #toast{position:fixed;left:50%;bottom:28px;transform:translate(-50%,20px);background:#2b2f31;border:1px solid var(--line2);padding:11px 18px;border-radius:999px;font-weight:700;font-size:14px;opacity:0;pointer-events:none;transition:.25s;z-index:200}
 #toast.show{opacity:1;transform:translate(-50%,0)}
 @keyframes fade{from{opacity:0}}
+#cloudbar{position:fixed;left:50%;top:70px;transform:translateX(-50%);width:min(680px,calc(100% - 24px));background:#3a2a12;border:1px solid rgba(244,183,64,.55);color:#ffe2a8;border-radius:14px;padding:12px 44px 12px 16px;font-size:14px;line-height:1.5;z-index:150;box-shadow:0 10px 30px rgba(0,0,0,.45)}
+#cloudbar span{color:#e9cf98;font-size:13px}#cloudbar code{color:#fff}
+#cloudbar .icon{position:absolute;top:6px;right:6px;color:#ffe2a8}
 .auth{min-height:100vh;display:grid;place-items:center;padding:20px}
 .auth-card{width:min(400px,100%);background:var(--panel);border:1px solid var(--line);border-radius:24px;padding:32px 28px}
 .atabs{display:flex;background:var(--panel2);border-radius:999px;padding:4px;margin:22px 0 20px}
@@ -284,13 +287,26 @@ function fbErr(e){var c=(e&&e.code)||'';return({
  'auth/too-many-requests':'Too many tries — wait a minute and try again','auth/network-request-failed':'No internet connection',
  'auth/operation-not-allowed':'Email/Password sign-in is off in Firebase → Authentication','auth/unauthorized-domain':'Add this website in Firebase → Authentication → Settings → Authorized domains',
  'auth/requires-recent-login':'Please log out and log in again first','permission-denied':'Firestore rules are blocking access — check the rules'}[c])||(e&&e.message)||'Something went wrong'}
-function saveErr(e){toast('Not saved to cloud: '+fbErr(e))}
+/* ----- outbox: changes not yet confirmed by the cloud survive a refresh and are re-sent ----- */
+var OB={sets:{},kv:{}};
+function obKey(){return 'fc_outbox_'+UID}
+function loadOB(){var o=dev.get(obKey());OB=o&&o.sets&&o.kv?o:{sets:{},kv:{}}}
+function saveOB(){if(UID){if(Object.keys(OB.sets).length||Object.keys(OB.kv).length)dev.set(obKey(),OB);else dev.del(obKey())}}
+function cloudWrite(kind,id,val,promise){OB[kind][id]=val;saveOB();
+ promise.then(function(){if(OB[kind][id]===val){delete OB[kind][id];saveOB()}cloudOK()},saveErr)}
+var cloudErrMsg=null;
+function cloudOK(){if(cloudErrMsg&&!Object.keys(OB.sets).length&&!Object.keys(OB.kv).length){cloudErrMsg=null;showBanner()}}
+function saveErr(e){cloudErrMsg=fbErr(e);showBanner()}
+function showBanner(){var b=$('#cloudbar');if(!cloudErrMsg){if(b)b.remove();return}
+ if(!b){b=document.createElement('div');b.id='cloudbar';document.body.appendChild(b)}
+ var perm=/permission|rules/i.test(cloudErrMsg)||/insufficient/i.test(cloudErrMsg);
+ b.innerHTML='<b>⚠ Not synced to the cloud:</b> '+esc(cloudErrMsg)+'<br><span>'+(perm?'Fix: Firebase console → Firestore Database → <b>Rules</b> → paste the rules from <code>firestore.rules</code> → <b>Publish</b>. ':'')+'Your changes are kept on this device and will upload automatically once it works.</span><button class="icon sm" onclick="this.parentNode.style.display=\'none\'">✕</button>'}
 function stamp(){return FB.firestore.FieldValue.serverTimestamp()}
-function kvWrite(k){if(!UID)return;userRef().collection('kv').doc(k).set({j:JSON.stringify(MEM[k]===undefined?null:MEM[k]),t:stamp()}).catch(saveErr)}
-function kvDel(k){if(!UID)return;userRef().collection('kv').doc(k).delete().catch(saveErr)}
+function kvWrite(k){if(!UID)return;var j=JSON.stringify(MEM[k]===undefined?null:MEM[k]);cloudWrite('kv',k,j,userRef().collection('kv').doc(k).set({j:j,t:stamp()}))}
+function kvDel(k){if(!UID)return;cloudWrite('kv',k,null,userRef().collection('kv').doc(k).delete())}
 function persist(){DB.updatedAt=Date.now();if(!UID)return Promise.resolve();var col=userRef().collection('sets'),seen={};
- DB.sets.forEach(function(x){seen[x.id]=1;var j=JSON.stringify(x);if(lastSynced[x.id]!==j){lastSynced[x.id]=j;col.doc(x.id).set({j:j,t:stamp()}).catch(saveErr)}});
- Object.keys(lastSynced).forEach(function(id){if(!seen[id]){delete lastSynced[id];col.doc(id).delete().catch(saveErr)}});
+ DB.sets.forEach(function(x){seen[x.id]=1;var j=JSON.stringify(x);if(lastSynced[x.id]!==j){lastSynced[x.id]=j;cloudWrite('sets',x.id,j,col.doc(x.id).set({j:j,t:stamp()}))}});
+ Object.keys(lastSynced).forEach(function(id){if(!seen[id]){delete lastSynced[id];cloudWrite('sets',id,null,col.doc(id).delete())}});
  return Promise.resolve()}
 /* changes from another browser: refresh the home / set page only (never interrupt studying or editing) */
 function softRender(){var h=location.hash.slice(1);if(!(h===''||/^set-/.test(h)))return;if($('#modal-root .ov'))return;var ae=document.activeElement;if(ae&&/INPUT|TEXTAREA|SELECT/.test(ae.tagName))return;var y=window.scrollY;render();window.scrollTo(0,y)}
@@ -302,19 +318,25 @@ function onSets(snap,initial){var remote=false;snap.docChanges().forEach(functio
 function onKV(snap,initial){var remote=false;snap.docChanges().forEach(function(ch){var d=ch.doc;if(d.metadata.hasPendingWrites&&!initial)return;remote=true;
   if(ch.type==='removed'){delete MEM[d.id];return}try{MEM[d.id]=JSON.parse(d.data().j)}catch(e){}});return remote}
 var pendingName=null;
-function startCloud(user){UID=user.uid;USER=user.displayName||pendingName||nameOf(user);pendingName=null;MEM={};DB={updatedAt:0,sets:[]};lastSynced={};
+function startCloud(user){UID=user.uid;loadOB();USER=user.displayName||pendingName||nameOf(user);pendingName=null;MEM={};DB={updatedAt:0,sets:[]};lastSynced={};
  var st={sets:0,kv:0},done=false;
  function check(force){if(done)return;if(!(st.sets&&st.kv)&&!force)return;done=true;
+  /* re-apply and re-send anything that never reached the cloud */
+  var pend=OB;OB={sets:{},kv:{}};
+  Object.keys(pend.sets).forEach(function(id){var j=pend.sets[id],ex=getSet(id);if(j===null){if(ex)DB.sets.splice(DB.sets.indexOf(ex),1)}else{try{var d=JSON.parse(j);if(ex){Object.keys(ex).forEach(function(k){delete ex[k]});Object.assign(ex,d)}else DB.sets.push(d)}catch(e){}}});
+  Object.keys(pend.kv).forEach(function(k){var j=pend.kv[k];if(j===null)delete MEM[k];else try{MEM[k]=JSON.parse(j)}catch(e){}});
+  OB=pend;if(Object.keys(pend.sets).length)persist();Object.keys(pend.kv).forEach(function(k){pend.kv[k]===null?kvDel(k):kvWrite(k)});
   if(st.sets===1&&st.kv===1&&!MEM.fc_meta){if(!DB.sets.length){DB=seedDB();persist()}ls.set('fc_meta',{seeded:true})}
   AUTH='in';render()}
  setTimeout(function(){check(true)},7000); /* offline: show cached cards */
  function sub(name,handler){unsubs.push(userRef().collection(name).onSnapshot({includeMetadataChanges:true},function(snap){
    var r=handler(snap,!done);if(!done){if(!snap.metadata.fromCache){st[name]=1;check()}}else if(r&&AUTH==='in')softRender()},
-  function(e){toast(fbErr(e));st[name]=2;check()}))}
+  function(e){saveErr(e);st[name]=2;check()}))}
  sub('sets',onSets);sub('kv',onKV);
 }
 if(auth)auth.onAuthStateChanged(function(u){unsubs.forEach(function(f){try{f()}catch(e){}});unsubs=[];
- if(u){AUTH='loading';render();startCloud(u)}else{UID=USER=MEM=null;DB={updatedAt:0,sets:[]};lastSynced={};AUTH='out';render()}});
+ cloudErrMsg=null;showBanner();
+ if(u){AUTH='loading';render();startCloud(u)}else{UID=USER=MEM=null;OB={sets:{},kv:{}};DB={updatedAt:0,sets:[]};lastSynced={};AUTH='out';render()}});
 function logout(){history.replaceState(null,'',location.pathname+location.search);auth.signOut()}
 function reauth(pw){var u=auth.currentUser;return u.reauthenticateWithCredential(FB.auth.EmailAuthProvider.credential(u.email,pw))}
 function updateStatus(){var el=$('#status');if(!el)return;el.innerHTML=USER?'<button class="uchip" data-a="user" title="Account"><span class="av">'+esc(USER.charAt(0).toUpperCase())+'</span>'+esc(USER)+'</button>':''}
