@@ -4,6 +4,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>My Flashcards</title>
+<link rel="icon" href="favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
@@ -206,6 +209,75 @@ textarea.code{width:100%;height:240px;background:var(--panel2);border:1px solid 
 #toast{position:fixed;left:50%;bottom:28px;transform:translate(-50%,20px);background:#2b2f31;border:1px solid var(--line2);padding:11px 18px;border-radius:999px;font-weight:700;font-size:14px;opacity:0;pointer-events:none;transition:.25s;z-index:200}
 #toast.show{opacity:1;transform:translate(-50%,0)}
 @keyframes fade{from{opacity:0}}
+.kind{font-size:11px;font-weight:900;letter-spacing:1px;color:var(--acc);margin-bottom:2px}
+.kind.k-quiz{color:#a78bfa}.kind.k-note{color:#f4b740}
+.kind .shk{color:var(--muted)}
+.tile .prev{line-height:1.45;max-height:4.4em;overflow:hidden;margin-top:4px}
+.tag.sh{display:inline-flex;align-items:center;gap:5px;background:var(--accbg);color:var(--acc);margin-left:6px;white-space:nowrap}
+.cmenu{display:flex;flex-direction:column;gap:10px}
+.cmenu button{display:flex;gap:14px;align-items:flex-start;text-align:left;padding:14px 16px;border-radius:14px;border:1px solid var(--line);background:var(--panel2);transition:.15s}
+.cmenu button:hover{border-color:var(--acc)}
+.cmenu button.dz:hover{border-color:var(--bad)}
+.cmenu svg{width:26px;height:26px;color:var(--acc);flex:none;margin-top:2px}
+.cmenu b{display:block;font-size:15px;margin-bottom:2px}
+.takecard{display:flex;align-items:center;justify-content:space-between;gap:16px;background:linear-gradient(135deg,rgba(167,139,250,.14),rgba(65,209,193,.1));border:1px solid var(--line);border-radius:18px;padding:20px 22px;margin-bottom:18px}
+.qv{padding:20px 22px;margin-bottom:12px}
+.qv .qtext{margin:0 0 12px}
+.qn{color:var(--muted);margin-right:4px}
+.qvopts{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.qvopt{display:flex;gap:10px;align-items:center;padding:9px 12px;border-radius:10px;background:var(--panel2);font-weight:600;font-size:15px;border:1.5px solid transparent;white-space:pre-wrap}
+.qvopt .num,.mcopts .num{flex:none;width:26px;height:26px;border-radius:50%;background:var(--bg);display:grid;place-items:center;font-size:13px;font-weight:800;color:var(--muted)}
+.qvopt.right{border-color:var(--good);background:var(--goodbg)}
+.qvopt.right .num{background:var(--good);color:#06281a}
+.mcopts{display:flex;flex-direction:column;gap:10px}
+.mcopts .opt{width:100%}
+.mcopts .opt.sel .num{background:var(--acc);color:#05231f}
+.mcopts .opt.right .num{background:var(--good);color:#06281a}
+.mcopts .opt.wrong .num{background:var(--bad);color:#2a0606}
+.why{margin-top:14px;background:var(--panel2);border-radius:12px;padding:12px 14px;font-size:14px;line-height:1.5}
+.qrow-b{padding:6px 18px 18px;display:flex;flex-direction:column;gap:10px}
+.qopts{display:flex;flex-direction:column;gap:8px}
+.qopt{display:flex;align-items:center;gap:10px;background:var(--panel2);border:1.5px solid transparent;border-radius:12px;padding:6px 8px 6px 6px}
+.qopt.right{border-color:var(--good);background:var(--goodbg)}
+.qopt input{flex:1;background:transparent;border:0;outline:none;font-size:15px;padding:6px 4px}
+.pickc{flex:none;width:32px;height:32px;border-radius:50%;border:1.5px solid var(--line2);font-weight:900;font-size:13px;color:var(--muted);transition:.12s}
+.pickc:hover{border-color:var(--good);color:var(--good)}
+.qopt.right .pickc{background:var(--good);border-color:var(--good);color:#06281a}
+.erow.flag{border-color:var(--warn);box-shadow:0 0 0 3px rgba(244,183,64,.25)}
+/* notes */
+.note-top{gap:8px}
+.ntitle{background:transparent;border:1px solid transparent;border-radius:8px;padding:6px 8px;font-size:18px;font-weight:800;outline:none;min-width:120px;width:min(380px,40vw)}
+.ntitle:hover{border-color:var(--line)}.ntitle:focus{border-color:var(--acc)}
+.toolbar{position:sticky;top:62px;z-index:20;display:flex;flex-wrap:wrap;align-items:center;gap:4px;padding:8px 14px;background:rgba(28,30,31,.97);border-bottom:1px solid var(--line)}
+.toolbar.ro{color:var(--muted);font-size:13px;font-weight:700;justify-content:center}
+.toolbar select{padding:5px 8px;font-size:13px}
+.tb{min-width:34px;height:32px;border-radius:8px;display:inline-grid;place-items:center;font-size:15px;color:#d5d9dc;padding:0 6px;transition:.12s}
+.tb:hover{background:var(--panel2)}
+.tb.on{background:var(--accbg);color:var(--acc)}
+.tsep{width:1px;height:22px;background:var(--line);margin:0 6px}
+.toolbar .accbar{gap:4px}
+.toolbar .acc-btn{width:30px;height:30px;font-size:14px}
+.hlb{background:rgba(244,183,64,.45);padding:0 4px;border-radius:3px}
+.docwrap{max-width:860px;margin:26px auto 120px;padding:0 18px}
+.doc{min-height:70vh;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:48px 56px;font-size:16px;line-height:1.7;outline:none;box-shadow:0 18px 40px rgba(0,0,0,.3);word-wrap:break-word}
+.doc:focus{border-color:#3d4346}
+.doc:empty:before{content:attr(data-ph);color:var(--muted);pointer-events:none}
+.doc h1{font-size:28px;margin:18px 0 8px;line-height:1.3}.doc h2{font-size:22px;margin:16px 0 6px}.doc h3{font-size:18px;margin:14px 0 4px}
+.doc p{margin:0 0 8px}.doc ul,.doc ol{margin:0 0 8px;padding-left:28px}
+.doc blockquote{margin:8px 0;padding:6px 16px;border-left:3px solid var(--acc);color:#cfd4d7;background:rgba(65,209,193,.06);border-radius:0 8px 8px 0}
+.doc hr{border:0;border-top:1px solid var(--line2);margin:16px 0}
+.docfoot{text-align:right;margin-top:8px}
+/* share */
+.linkbox{display:flex;gap:8px;margin:14px 0}
+.linkbox input{flex:1;min-width:0;background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:9px 12px;font-size:13px;outline:none;color:var(--muted)}
+.seg2{display:flex;flex-direction:column;gap:10px;margin:14px 0}
+.seg2 label{display:flex;gap:12px;align-items:flex-start;padding:12px 14px;border:1.5px solid var(--line);border-radius:12px;cursor:pointer}
+.seg2 label:has(input:checked){border-color:var(--acc);background:var(--accbg)}
+.seg2 input{accent-color:var(--acc);margin-top:3px}
+.seg2 b{display:block}
+.joinnote{background:var(--accbg);color:var(--acc);border-radius:12px;padding:10px 14px;font-weight:700;font-size:14px;margin:16px 0 0;text-align:center}
+@media(max-width:720px){.qvopts{grid-template-columns:1fr}.doc{padding:28px 20px}.takecard{flex-direction:column;align-items:flex-start}.ntitle{width:40vw}}
+
 #cloudbar{position:fixed;left:50%;top:70px;transform:translateX(-50%);width:min(680px,calc(100% - 24px));background:#3a2a12;border:1px solid rgba(244,183,64,.55);color:#ffe2a8;border-radius:14px;padding:12px 44px 12px 16px;font-size:14px;line-height:1.5;z-index:150;box-shadow:0 10px 30px rgba(0,0,0,.45)}
 #cloudbar span{color:#e9cf98;font-size:13px}#cloudbar code{color:#fff}
 #cloudbar .icon{position:absolute;top:6px;right:6px;color:#ffe2a8}
@@ -256,6 +328,8 @@ var ICON={
  cards:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="3" y="6" width="14" height="14" rx="3"/><path d="M7 3h11a3 3 0 0 1 3 3v11"/></svg>',
  learn:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a9 9 0 1 0 9 9"/><path d="M21 3l-9 9"/><path d="M15 3h6v6"/></svg>',
  test:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="18" rx="3"/><path d="M8 9l2 2 4-4M8 16h8"/></svg>',
+ note:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h9l4 4v14H6z"/><path d="M14 3v5h5M9 13h7M9 17h5"/></svg>',
+ share:'<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4"/></svg>',
  match:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="3" y="3" width="7.5" height="7.5" rx="2"/><rect x="13.5" y="3" width="7.5" height="7.5" rx="2"/><rect x="3" y="13.5" width="7.5" height="7.5" rx="2"/><rect x="13.5" y="13.5" width="7.5" height="7.5" rx="2"/></svg>'
 };
 function toast(msg){var t=$('#toast');t.textContent=msg;t.classList.add('show');clearTimeout(toast._t);toast._t=setTimeout(function(){t.classList.remove('show')},2400)}
@@ -307,9 +381,10 @@ function kvDel(k){if(!UID)return;cloudWrite('kv',k,null,userRef().collection('kv
 function persist(){DB.updatedAt=Date.now();if(!UID)return Promise.resolve();var col=userRef().collection('sets'),seen={};
  DB.sets.forEach(function(x){seen[x.id]=1;var j=JSON.stringify(x);if(lastSynced[x.id]!==j){lastSynced[x.id]=j;cloudWrite('sets',x.id,j,col.doc(x.id).set({j:j,t:stamp()}))}});
  Object.keys(lastSynced).forEach(function(id){if(!seen[id]){delete lastSynced[id];cloudWrite('sets',id,null,col.doc(id).delete())}});
+ pushShared();syncSharedSubs();
  return Promise.resolve()}
 /* changes from another browser: refresh the home / set page only (never interrupt studying or editing) */
-function softRender(){var h=location.hash.slice(1);if(!(h===''||/^set-/.test(h)))return;if($('#modal-root .ov'))return;var ae=document.activeElement;if(ae&&/INPUT|TEXTAREA|SELECT/.test(ae.tagName))return;var y=window.scrollY;render();window.scrollTo(0,y)}
+function softRender(){syncSharedSubs();if(remoteHook)remoteHook();var h=location.hash.slice(1);if(!(h===''||/^(set|quiz)-/.test(h)))return;if($('#modal-root .ov'))return;var ae=document.activeElement;if(ae&&/INPUT|TEXTAREA|SELECT/.test(ae.tagName))return;var y=window.scrollY;render();window.scrollTo(0,y)}
 function onSets(snap,initial){var remote=false;snap.docChanges().forEach(function(ch){var d=ch.doc,id=d.id;if(d.metadata.hasPendingWrites&&!initial)return;remote=true;
   if(ch.type==='removed'){delete lastSynced[id];var ex=getSet(id);if(ex)DB.sets.splice(DB.sets.indexOf(ex),1);return}
   var j=d.data().j,data;try{data=JSON.parse(j)}catch(e){return}lastSynced[id]=j;var ex2=getSet(id);
@@ -327,14 +402,14 @@ function startCloud(user){UID=user.uid;loadOB();USER=user.displayName||pendingNa
   Object.keys(pend.kv).forEach(function(k){var j=pend.kv[k];if(j===null)delete MEM[k];else try{MEM[k]=JSON.parse(j)}catch(e){}});
   OB=pend;if(Object.keys(pend.sets).length)persist();Object.keys(pend.kv).forEach(function(k){pend.kv[k]===null?kvDel(k):kvWrite(k)});
   if(st.sets===1&&st.kv===1&&!MEM.fc_meta){if(!DB.sets.length){DB=seedDB();persist()}ls.set('fc_meta',{seeded:true})}
-  AUTH='in';render()}
+  AUTH='in';syncSharedSubs();render()}
  setTimeout(function(){check(true)},7000); /* offline: show cached cards */
  function sub(name,handler){unsubs.push(userRef().collection(name).onSnapshot({includeMetadataChanges:true},function(snap){
    var r=handler(snap,!done);if(!done){if(!snap.metadata.fromCache){st[name]=1;check()}}else if(r&&AUTH==='in')softRender()},
   function(e){saveErr(e);st[name]=2;check()}))}
  sub('sets',onSets);sub('kv',onKV);
 }
-if(auth)auth.onAuthStateChanged(function(u){unsubs.forEach(function(f){try{f()}catch(e){}});unsubs=[];
+if(auth)auth.onAuthStateChanged(function(u){clearSharedSubs();unsubs.forEach(function(f){try{f()}catch(e){}});unsubs=[];
  cloudErrMsg=null;showBanner();
  if(u){AUTH='loading';render();startCloud(u)}else{UID=USER=MEM=null;OB={sets:{},kv:{}};DB={updatedAt:0,sets:[]};lastSynced={};AUTH='out';render()}});
 function logout(){history.replaceState(null,'',location.pathname+location.search);auth.signOut()}
@@ -357,6 +432,7 @@ function viewLoading(){app.innerHTML='<div class="auth"><div class="center"><div
 function viewLogin(mode){mode=mode||'login';var su=mode==='signup';
  app.innerHTML='<div class="auth"><div class="auth-card"><div class="brand" style="justify-content:center"><i></i>My Flashcards</div><p class="muted sm center" style="margin:8px 0 0">Your cards sync to every browser you log in on.</p>'+
  '<div class="atabs"><button class="atab'+(su?'':' on')+'" data-a="mlogin">Log in</button><button class="atab'+(su?' on':'')+'" data-a="msignup">Sign up</button></div>'+
+ (/^join-/.test(location.hash.slice(1))?'<p class="joinnote">'+ICON.share+' Log in or sign up to open the shared link.</p>':'')+
  '<form id="af" novalidate><div class="afld"><label for="a-user">Username or email</label><input id="a-user" name="username" autocomplete="username" autocapitalize="off" spellcheck="false" maxlength="64"></div>'+
  '<div class="afld"><label for="a-pw">Password</label><div class="pw"><input id="a-pw" name="password" type="password" autocomplete="'+(su?'new-password':'current-password')+'"><button type="button" class="link" data-a="showpw">Show</button></div></div>'+
  (su?'<div class="afld"><label for="a-pw2">Confirm password</label><input id="a-pw2" type="password" autocomplete="new-password"></div>':'')+
@@ -449,12 +525,13 @@ function mcOpts(c,q,pool){var others=[],seen={};seen[q.a]=1;shuffle(pool).forEac
 /* ---------- accent bar ---------- */
 var shiftOn=false,lastInput=null;
 function accBar(chars){chars=chars||DEFAULT_CHARS;return '<div class="accbar">'+Array.from(chars).filter(function(c){return c.trim()}).map(function(c){return '<button type="button" class="acc-btn" tabindex="-1" data-ch="'+esc(c)+'">'+esc(shiftOn?c.toUpperCase():c)+'</button>'}).join('')+'<button type="button" class="acc-btn shift'+(shiftOn?' on':'')+'" tabindex="-1" data-shift="1" title="Uppercase">⇧</button></div>'}
-document.addEventListener('focusin',function(e){var t=e.target;if(t&&(t.tagName==='TEXTAREA'||(t.tagName==='INPUT'&&/^(text|search|)$/.test(t.type||''))))lastInput=t});
+document.addEventListener('focusin',function(e){var t=e.target;if(t&&(t.isContentEditable||t.tagName==='TEXTAREA'||(t.tagName==='INPUT'&&/^(text|search|)$/.test(t.type||''))))lastInput=t});
 document.addEventListener('mousedown',function(e){if(e.target.closest&&e.target.closest('.acc-btn'))e.preventDefault()});
 document.addEventListener('click',function(e){var b=e.target.closest&&e.target.closest('.acc-btn');if(!b)return;
  if(b.dataset.shift){shiftOn=!shiftOn;$$('.accbar').forEach(function(bar){$$('.acc-btn[data-ch]',bar).forEach(function(x){x.textContent=shiftOn?x.dataset.ch.toUpperCase():x.dataset.ch});$('.shift',bar).classList.toggle('on',shiftOn)});return}
  var ch=shiftOn?b.dataset.ch.toUpperCase():b.dataset.ch,el=lastInput;
  if(!el||!document.contains(el)||el.disabled){el=$('#app input.ans:not([disabled])');if(!el)return}
+ if(el.isContentEditable){el.focus();document.execCommand('insertText',false,ch);return}
  var s=el.selectionStart!=null?el.selectionStart:el.value.length,en=el.selectionEnd!=null?el.selectionEnd:s;
  el.value=el.value.slice(0,s)+ch+el.value.slice(en);el.focus();el.selectionStart=el.selectionEnd=s+ch.length;
  el.dispatchEvent(new Event('input',{bubbles:true}));
@@ -487,16 +564,21 @@ function exportAll(){var local={};DB.sets.forEach(function(s){local[s.id]=SL(s.i
 function exportSet(s){var name=(s.title||'set').replace(/[^\w\- ]+/g,'').trim().replace(/\s+/g,'-')||'set';saveFile(name+'.json',JSON.stringify({app:'my-flashcards',version:1,sets:[s],local:(function(){var o={};o[s.id]=SL(s.id);return o})()},null,2))}
 var fileIn=document.createElement('input');fileIn.type='file';fileIn.accept='.json,.txt,.csv,.tsv';fileIn.style.display='none';document.body.appendChild(fileIn);
 fileIn.addEventListener('change',function(){var f=fileIn.files&&fileIn.files[0];fileIn.value='';if(!f)return;f.text().then(function(t){handleImport(t,f.name)})});
-function normSet(s){if(!s||!Array.isArray(s.cards))return null;var cards=s.cards.map(function(c){return{id:/^[a-z0-9]+$/i.test(c.id||'')?String(c.id):uid(),t:String(c.t!=null?c.t:c.term!=null?c.term:''),d:String(c.d!=null?c.d:c.definition!=null?c.definition:'')}}).filter(function(c){return c.t||c.d});
- return{id:/^[a-z0-9]+$/.test(s.id||'')?s.id:uid(),title:String(s.title||'Imported set'),desc:String(s.desc||''),chars:String(s.chars||DEFAULT_CHARS),created:s.created||Date.now(),updated:Date.now(),cards:cards}}
+function normSet(s){if(!s)return null;var t=s.type==='quiz'||s.type==='note'?s.type:'cards';
+ var base={id:/^[a-z0-9]+$/.test(s.id||'')?s.id:uid(),type:t,title:String(s.title||'Imported'),desc:String(s.desc||''),chars:String(s.chars||DEFAULT_CHARS),created:s.created||Date.now(),updated:Date.now()};
+ if(t==='note'){base.html=sanitizeHTML(String(s.html||''));return base}
+ if(t==='quiz'){if(!Array.isArray(s.qs))return null;base.qs=s.qs.map(function(q){var o=(Array.isArray(q.opts)?q.opts:[]).map(String);return{id:uid(),q:String(q.q||''),opts:o,ans:(q.ans>=0&&q.ans<o.length)?+q.ans:-1,why:String(q.why||'')}}).filter(function(q){return q.q&&q.opts.length>=2});return base}
+ if(!Array.isArray(s.cards))return null;
+ base.cards=s.cards.map(function(c){return{id:/^[a-z0-9]+$/i.test(c.id||'')?String(c.id):uid(),t:String(c.t!=null?c.t:c.term!=null?c.term:''),d:String(c.d!=null?c.d:c.definition!=null?c.definition:'')}}).filter(function(c){return c.t||c.d});
+ return base}
 var pendingImport=null;
 function handleImport(text,name){var j=null;try{j=JSON.parse(text)}catch(e){}
- if(j&&(Array.isArray(j.sets)||Array.isArray(j.cards))){var list=Array.isArray(j.sets)?j.sets:[j],add=0,upd=0,last=null;
+ if(j&&(Array.isArray(j.sets)||Array.isArray(j.cards)||Array.isArray(j.qs)||j.type==='note')){var list=Array.isArray(j.sets)?j.sets:[j],add=0,upd=0,last=null;
   list.forEach(function(raw){var s=normSet(raw);if(!s)return;var ex=getSet(s.id);if(ex){DB.sets[DB.sets.indexOf(ex)]=s;upd++}else{DB.sets.push(s);add++}last=s;if(j.local&&j.local[raw.id])SLsave(s.id,j.local[raw.id])});
   if(j.prefs)ls.set('fc_prefs',j.prefs);
   if(!last)return toast('No cards found in that file');
-  toast((add?add+' set'+(add>1?'s':'')+' added':'')+(add&&upd?', ':'')+(upd?upd+' updated':''));
-  location.hash=list.length===1?'set-'+last.id:'';render();persist();return}
+  toast((add?add+' item'+(add>1?'s':'')+' added':'')+(add&&upd?', ':'')+(upd?upd+' updated':''));
+  location.hash=list.length===1?itemPath(last):'';render();persist();return}
  var cards=parseText(text,'auto','\n');
  if(!cards.length)return toast('Couldn\'t find any cards in that file');
  pendingImport={title:name.replace(/\.\w+$/,''),cards:cards};go('edit-new');
@@ -516,10 +598,19 @@ app.addEventListener('input',function(e){if(A._input)A._input(e)});
 document.addEventListener('keydown',function(e){if($('#modal-root .ov')){if(e.key==='Escape')closeModal();return}if(viewKey)viewKey(e)});
 function go(h){if(location.hash.slice(1)===h)render();else location.hash=h}
 window.addEventListener('hashchange',render);
-function render(){A={};viewKey=null;timers.forEach(function(t){clearInterval(t);clearTimeout(t)});timers=[];closeModal();window.scrollTo(0,0);
+function render(){if(leaveHook){var lh=leaveHook;leaveHook=null;lh()}remoteHook=null;noteSelHook=null;A={};viewKey=null;timers.forEach(function(t){clearInterval(t);clearTimeout(t)});timers=[];closeModal();window.scrollTo(0,0);
  if(AUTH!=='in')return AUTH==='loading'?viewLoading():viewLogin();
- var h=location.hash.slice(1),m=h.match(/^(set|edit|cards|learn|test|match)-([a-z0-9]+)$/);
- if(m){if(m[1]==='edit'&&m[2]==='new')return viewEdit(null);var s=getSet(m[2]);if(s)return({set:viewSet,edit:viewEdit,cards:viewCards,learn:viewLearn,test:viewTest,match:viewMatch})[m[1]](s)}
+ var h=location.hash.slice(1),m=h.match(/^(set|edit|cards|learn|test|match|quiz|qedit|take|note|join)-([a-z0-9]+)$/);
+ if(m){var r=m[1],id=m[2];
+  if(r==='join')return viewJoin(id);
+  if(r==='edit'&&id==='new')return viewEdit(null);
+  if(r==='qedit'&&id==='new')return viewQuizEdit(null);
+  var s=getSet(id);
+  if(s){var t=typ(s);
+   if(t==='quiz'){if(r==='qedit'&&canEdit(s))return viewQuizEdit(s);if(r==='take')return viewTake(s);if(r!=='quiz')history.replaceState(null,'','#quiz-'+id);return viewQuizPage(s)}
+   if(t==='note'){if(r!=='note')history.replaceState(null,'','#note-'+id);return viewNote(s)}
+   if(r==='edit'&&!canEdit(s)){r='set';history.replaceState(null,'','#set-'+id)}
+   var V={set:viewSet,edit:viewEdit,cards:viewCards,learn:viewLearn,test:viewTest,match:viewMatch}[r];if(V)return V(s)}}
  viewHome();
 }
 function studyTop(s,name,sub,gear){return '<header class="top"><button class="icon" data-a="close" title="Close">✕</button><div class="st-mode">'+name+'</div><div class="st-sub muted">'+(sub||'')+'</div><div class="sp"></div><div class="st-title muted">'+esc(s.title)+'</div>'+(gear?'<button class="icon" data-a="opts" title="Options">⚙</button>':'')+'</header>'}
@@ -527,15 +618,20 @@ function dirSelect(id,v){return '<select id="'+id+'"><option value="def"'+(v==='
 function tooFew(s,n,what){app.innerHTML=studyTop(s,what)+'<main class="wrap narrow"><div class="qcard center"><h2>Add more cards</h2><p class="muted">'+what+' needs at least '+n+' cards.</p><button class="btn primary" data-a="edit">Edit set</button></div></main>';A.close=function(){go('set-'+s.id)};A.edit=function(){go('edit-'+s.id)}}
 
 /* ---------- home ---------- */
+function tileHTML(s){var t=typ(s),body;
+ if(t==='quiz'){var qn=(s.qs||[]).length,q=ls.get('fc_q_'+s.id,{});body='<div class="muted sm">'+qn+' question'+(qn===1?'':'s')+'</div><div class="muted xs" style="margin-top:auto">'+(q.last?'Last score: '+q.last.score+' / '+q.last.total:'Not taken yet')+'</div>'}
+ else if(t==='note'){var tx=htmlText(s.html||'').trim().slice(0,110);body='<div class="muted xs prev">'+esc(tx||'Empty page')+'</div>'}
+ else{var sl=SL(s.id),n=(s.cards||[]).length,m=s.cards.filter(function(c){return(sl.learn[c.id]||0)>=2}).length;body='<div class="muted sm">'+n+' term'+(n===1?'':'s')+'</div><div class="pbar"><i style="width:'+(n?m/n*100:0)+'%"></i></div><div class="muted xs">'+m+' / '+n+' mastered</div>'}
+ return '<button class="tile" data-a="open" data-id="'+s.id+'"><div class="kind k-'+t+'">'+(t==='quiz'?'QUIZ':t==='note'?'NOTES':'FLASHCARDS')+(s.shareId?' · <span class="shk">'+(s.role==='owner'?'SHARED':'SHARED WITH YOU')+'</span>':'')+'</div><div class="tile-t">'+esc(s.title)+'</div>'+body+'</button>'}
 function viewHome(){
  var sets=DB.sets.slice().sort(function(a,b){return(b.updated||0)-(a.updated||0)});
  app.innerHTML='<header class="top"><div class="brand"><i></i>My Flashcards</div><div class="sp"></div><span id="status"></span><button class="icon" data-a="grading" title="Grading settings">⚙</button><button class="btn ghost sm" data-a="import">Import</button><button class="btn ghost sm" data-a="backup">Export all</button><button class="btn primary sm" data-a="new">+ Create</button></header>'+
- '<main class="wrap"><div class="row-between"><h2>Your sets</h2><span class="muted sm">'+sets.length+' set'+(sets.length===1?'':'s')+'</span></div>'+
- (sets.length?'<div class="grid">'+sets.map(function(s){var sl=SL(s.id),n=s.cards.length,m=s.cards.filter(function(c){return(sl.learn[c.id]||0)>=2}).length;return '<button class="tile" data-a="open" data-id="'+s.id+'"><div class="tile-t">'+esc(s.title)+'</div><div class="muted sm">'+n+' term'+(n===1?'':'s')+'</div><div class="pbar"><i style="width:'+(n?m/n*100:0)+'%"></i></div><div class="muted xs">'+m+' / '+n+' mastered</div></button>'}).join('')+'</div>'
- :'<div class="empty"><p class="muted">No sets yet.</p><button class="btn primary" data-a="new">+ Create your first set</button></div>')+
- '<div class="note"><b>How your cards are stored</b><ul><li>Your sets, stars and progress are saved to <b>your account in the cloud</b>. Log in on any browser or device to get the same cards. Clearing browser data doesn\'t delete them.</li><li>Only you can read your account\'s cards.</li><li><b>Export all</b> downloads a <code>.json</code> backup; <b>Import</b> loads one back, or a <code>.txt/.csv</code> list with one “term⇥definition” per line.</li></ul></div></main>';
+ '<main class="wrap"><div class="row-between"><h2>Your library</h2><span class="muted sm">'+sets.length+' item'+(sets.length===1?'':'s')+'</span></div>'+
+ (sets.length?'<div class="grid">'+sets.map(tileHTML).join('')+'</div>'
+ :'<div class="empty"><p class="muted">Nothing here yet.</p><button class="btn primary" data-a="new">+ Create your first set</button></div>')+
+ '<div class="note"><b>Good to know</b><ul><li>Everything is saved to <b>your account in the cloud</b> — log in on any browser or device to get the same library.</li><li><b>Share</b> any flashcard set, quiz or notes page with a link. Choose <i>can view</i> or <i>can edit</i>; edits sync live for everyone.</li><li><b>Export all</b> downloads a <code>.json</code> backup; <b>Import</b> loads one back, or a <code>.txt/.csv</code> list with one “term⇥definition” per line.</li></ul></div></main>';
  updateStatus();
- A.new=function(){go('edit-new')};A.open=function(b){go('set-'+b.dataset.id)};A.import=function(){fileIn.click()};A.backup=exportAll;A.grading=gradingModal;
+ A.new=createMenu;A.open=function(b){var x=getSet(b.dataset.id);if(x)go(itemPath(x))};A.import=function(){fileIn.click()};A.backup=exportAll;A.grading=gradingModal;
 }
 
 /* ---------- set page ---------- */
@@ -543,9 +639,9 @@ function viewSet(s){
  var sl=SL(s.id),n=s.cards.length,lv=function(c){return sl.learn[c.id]||0};
  var m=s.cards.filter(function(c){return lv(c)>=2}).length,f=s.cards.filter(function(c){return lv(c)===1}).length;
  var mode=function(k,t){return '<button class="mode" data-a="mode" data-m2="'+k+'">'+ICON[k]+t+'</button>'};
- app.innerHTML='<header class="top"><button class="icon" data-a="home" title="Back">←</button><div class="brand sm">Your sets</div><div class="sp"></div><span id="status"></span></header>'+
- '<main class="wrap"><h1>'+esc(s.title)+'</h1>'+(s.desc?'<p class="muted" style="margin:4px 0 0">'+esc(s.desc)+'</p>':'')+
- '<div class="meta"><span class="muted sm">'+n+' term'+(n===1?'':'s')+'</span><div class="sp"></div><button class="btn sm" data-a="edit">Edit</button><button class="btn sm" data-a="export">Export</button><button class="btn sm danger" data-a="delete">Delete</button></div>'+
+ app.innerHTML='<header class="top"><button class="icon" data-a="home" title="Back">←</button><div class="brand sm">Your library</div><div class="sp"></div><span id="status"></span></header>'+
+ '<main class="wrap"><div class="kind k-cards">FLASHCARDS</div><h1>'+esc(s.title)+'</h1>'+(s.desc?'<p class="muted" style="margin:4px 0 0">'+esc(s.desc)+'</p>':'')+
+ metaBar(s,n+' term'+(n===1?'':'s'))+
  '<div class="modes">'+mode('cards','Flashcards')+mode('learn','Learn')+mode('test','Test')+mode('match','Match')+'</div>'+
  '<div class="opts-row"><span>Answer with '+dirSelect('o-dir',sl.dir)+'</span><label class="tog"><input type="checkbox" id="o-star"'+(sl.starredOnly?' checked':'')+'><span></span>Starred only (<b id="nstar">'+sl.stars.filter(function(id){return s.cards.some(function(c){return c.id===id})}).length+'</b>)</label><div class="sp"></div><button class="btn sm ghost" data-a="grading">Grading settings</button></div>'+
  '<div class="lprog"><div class="seg"><i class="g" style="width:'+(n?m/n*100:0)+'%"></i><i class="t" style="width:'+(n?f/n*100:0)+'%"></i></div><div class="lg"><span><b class="dot g"></b>'+m+' mastered</span><span><b class="dot t"></b>'+f+' familiar</span><span><b class="dot n"></b>'+(n-m-f)+' not studied</span></div></div>'+
@@ -553,7 +649,7 @@ function viewSet(s){
  updateStatus();
  A.home=function(){go('')};A.edit=function(){go('edit-'+s.id)};A.export=function(){exportSet(s)};A.grading=gradingModal;
  A.mode=function(b){go(b.dataset.m2+'-'+s.id)};
- A.delete=function(){confirmBox('Delete this set?','“'+s.title+'” and its progress will be removed. This can\'t be undone unless you have an exported file.','Delete',function(){DB.sets.splice(DB.sets.indexOf(s),1);ls.del('fc_s_'+s.id);location.hash='';render();persist()},true)};
+ A.delete=function(){deleteItemBox(s)};A.share=function(){shareModal(s)};
  A.star=function(b){var id=b.dataset.id,i=sl.stars.indexOf(id);if(i>=0)sl.stars.splice(i,1);else sl.stars.push(id);SLsave(s.id,sl);var on=i<0;b.classList.toggle('on',on);b.innerHTML=on?STAR:STAR_O;$('#nstar').textContent=sl.stars.length};
  A._input=function(e){if(e.target.id==='o-dir'){sl.dir=e.target.value;SLsave(s.id,sl)}if(e.target.id==='o-star'){sl.starredOnly=e.target.checked;SLsave(s.id,sl);if(sl.starredOnly&&!sl.stars.length)toast('Star some terms first — studying all for now')}};
 }
@@ -608,7 +704,7 @@ function viewEdit(set){
  A.save=function(){var cards=draft.cards.map(function(c){return{id:c.id||uid(),t:c.t.trim(),d:c.d.trim()}}).filter(function(c){return c.t||c.d});
   if(!cards.length)return toast('Add at least one card');
   var s=set;if(!s){s={id:uid(),created:Date.now()};DB.sets.push(s)}
-  s.title=draft.title.trim()||'Untitled set';s.desc=draft.desc.trim();s.chars=draft.chars||DEFAULT_CHARS;s.cards=cards;s.updated=Date.now();
+  s.type='cards';s.title=draft.title.trim()||'Untitled set';s.desc=draft.desc.trim();s.chars=draft.chars||DEFAULT_CHARS;s.cards=cards;s.updated=Date.now();
   location.hash='set-'+s.id;persist();
  };
  A.cancel=function(){var back=function(){go(set?'set-'+set.id:'')};if(dirty)confirmBox('Discard changes?','Your unsaved edits will be lost.','Discard',back,true);else back()};
@@ -793,6 +889,265 @@ function viewMatch(s){
   app.innerHTML=studyTop(s,'Match')+'<main class="wrap narrow"><div class="qcard center"><h2>'+(nb?'New personal best!':'Nice work!')+'</h2><p style="font-size:40px;font-weight:900;margin:10px 0">'+fmt(t)+'</p><p class="muted">'+(pen?'Includes '+(pen/1000)+'s penalty · ':'')+'Best: '+fmt(sl.matchBest)+'</p><div style="display:flex;gap:10px;justify-content:center"><button class="btn primary" data-a="start">Play again</button><button class="btn" data-a="close">Back to set</button></div></div></main>'}
  intro();
 }
+
+/* ================= item types ================= */
+var leaveHook=null,remoteHook=null,noteSelHook=null;
+document.addEventListener('selectionchange',function(){if(noteSelHook)noteSelHook()});
+window.addEventListener('beforeunload',function(){if(leaveHook)leaveHook()});
+document.addEventListener('visibilitychange',function(){if(document.visibilityState==='hidden'&&leaveHook)leaveHook()});
+function typ(s){return s.type||'cards'}
+function itemPath(s){var t=typ(s);return(t==='quiz'?'quiz-':t==='note'?'note-':'set-')+s.id}
+function canEdit(s){return !s.shareId||s.role!=='view'}
+function autoGrow(el){el.style.height='auto';el.style.height=el.scrollHeight+'px'}
+function htmlText(h){try{return(new DOMParser().parseFromString(String(h||'').replace(/<(\/p|\/div|\/h[1-6]|\/li|br|\/blockquote)/gi,' <$1'),'text/html').body.textContent||'').replace(/\s+/g,' ')}catch(e){return''}}
+function sharedBadge(s){if(!s.shareId)return'';return '<span class="tag sh">'+ICON.share+' '+(s.role==='owner'?'Shared ('+(s.mode==='edit'?'can edit':'view only')+')':'Shared by '+esc(s.sharedBy||'someone')+(s.role==='view'?' · view only':' · can edit'))+'</span>'}
+function metaBar(s,txt){var own=!s.shareId||s.role==='owner';
+ return '<div class="meta"><span class="muted sm">'+txt+'</span>'+sharedBadge(s)+'<div class="sp"></div>'+(canEdit(s)?'<button class="btn sm" data-a="edit">Edit</button>':'')+'<button class="btn sm" data-a="share">'+ICON.share+' Share</button><button class="btn sm" data-a="export">Export</button><button class="btn sm danger" data-a="delete">'+(own?'Delete':'Remove')+'</button></div>'}
+function removeItem(s){
+ if(s.shareId){var sid=s.shareId;unsubShared(sid);if(s.role==='owner')sref(sid).delete().catch(saveErr)}
+ DB.sets.splice(DB.sets.indexOf(s),1);ls.del('fc_s_'+s.id);if(ls.get('fc_q_'+s.id))ls.del('fc_q_'+s.id);location.hash='';render();persist()}
+function deleteItemBox(s){var own=!s.shareId||s.role==='owner';
+ confirmBox(own?'Delete “'+s.title+'”?':'Remove “'+s.title+'” from your library?',
+  own?(s.shareId?'It will also stop being shared — people with the link lose access. ':'')+'This can\'t be undone unless you have an exported file.':'The original stays with '+(s.sharedBy||'its owner')+'. Open the link again any time to re-add it.',
+  own?'Delete':'Remove',function(){removeItem(s)},true)}
+function createMenu(){modal('<h3>Create</h3><div class="cmenu">'+
+ '<button data-m="cards">'+ICON.cards+'<div><b>Flashcard set</b><span class="muted sm">Terms and definitions — Flashcards, Learn, Test, Match</span></div></button>'+
+ '<button data-m="quiz">'+ICON.test+'<div><b>Multiple-choice quiz</b><span class="muted sm">Write your own questions with A/B/C/D answers and take it like a real test</span></div></button>'+
+ '<button data-m="note">'+ICON.note+'<div><b>Notes</b><span class="muted sm">A blank page for taking notes, like Google Docs</span></div></button></div>',
+ {cards:function(){closeModal();go('edit-new')},quiz:function(){closeModal();go('qedit-new')},
+  note:function(){closeModal();var n={id:uid(),type:'note',title:'Untitled notes',html:'',chars:DEFAULT_CHARS,created:Date.now(),updated:Date.now()};DB.sets.push(n);location.hash='note-'+n.id;persist()}})}
+
+/* ================= multiple-choice quiz ================= */
+var LET='ABCDEF';
+function blankQ(){return{id:uid(),q:'',opts:['','','',''],ans:-1,why:''}}
+function qPrefs(id){var o=ls.get('fc_q_'+id,{});return{shufQ:o.shufQ!==undefined?o.shufQ:false,shufO:!!o.shufO,last:o.last||null,best:o.best!=null?o.best:null}}
+/* paste format:  1. Question?  /  A. option  /  B) option  /  Answer: B  /  Explanation: ... ; or mark the right option with * */
+function parseQuiz(text){var out=[],cur=null;
+ String(text).replace(/\r\n?/g,'\n').split('\n').forEach(function(line){var l=line.trim(),m;if(!l)return;
+  if(cur&&(m=l.match(/^(?:answer|ans|correct(?: answer)?|key)\s*[:：\-]\s*\(?([A-Fa-f])\)?\b/i))){cur.ans=LET.indexOf(m[1].toUpperCase());return}
+  if(cur&&(m=l.match(/^(?:explanation|why|reason)\s*[:：\-]\s*(.*)$/i))){cur.why=m[1];return}
+  if(cur&&(m=l.match(/^\(?([A-Fa-f])\s*[\.\)\]:：]\s*(.+)$/))&&LET.indexOf(m[1].toUpperCase())===cur.opts.length){var t=m[2].trim();if(/^\*|\*$|\(correct\)$/i.test(t)){cur.ans=cur.opts.length;t=t.replace(/^\*|\*$|\s*\(correct\)$/ig,'').trim()}cur.opts.push(t);return}
+  m=l.match(/^(?:Q\s*)?\d+\s*[\.\)、:：]\s*(.+)$/i);
+  if(m||!cur||cur.opts.length){cur={id:uid(),q:m?m[1]:l,opts:[],ans:-1,why:''};out.push(cur);return}
+  cur.q+='\n'+l});
+ return out.filter(function(q){return q.q&&q.opts.length>=2})}
+
+function viewQuizPage(s){var qp=qPrefs(s.id),show=false;
+ function draw(){var qs=s.qs||[];
+  app.innerHTML='<header class="top"><button class="icon" data-a="home" title="Back">←</button><div class="brand sm">Your library</div><div class="sp"></div><span id="status"></span></header>'+
+  '<main class="wrap"><div class="kind k-quiz">MULTIPLE-CHOICE QUIZ</div><h1>'+esc(s.title)+'</h1>'+(s.desc?'<p class="muted" style="margin:4px 0 0">'+esc(s.desc)+'</p>':'')+
+  metaBar(s,qs.length+' question'+(qs.length===1?'':'s'))+
+  '<div class="takecard"><div><h2 style="margin:0 0 4px">Take the test</h2><div class="muted sm">'+(qp.last?'Last score <b>'+qp.last.score+' / '+qp.last.total+'</b>'+(qp.best!=null?' · Best <b>'+qp.best+'%</b>':''):'Answer every question, then submit to see your score.')+'</div></div><button class="btn primary big" data-a="take"'+(qs.length?'':' disabled')+'>Start test</button></div>'+
+  '<div class="opts-row"><label class="tog"><input type="checkbox" id="q-sq"'+(qp.shufQ?' checked':'')+'><span></span>Shuffle questions</label><label class="tog"><input type="checkbox" id="q-so"'+(qp.shufO?' checked':'')+'><span></span>Shuffle answer choices</label><div class="sp"></div><label class="tog"><input type="checkbox" id="q-show"'+(show?' checked':'')+'><span></span>Show answers</label></div>'+
+  '<h2>Questions ('+qs.length+')</h2>'+(qs.length?qs.map(function(q,k){return '<div class="qcard qv"><div class="qtext xs"><b class="qn">'+(k+1)+'.</b> '+esc(q.q)+'</div><div class="qvopts">'+q.opts.map(function(o,j){return '<div class="qvopt'+(show&&j===q.ans?' right':'')+'"><span class="num">'+LET[j]+'</span><span>'+esc(o)+'</span></div>'}).join('')+'</div>'+(show&&q.why?'<p class="muted sm" style="margin:10px 0 0"><b>Why:</b> '+esc(q.why)+'</p>':'')+'</div>'}).join('')
+   :'<div class="empty"><p class="muted">No questions yet.</p>'+(canEdit(s)?'<button class="btn primary" data-a="edit">Add questions</button>':'')+'</div>')+'</main>';
+  updateStatus()}
+ A.home=function(){go('')};A.edit=function(){go('qedit-'+s.id)};A.take=function(){go('take-'+s.id)};A.share=function(){shareModal(s)};A.export=function(){exportSet(s)};A.delete=function(){deleteItemBox(s)};
+ A._input=function(e){var t=e.target;if(t.id==='q-sq'){qp.shufQ=t.checked;ls.set('fc_q_'+s.id,qp)}if(t.id==='q-so'){qp.shufO=t.checked;ls.set('fc_q_'+s.id,qp)}if(t.id==='q-show'){show=t.checked;var y=scrollY;draw();scrollTo(0,y)}};
+ draw()}
+
+function viewQuizEdit(set){
+ var isNew=!set,dirty=false,showPaste=false;
+ var draft=set?{title:set.title,desc:set.desc||'',chars:set.chars||DEFAULT_CHARS,qs:clone(set.qs||[])}:{title:'',desc:'',chars:DEFAULT_CHARS,qs:[blankQ()]};
+ if(!draft.qs.length)draft.qs.push(blankQ());
+ draft.qs.forEach(function(q){if(q.why==null)q.why=''});
+ function qHTML(q,i){return '<div class="erow qrow" id="qr'+i+'"><div class="erow-h">Question '+(i+1)+'<div class="sp"></div><button class="icon sm" data-a="up" data-i="'+i+'" title="Move up">↑</button><button class="icon sm" data-a="del" data-i="'+i+'" title="Delete question">✕</button></div><div class="qrow-b">'+
+  '<div class="fld"><textarea rows="1" data-i="'+i+'" data-f="q" placeholder="Type the question" spellcheck="false">'+esc(q.q)+'</textarea><label>QUESTION</label></div>'+
+  '<div class="qopts">'+q.opts.map(function(o,j){return '<div class="qopt'+(q.ans===j?' right':'')+'"><button type="button" class="pickc" data-a="setans" data-i="'+i+'" data-j="'+j+'" title="Mark '+LET[j]+' as the correct answer">'+(q.ans===j?'✓':LET[j])+'</button><input data-i="'+i+'" data-o="'+j+'" value="'+esc(o)+'" placeholder="Option '+LET[j]+'" spellcheck="false">'+(q.opts.length>2?'<button class="icon sm" data-a="delopt" data-i="'+i+'" data-j="'+j+'" title="Remove option">✕</button>':'')+'</div>'}).join('')+'</div>'+
+  '<div class="row-between" style="margin:8px 0 6px">'+(q.opts.length<6?'<button class="link" data-a="addopt" data-i="'+i+'">+ Add option</button>':'<span></span>')+'<span class="xs">'+(q.ans<0?'<span style="color:var(--warn);font-weight:700">Click a letter to mark the correct answer</span>':'<span class="muted">Correct answer: </span><b style="color:var(--good)">'+LET[q.ans]+'</b>')+'</span></div>'+
+  '<div class="fld"><input data-i="'+i+'" data-f="why" value="'+esc(q.why||'')+'" placeholder="Optional — shown after the test" spellcheck="false"><label>EXPLANATION</label></div></div></div>'}
+ function drawRows(){$('#rows').innerHTML=draft.qs.map(qHTML).join('');$$('#rows textarea').forEach(autoGrow)}
+ function redrawRow(i,focusSel){var el=$('#qr'+i);if(!el)return;el.outerHTML=qHTML(draft.qs[i],i);$$('#qr'+i+' textarea').forEach(autoGrow);if(focusSel){var f=$(focusSel);if(f)f.focus()}}
+ app.innerHTML='<header class="top"><button class="icon" data-a="cancel" title="Back">←</button><div class="st-mode">'+(isNew?'Create a multiple-choice quiz':'Edit quiz')+'</div><div class="sp"></div><button class="btn primary" data-a="save">'+(isNew?'Create':'Save')+'</button></header>'+
+ '<main class="wrap"><div class="ehead"><div class="fld big"><input id="f-title" placeholder="Enter a title, like “Biology Unit 3 Quiz”" value="'+esc(draft.title)+'"><label>TITLE</label></div><div class="fld"><textarea id="f-desc" rows="1" placeholder="Add a description…">'+esc(draft.desc)+'</textarea><label>DESCRIPTION</label></div></div>'+
+ '<div class="ed-tools"><button class="btn sm" data-a="paste">+ Import questions</button><div class="sp"></div><div class="fld inline"><input id="f-chars" value="'+esc(draft.chars)+'" spellcheck="false"><label>ACCENT KEYS</label></div></div>'+
+ '<div id="paste"></div><div class="sticky-acc">'+accBar(draft.chars)+'</div><div id="rows"></div><button class="addrow" data-a="add">+ ADD QUESTION</button><div class="ed-foot"><button class="btn primary big" data-a="save">'+(isNew?'Create':'Save')+'</button></div></main>';
+ drawRows();autoGrow($('#f-desc'));if(isNew)$('#f-title').focus();
+ function drawPaste(){var el=$('#paste');if(!showPaste){el.innerHTML='';return}
+  el.innerHTML='<div class="paste"><div class="row-between"><b>Import questions</b><span class="muted xs">Paste from Word, Google Docs, a worksheet…</span></div><textarea id="p-text" rows="10" placeholder="1. What is the capital of Spain?&#10;A. Barcelona&#10;B. Madrid&#10;C. Seville&#10;D. Valencia&#10;Answer: B&#10;Explanation: Madrid has been the capital since 1561.&#10;&#10;2. Which word means “Moroccan”?&#10;A. marroquí*&#10;B. mexicano&#10;C. francés"></textarea><p class="muted xs" style="margin:0 0 10px">Start each question on a new line, put each option on its own line starting with <b>A.</b> <b>B.</b> <b>C.</b>…, then add <b>Answer: B</b> — or put <b>*</b> after the correct option. <b>Explanation:</b> is optional.</p><div class="row-between"><span id="p-count" class="muted sm">Preview: 0 questions</span><div><button class="btn sm ghost" data-a="pcancel">Cancel</button> <button class="btn sm primary" data-a="pimport">Import</button></div></div></div>';$('#p-text').focus()}
+ A._input=function(e){var t=e.target,i=+t.dataset.i;
+  if(t.dataset.f){draft.qs[i][t.dataset.f]=t.value;if(t.tagName==='TEXTAREA')autoGrow(t);dirty=true}
+  else if(t.dataset.o!=null){draft.qs[i].opts[+t.dataset.o]=t.value;dirty=true}
+  else if(t.id==='f-title'){draft.title=t.value;dirty=true}
+  else if(t.id==='f-desc'){draft.desc=t.value;autoGrow(t);dirty=true}
+  else if(t.id==='f-chars'){draft.chars=t.value;$('.sticky-acc').innerHTML=accBar(draft.chars||DEFAULT_CHARS);dirty=true}
+  else if(t.id==='p-text'){var qs=parseQuiz(t.value),miss=qs.filter(function(q){return q.ans<0}).length;$('#p-count').innerHTML='Preview: '+qs.length+' question'+(qs.length===1?'':'s')+(miss?' · <span style="color:var(--warn)">'+miss+' without an answer (you can mark them after)</span>':'')}};
+ viewKey=function(e){var t=e.target;if(e.key!=='Enter'||e.shiftKey||!t.dataset||t.dataset.i==null)return;var i=+t.dataset.i,q=draft.qs[i];
+  if(t.dataset.f==='q'){e.preventDefault();var f=$('#qr'+i+' input[data-o="0"]');if(f)f.focus()}
+  else if(t.dataset.o!=null){e.preventDefault();var j=+t.dataset.o;var n=$('#qr'+i+' input[data-o="'+(j+1)+'"]');(n||$('#qr'+i+' input[data-f="why"]')).focus()}
+  else if(t.dataset.f==='why'){e.preventDefault();if(i===draft.qs.length-1)A.add();else $('#qr'+(i+1)+' textarea').focus()}};
+ A.setans=function(b){var i=+b.dataset.i,j=+b.dataset.j;draft.qs[i].ans=j;dirty=true;redrawRow(i)};
+ A.addopt=function(b){var i=+b.dataset.i;if(draft.qs[i].opts.length>=6)return;draft.qs[i].opts.push('');dirty=true;redrawRow(i,'#qr'+i+' input[data-o="'+(draft.qs[i].opts.length-1)+'"]')};
+ A.delopt=function(b){var i=+b.dataset.i,j=+b.dataset.j,q=draft.qs[i];q.opts.splice(j,1);if(q.ans===j)q.ans=-1;else if(q.ans>j)q.ans--;dirty=true;redrawRow(i)};
+ A.add=function(){draft.qs.push(blankQ());dirty=true;var i=draft.qs.length-1;$('#rows').insertAdjacentHTML('beforeend',qHTML(draft.qs[i],i));var t=$('#qr'+i+' textarea');t.focus();t.scrollIntoView({block:'center',behavior:'smooth'})};
+ A.del=function(b){draft.qs.splice(+b.dataset.i,1);if(!draft.qs.length)draft.qs.push(blankQ());dirty=true;drawRows()};
+ A.up=function(b){var i=+b.dataset.i;if(!i)return;var t=draft.qs[i];draft.qs[i]=draft.qs[i-1];draft.qs[i-1]=t;dirty=true;drawRows()};
+ A.paste=function(){showPaste=!showPaste;drawPaste()};A.pcancel=function(){showPaste=false;drawPaste()};
+ A.pimport=function(){var qs=parseQuiz($('#p-text').value);if(!qs.length)return toast('No questions found — check the format');
+  draft.qs=draft.qs.filter(function(q){return q.q.trim()||q.opts.some(function(o){return o.trim()})}).concat(qs);dirty=true;showPaste=false;drawPaste();drawRows();toast('Imported '+qs.length+' question'+(qs.length>1?'s':''))};
+ A.save=function(){var out=[],bad=null;
+  draft.qs.forEach(function(q,i){var opts=[],ans=-1;q.opts.forEach(function(o,j){o=o.trim();if(o){if(j===q.ans)ans=opts.length;opts.push(o)}});var qt=q.q.trim();
+   if(!qt&&!opts.length)return;
+   if(!bad){if(!qt)bad=[i,'Question '+(i+1)+' needs text'];else if(opts.length<2)bad=[i,'Question '+(i+1)+' needs at least 2 options'];else if(ans<0)bad=[i,'Question '+(i+1)+': click a letter to mark the correct answer']}
+   out.push({id:q.id||uid(),q:qt,opts:opts,ans:ans,why:(q.why||'').trim()})});
+  if(bad){toast(bad[1]);var r=$('#qr'+bad[0]);if(r){r.scrollIntoView({block:'center',behavior:'smooth'});r.classList.add('flag');setTimeout(function(){r.classList.remove('flag')},1500)}return}
+  if(!out.length)return toast('Add at least one question');
+  var s=set;if(!s){s={id:uid(),type:'quiz',created:Date.now()};DB.sets.push(s)}
+  s.type='quiz';s.title=draft.title.trim()||'Untitled quiz';s.desc=draft.desc.trim();s.chars=draft.chars||DEFAULT_CHARS;s.qs=out;s.updated=Date.now();
+  location.hash='quiz-'+s.id;persist()};
+ A.cancel=function(){var back=function(){go(set?'quiz-'+set.id:'')};if(dirty)confirmBox('Discard changes?','Your unsaved edits will be lost.','Discard',back,true);else back()};
+}
+
+function viewTake(s){var qp=qPrefs(s.id),all=(s.qs||[]).filter(function(q){return q.opts&&q.opts.length});if(!all.length)return viewQuizPage(s);
+ var items=[],ans={},done=false,full=true;
+ function start(subset){full=!subset;var base=subset||all;items=(qp.shufQ?shuffle(base):base.slice()).map(function(q){var ord=q.opts.map(function(_,j){return j});if(qp.shufO)ord=shuffle(ord);return{q:q,ord:ord}});ans={};done=false;draw();window.scrollTo(0,0)}
+ function nAns(){return Object.keys(ans).length}
+ function correct(){return items.filter(function(it,k){return ans[k]===it.q.ans}).length}
+ function card(it,k){var q=it.q,ok=ans[k]===q.ans,res=done?'<span class="tag '+(ok?'ok':'no')+'">'+(ok?'CORRECT':ans[k]==null?'NO ANSWER':'INCORRECT')+'</span>':'';
+  return '<div class="qcard tq'+(done?(ok?' res-ok':' res-no'):'')+'" id="tk'+k+'"><div class="row-between"><span class="qlabel">Question '+(k+1)+' of '+items.length+'</span>'+res+'</div><div class="qtext sm">'+esc(q.q)+'</div><div class="mcopts">'+
+  it.ord.map(function(j,pos){var c='';if(done){c=j===q.ans?' right':ans[k]===j?' wrong':' dim'}else if(ans[k]===j)c=' sel';return '<button class="opt'+c+'" data-a="pick" data-k="'+k+'" data-j="'+j+'"'+(done?' disabled':'')+'><span class="num">'+LET[pos]+'</span><span>'+esc(q.opts[j])+'</span></button>'}).join('')+'</div>'+
+  (done&&q.why?'<div class="why"><b>Explanation:</b> '+esc(q.why)+'</div>':'')+'</div>'}
+ function scoreCard(){var r=correct(),n=items.length,f=r/n;return '<div class="qcard"><div class="score">'+ring(f)+'<div><h2 style="margin:0 0 6px">'+(r===n?'Perfect score!':f>=.8?'Great job!':f>=.5?'Keep it up!':'Keep practicing — you\'ll get there!')+'</h2><div class="muted"><b style="color:var(--good)">'+r+' correct</b> · <b style="color:var(--bad)">'+(n-r)+' incorrect</b>'+(full?'':' · <i>missed-questions retake</i>')+'</div><div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap"><button class="btn primary sm" data-a="retake">Retake test</button>'+(r<n?'<button class="btn sm" data-a="missed">Retake missed ('+(n-r)+')</button>':'')+'<button class="btn sm" data-a="close">Back to quiz</button></div></div></div></div>'}
+ function draw(){app.innerHTML=studyTop(s,'Test','<span id="tk-prog">'+(done?'Results':nAns()+' / '+items.length+' answered')+'</span>')+'<main class="wrap narrow">'+(done?scoreCard():'')+items.map(card).join('')+
+  (done?'':'<div class="center" style="margin-top:30px"><p class="muted">Finished? Check your answers, then submit.</p><button class="btn primary big" data-a="submit">Submit test</button></div>')+'</main>'}
+ function grade(){done=true;if(full){var r=correct();qp.last={score:r,total:items.length,date:Date.now()};qp.best=Math.max(qp.best||0,Math.round(r/items.length*100));ls.set('fc_q_'+s.id,qp)}draw();window.scrollTo(0,0)}
+ A.close=function(){go('quiz-'+s.id)};
+ A.pick=function(b){if(done)return;var k=+b.dataset.k;ans[k]=+b.dataset.j;$$('.opt',b.parentNode).forEach(function(x){x.classList.toggle('sel',x===b)});$('#tk-prog').textContent=nAns()+' / '+items.length+' answered'};
+ A.submit=function(){var un=items.length-nAns();if(un)confirmBox('Submit anyway?','You have '+un+' unanswered question'+(un>1?'s':'')+'.','Submit',grade);else grade()};
+ A.retake=function(){start()};A.missed=function(){start(items.filter(function(it,k){return ans[k]!==it.q.ans}).map(function(it){return it.q}))};
+ start()}
+
+/* ================= notes (rich text) ================= */
+var OK_TAGS={P:1,DIV:1,BR:1,B:1,STRONG:1,I:1,EM:1,U:1,S:1,STRIKE:1,H1:1,H2:1,H3:1,UL:1,OL:1,LI:1,SPAN:1,MARK:1,BLOCKQUOTE:1,FONT:1,SUB:1,SUP:1,HR:1};
+var DROP_TAGS={SCRIPT:1,STYLE:1,IFRAME:1,OBJECT:1,EMBED:1,TEMPLATE:1,NOSCRIPT:1,SVG:1,MATH:1,LINK:1,META:1,TITLE:1,HEAD:1};
+function sanitizeHTML(html){var root;try{root=new DOMParser().parseFromString('<div>'+String(html||'')+'</div>','text/html').body.firstChild}catch(e){return esc(html)}if(!root)return'';
+ (function walk(n){Array.prototype.slice.call(n.childNodes).forEach(function(c){
+  if(c.nodeType===3)return;
+  if(c.nodeType!==1){n.removeChild(c);return}
+  var tag=c.tagName.toUpperCase();
+  if(DROP_TAGS[tag]){n.removeChild(c);return}
+  if(!OK_TAGS[tag]){walk(c);while(c.firstChild)n.insertBefore(c.firstChild,c);n.removeChild(c);return}
+  var st=c.style||{},bg=st.backgroundColor,fw=st.fontWeight,fi=st.fontStyle,td=(st.textDecorationLine||st.textDecoration||'');
+  Array.prototype.slice.call(c.attributes).forEach(function(a){c.removeAttribute(a.name)});
+  if(bg&&bg!=='transparent'&&!/url|expression|rgb\(255, 255, 255\)|^white$/i.test(bg))c.style.backgroundColor=bg;
+  if(fw==='bold'||+fw>=600)c.style.fontWeight='bold';
+  if(fi==='italic')c.style.fontStyle='italic';
+  var dec=[];if(/underline/.test(td))dec.push('underline');if(/line-through/.test(td))dec.push('line-through');if(dec.length)c.style.textDecoration=dec.join(' ');
+  walk(c)})})(root);
+ return root.innerHTML}
+function caretOffset(el){var sel=getSelection();if(!sel.rangeCount||!el.contains(sel.anchorNode))return -1;var r0=sel.getRangeAt(0),r=document.createRange();r.selectNodeContents(el);r.setEnd(r0.endContainer,r0.endOffset);return r.toString().length}
+function setCaret(el,off){var w=document.createTreeWalker(el,NodeFilter.SHOW_TEXT),n,acc=0,last=null;while((n=w.nextNode())){last=n;if(acc+n.length>=off){var r=document.createRange();r.setStart(n,off-acc);r.collapse(true);var sl=getSelection();sl.removeAllRanges();sl.addRange(r);return}acc+=n.length}
+ if(last){var r2=document.createRange();r2.setStart(last,last.length);r2.collapse(true);getSelection().removeAllRanges();getSelection().addRange(r2)}}
+var HILITE='rgba(244, 183, 64, 0.35)';
+function viewNote(s){var ed=canEdit(s),timer=null,saved=null;
+ function tb(cmd,label,title){return '<button type="button" class="tb" data-cmd="'+cmd+'" title="'+title+'">'+label+'</button>'}
+ app.innerHTML='<header class="top note-top"><button class="icon" data-a="home" title="Back">←</button><input id="n-title" class="ntitle" value="'+esc(s.title)+'"'+(ed?'':' readonly')+' spellcheck="false" placeholder="Untitled notes"><span id="n-status" class="muted xs"></span><div class="sp"></div>'+sharedBadge(s)+'<button class="btn sm" data-a="share">'+ICON.share+' Share</button><button class="icon" data-a="more" title="More">⋯</button></header>'+
+ (ed?'<div class="toolbar"><select id="n-block" title="Text style"><option value="p">Normal text</option><option value="h1">Heading 1</option><option value="h2">Heading 2</option><option value="h3">Heading 3</option></select><span class="tsep"></span>'+
+  tb('bold','<b>B</b>','Bold (Ctrl+B)')+tb('italic','<i>I</i>','Italic (Ctrl+I)')+tb('underline','<u>U</u>','Underline (Ctrl+U)')+tb('strikeThrough','<s>S</s>','Strikethrough')+tb('hilite','<span class="hlb">A</span>','Highlight')+'<span class="tsep"></span>'+
+  tb('insertUnorderedList','<svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M9 6h11M9 12h11M9 18h11"/><circle cx="4.5" cy="6" r="1.2" fill="currentColor"/><circle cx="4.5" cy="12" r="1.2" fill="currentColor"/><circle cx="4.5" cy="18" r="1.2" fill="currentColor"/></svg>','Bulleted list')+
+  tb('insertOrderedList','<svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M10 6h10M10 12h10M10 18h10"/><text x="2" y="8.5" font-size="7" fill="currentColor" stroke="none" font-family="sans-serif">1</text><text x="2" y="14.5" font-size="7" fill="currentColor" stroke="none" font-family="sans-serif">2</text><text x="2" y="20.5" font-size="7" fill="currentColor" stroke="none" font-family="sans-serif">3</text></svg>','Numbered list')+
+  tb('outdent','⇤','Decrease indent')+tb('indent','⇥','Increase indent')+tb('quote','❝','Quote')+tb('insertHorizontalRule','—','Divider')+'<span class="tsep"></span>'+tb('removeFormat','<span style="text-decoration:line-through">T</span>','Clear formatting')+
+  '<span class="tsep"></span>'+accBar(s.chars||DEFAULT_CHARS)+'</div>'
+  :'<div class="toolbar ro">View only — '+esc(s.sharedBy||'the owner')+' shared this with you. You can read and copy it.</div>')+
+ '<main class="docwrap"><div id="doc" class="doc"'+(ed?' contenteditable="true"':'')+' spellcheck="true" data-ph="Start typing your notes…">'+sanitizeHTML(s.html||'')+'</div><div class="docfoot muted xs" id="n-words"></div></main>';
+ var doc=$('#doc'),title=$('#n-title');
+ try{document.execCommand('styleWithCSS',false,false);document.execCommand('defaultParagraphSeparator',false,'p')}catch(e){}
+ function status(t){var el=$('#n-status');if(el)el.textContent=t}
+ function words(){var t=(doc.innerText||'').trim();$('#n-words').textContent=(t?t.split(/\s+/).length:0)+' words · '+t.replace(/\s/g,'').length+' characters'}
+ function save(){clearTimeout(timer);timer=null;var h=sanitizeHTML(doc.innerHTML),ti=title.value.trim()||'Untitled notes';
+  if(h!==s.html||ti!==s.title){s.html=h;s.title=ti;s.updated=Date.now();persist()}status(s.shareId?'Saved · synced':'Saved')}
+ function queue(){if(!ed)return;status('Saving…');clearTimeout(timer);timer=setTimeout(save,700)}
+ leaveHook=function(){if(timer)save()};
+ words();status('Saved');
+ if(ed){
+  doc.addEventListener('input',function(){queue();words()});
+  title.addEventListener('input',queue);
+  title.addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();doc.focus()}});
+  doc.addEventListener('paste',function(e){var cd=e.clipboardData;if(!cd)return;e.preventDefault();var h=cd.getData('text/html');
+   if(h){document.execCommand('insertHTML',false,sanitizeHTML(h.replace(/<!--[\s\S]*?-->/g,'')))}else{document.execCommand('insertText',false,cd.getData('text/plain'))}});
+  var bar=$('.toolbar');
+  bar.addEventListener('mousedown',function(e){if(e.target.closest('.tb'))e.preventDefault()});
+  bar.addEventListener('click',function(e){var b=e.target.closest('.tb');if(!b)return;exec(b.dataset.cmd)});
+  var blk=$('#n-block');
+  blk.addEventListener('mousedown',function(){var sl=getSelection();if(sl.rangeCount&&doc.contains(sl.anchorNode))saved=sl.getRangeAt(0).cloneRange()});
+  blk.addEventListener('change',function(){doc.focus();if(saved){var sl=getSelection();sl.removeAllRanges();sl.addRange(saved)}document.execCommand('formatBlock',false,'<'+blk.value+'>');queue();updateBar()});
+  noteSelHook=updateBar;
+  doc.addEventListener('keydown',function(e){
+   if(e.key==='Tab'){e.preventDefault();document.execCommand(e.shiftKey?'outdent':'indent')}
+  });
+ }
+ function inBlock(tag){var sl=getSelection();if(!sl.rangeCount)return false;var n=sl.anchorNode;while(n&&n!==doc){if(n.nodeName===tag)return true;n=n.parentNode}return false}
+ function exec(cmd){doc.focus();
+  if(cmd==='hilite'){var cur=String(document.queryCommandValue('hiliteColor')||'');document.execCommand('hiliteColor',false,/244/.test(cur)?'transparent':HILITE)}
+  else if(cmd==='quote')document.execCommand('formatBlock',false,inBlock('BLOCKQUOTE')?'<p>':'<blockquote>');
+  else document.execCommand(cmd,false,null);
+  queue();updateBar()}
+ function updateBar(){var sl=getSelection();if(!sl.rangeCount||!doc.contains(sl.anchorNode))return;
+  $$('.toolbar .tb').forEach(function(b){var c=b.dataset.cmd,on=false;try{if(/^(bold|italic|underline|strikeThrough|insertUnorderedList|insertOrderedList)$/.test(c))on=document.queryCommandState(c);else if(c==='hilite')on=/244/.test(String(document.queryCommandValue('hiliteColor')||''));else if(c==='quote')on=inBlock('BLOCKQUOTE')}catch(e){}b.classList.toggle('on',!!on)});
+  var v=String(document.queryCommandValue('formatBlock')||'p').toLowerCase();var blk=$('#n-block');if(blk)blk.value=/^h[123]$/.test(v)?v:'p'}
+ remoteHook=function(){if(!getSet(s.id))return;if(canEdit(s)!==ed){leaveHook=null;return render()}
+  if(timer)return; /* you're mid-edit: your save wins */
+  var h=sanitizeHTML(s.html||'');if(doc.innerHTML!==h){var off=document.activeElement===doc?caretOffset(doc):-1;doc.innerHTML=h;if(off>=0)setCaret(doc,off);words()}
+  if(document.activeElement!==title&&title.value!==s.title)title.value=s.title;
+  var bd=$('.note-top .tag.sh');if(bd)bd.outerHTML=sharedBadge(s)};
+ A.home=function(){go('')};A.share=function(){save();shareModal(s)};
+ A.more=function(){var own=!s.shareId||s.role==='owner';modal('<h3>'+esc(s.title)+'</h3><div class="cmenu"><button data-m="exp"><div><b>Export</b><span class="muted sm">Download a .json backup of this page</span></div></button><button data-m="copy"><div><b>Copy all text</b><span class="muted sm">Plain text to paste anywhere</span></div></button><button data-m="del" class="dz"><div><b>'+(own?'Delete':'Remove from my library')+'</b><span class="muted sm">'+(own?'Delete this page for good':'The owner keeps the original')+'</span></div></button></div>',
+  {exp:function(){closeModal();save();exportSet(s)},copy:function(){var t=doc.innerText;closeModal();try{navigator.clipboard.writeText(t).then(function(){toast('Copied')},function(){toast('Couldn\'t copy')})}catch(e){toast('Couldn\'t copy')}},del:function(){closeModal();leaveHook=null;deleteItemBox(s)}})};
+ if(ed&&!htmlText(s.html).trim())doc.focus();
+}
+
+/* ================= sharing ================= */
+var sharedSubs={},lastShared={};
+function sref(sid){return fs.collection('shared').doc(sid)}
+function shareContent(s){var t=typ(s),o={type:t,title:s.title||'',desc:s.desc||'',chars:s.chars||DEFAULT_CHARS};if(t==='note')o.html=s.html||'';else if(t==='quiz')o.qs=s.qs||[];else o.cards=s.cards||[];return JSON.stringify(o)}
+function itemByShare(sid){for(var i=0;i<DB.sets.length;i++)if(DB.sets[i].shareId===sid)return DB.sets[i];return null}
+function pushShared(){if(!UID)return;DB.sets.forEach(function(s){if(!s.shareId||s.role==='view')return;var sid=s.shareId;if(lastShared[sid]===undefined)return;var cj=shareContent(s);
+ if(lastShared[sid]!==cj){lastShared[sid]=cj;sref(sid).update({j:cj,t:stamp(),by:USER}).catch(saveErr)}})}
+function syncSharedSubs(){if(!UID||!fs)return;var want={};DB.sets.forEach(function(s){if(s.shareId)want[s.shareId]=1});
+ Object.keys(sharedSubs).forEach(function(sid){if(!want[sid])unsubShared(sid)});
+ Object.keys(want).forEach(function(sid){if(sharedSubs[sid])return;sharedSubs[sid]=sref(sid).onSnapshot(function(d){onShared(sid,d)},function(e){saveErr(e)})})}
+function unsubShared(sid){if(sharedSubs[sid]){try{sharedSubs[sid]()}catch(e){}delete sharedSubs[sid]}delete lastShared[sid]}
+function clearSharedSubs(){Object.keys(sharedSubs).forEach(unsubShared);sharedSubs={};lastShared={}}
+function onShared(sid,d){var s=itemByShare(sid);if(!s)return;
+ if(d.metadata&&d.metadata.hasPendingWrites)return;
+ if(!d.exists){if(d.metadata&&d.metadata.fromCache)return;
+  if(s.role!=='owner')toast((s.sharedBy||'The owner')+' stopped sharing “'+s.title+'” — you keep your own copy');
+  delete s.shareId;delete s.role;delete s.sharedBy;delete s.mode;unsubShared(sid);persist();softRender();return}
+ var data=d.data()||{},first=lastShared[sid]===undefined,changed=false;
+ if(s.role!=='owner'){var nr=data.mode==='edit'?'edit':'view';if(s.role!==nr){s.role=nr;s.mode=data.mode;changed=true}}
+ else if(data.mode&&s.mode!==data.mode){s.mode=data.mode;changed=true}
+ if(data.ownerName&&s.role!=='owner'&&s.sharedBy!==data.ownerName){s.sharedBy=data.ownerName;changed=true}
+ if(data.j!==lastShared[sid]){var cur=shareContent(s);
+  if(first&&cur!==data.j&&s.role!=='view'){var rt=data.t&&data.t.toMillis?data.t.toMillis():(+data.t||0);if((s.updated||0)>rt){lastShared[sid]=data.j;pushShared();if(changed){persist();softRender()}return}}
+  lastShared[sid]=data.j;
+  if(cur!==data.j){var c;try{c=JSON.parse(data.j)}catch(e){c=null}
+   if(c){s.title=c.title;s.desc=c.desc;s.chars=c.chars;if(c.type)s.type=c.type;if(c.cards)s.cards=c.cards;if(c.qs)s.qs=c.qs;if(c.html!=null)s.html=c.html;s.updated=Date.now();changed=true}}}
+ if(changed){persist();softRender()}}
+function linkBox(link){return '<div class="linkbox"><input readonly value="'+esc(link)+'" onclick="this.select()"><button class="btn sm primary" data-m="copy">Copy link</button></div>'}
+function copyLinkFn(link){return function(){var i=$('#modal-root .linkbox input');if(i)i.select();try{navigator.clipboard.writeText(link).then(function(){toast('Link copied')},function(){toast('Press Ctrl+C to copy')})}catch(e){toast('Press Ctrl+C to copy')}}}
+function shareLink(sid){return location.origin+location.pathname+'#join-'+sid}
+function shareModal(s){
+ if(s.shareId&&s.role!=='owner'){var link=shareLink(s.shareId);
+  modal('<h3>Shared with you</h3><p class="muted sm">“'+esc(s.title)+'” was shared by <b>'+esc(s.sharedBy||'someone')+'</b>. You can '+(s.role==='edit'?'<b>view and edit</b> it — changes sync to everyone who has it.':'<b>view and study</b> it, but not change it.')+'</p>'+linkBox(link)+'<p class="muted xs">Anyone you send this link to can open it after logging in.</p><div class="mfoot"><button class="btn primary" data-m="close">Done</button></div>',{copy:copyLinkFn(link)});return}
+ if(!s.shareId){
+  modal('<h3>Share “'+esc(s.title)+'”</h3><p class="muted sm">Anyone with the link can open it after logging in. What can they do?</p><div class="seg2"><label><input type="radio" name="sm" value="view" checked><div><b>Can view</b><span class="muted xs">Read and study it, but not change it</span></div></label><label><input type="radio" name="sm" value="edit"><div><b>Can edit</b><span class="muted xs">Collaborate — everyone\'s changes sync live</span></div></label></div><div id="sh-err" class="aerr"></div><div class="mfoot"><button class="btn" data-m="close">Cancel</button><button class="btn primary" data-m="create">Create link</button></div>',
+  {create:function(b){var mode=$('input[name=sm]:checked').value,sid=uid()+uid(),cj=shareContent(s);b.disabled=true;b.textContent='Creating…';
+   sref(sid).set({owner:UID,ownerName:USER,mode:mode,j:cj,t:stamp(),by:USER}).then(function(){s.shareId=sid;s.role='owner';s.mode=mode;lastShared[sid]=cj;persist();render();shareModal(s)},
+    function(e){b.disabled=false;b.textContent='Create link';$('#sh-err').textContent=e&&e.code==='permission-denied'?'Sharing is blocked by your Firestore rules — publish the new firestore.rules first.':fbErr(e)})}});return}
+ var link2=shareLink(s.shareId);
+ modal('<h3>Share “'+esc(s.title)+'”</h3>'+linkBox(link2)+'<div class="srow"><span>People with the link can</span><select id="sm-mode"><option value="view"'+(s.mode!=='edit'?' selected':'')+'>view</option><option value="edit"'+(s.mode==='edit'?' selected':'')+'>edit</option></select></div><p class="muted xs">They need to log in (or sign up) to open it. Only you can change this or stop sharing.</p><div class="mfoot"><button class="btn danger" data-m="stop">Stop sharing</button><div class="sp"></div><button class="btn primary" data-m="close">Done</button></div>',
+ {copy:copyLinkFn(link2),stop:function(){confirmBox('Stop sharing?','People with the link will lose access. Anyone who already added it keeps their own copy.','Stop sharing',function(){var sid=s.shareId;sref(sid).delete().then(function(){unsubShared(sid);delete s.shareId;delete s.role;delete s.mode;persist();toast('Stopped sharing');render()},function(e){toast(fbErr(e))})},true)}},
+ function(ov){$('#sm-mode',ov).addEventListener('change',function(e){var v=e.target.value;sref(s.shareId).update({mode:v}).then(function(){s.mode=v;persist();render();shareModal(s);toast(v==='edit'?'People with the link can now edit':'People with the link can now only view')},function(er){toast(fbErr(er))})})})}
+function viewJoin(sid){var ex=itemByShare(sid);if(ex){history.replaceState(null,'','#'+itemPath(ex));return render()}
+ app.innerHTML='<div class="auth"><div class="center"><div class="brand" style="justify-content:center"><i></i>My Flashcards</div><p class="muted sm">Opening shared link…</p></div></div>';
+ function fail(msg){app.innerHTML='<div class="auth"><div class="auth-card center"><h3>Can\'t open this link</h3><p class="muted sm">'+msg+'</p><button class="btn primary" data-a="home">Go to my library</button></div></div>';A.home=function(){go('')}}
+ sref(sid).get().then(function(d){if(location.hash.slice(1)!=='join-'+sid)return;
+  if(!d.exists)return fail('It may have been deleted, or the owner stopped sharing it.');
+  var data=d.data(),c;try{c=JSON.parse(data.j)}catch(e){return fail('The shared data is damaged.')}
+  var mine=data.owner===UID,it={id:uid(),type:c.type||'cards',title:c.title||'Shared',desc:c.desc||'',chars:c.chars||DEFAULT_CHARS,created:Date.now(),updated:Date.now(),shareId:sid,role:mine?'owner':(data.mode==='edit'?'edit':'view'),sharedBy:data.ownerName||'someone',mode:data.mode};
+  if(c.cards)it.cards=c.cards;if(c.qs)it.qs=c.qs;if(c.html!=null)it.html=c.html;if(!it.cards&&it.type==='cards')it.cards=[];
+  lastShared[sid]=data.j;DB.sets.push(it);persist();toast(mine?'Restored your shared item':'Added “'+it.title+'” to your library');history.replaceState(null,'','#'+itemPath(it));render()},
+ function(e){fail(e&&e.code==='permission-denied'?'Sharing isn\'t set up on this site yet (the Firestore rules need updating).':fbErr(e))})}
 
 render();
 })();
