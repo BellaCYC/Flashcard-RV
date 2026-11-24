@@ -2,6 +2,7 @@
 
 <p align="center">
   <img src="apple-touch-icon.png" width="160" alt="Flashcard RV icon: a free and O ads platform for midterm exams">
+  <a href="https://bellacyc.github.io/Flashcard-RV/"></a>
 </p>
 
 <h1 align="center">Flashcard RV</h1>
