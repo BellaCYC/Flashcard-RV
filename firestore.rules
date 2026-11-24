@@ -1,9 +1,27 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    // Each user can only read and write their own flashcards.
+
+    // Each user's own library: only that user can read or write it.
     match /users/{uid}/{document=**} {
       allow read, write: if request.auth != null && request.auth.uid == uid;
+    }
+
+    // Shared items (opened with a share link).
+    // Any logged-in user who has the link can open it, but nobody can list or search them.
+    match /shared/{sid} {
+      allow get: if request.auth != null;
+      allow create: if request.auth != null
+        && request.resource.data.owner == request.auth.uid;
+      // Owner can change anything except ownership.
+      // Others can only change the content, and only if the link is "can edit".
+      allow update: if request.auth != null
+        && request.resource.data.owner == resource.data.owner
+        && (resource.data.owner == request.auth.uid
+            || (resource.data.mode == 'edit'
+                && request.resource.data.mode == resource.data.mode
+                && request.resource.data.ownerName == resource.data.ownerName));
+      allow delete: if request.auth != null && resource.data.owner == request.auth.uid;
     }
   }
 }
