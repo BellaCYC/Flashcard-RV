@@ -7,7 +7,7 @@ A simple, dark-mode flashcard app inspired by Knowt and Quizlet, built for perso
 N0 ADS
 
 ## Features
-
+ 
 - **Create sets** – term / definition cards, Tab/Enter to jump to the next field, reorder, delete, swap terms and definitions
 - **Bulk import** – paste lists separated by tab, comma, dash or a custom separator (works with Quizlet/Knowt exports)
 - **Accent keys** – `¡ ¿ ° á é í ñ ó ú ü` + ⇧ for capitals; customizable per set
@@ -15,6 +15,9 @@ N0 ADS
 - **Learn** – rounds of 7: multiple choice → written → mastered
 - **Test** – true/false, multiple choice and written questions with a scored review
 - **Match** – timed tile game with personal best
+- **Multiple-choice quizzes** – write your own questions with A–F options and an optional explanation (or paste them in), then take it like a real test: submit, score, review, retake missed
+- **Notes** – a blank Google-Docs-style page: headings, bold/italic/underline/strike, highlight, lists, indent, quotes, accent keys, autosave
+- **Share links** – share any set, quiz or notes page as *can view* or *can edit*; edits sync live to everyone with the link
 
 ## Smart grading
 
