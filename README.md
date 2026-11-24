@@ -1,11 +1,11 @@
 # Flashcard RV
 
 <p align="center">
-  <img src="favicon-32x32.png" width="160" alt="Flashcard RV icon: a free and O ads platform for midterm exams">
+  <img src="apple-touch-icon.png" width="160" alt="Flashcard RV icon: a free and O ads platform for midterm exams">
 </p>
 
 <h1 align="center">Flashcard RV</h1>
-<p align="center"><em> FREE and O Ads platform for midterm exams.</em></p>
+<p align="center"><em> FREE and NO Ads platform for midterm exams.</em></p>
 </p>
 
 A simple, dark-mode flashcard app inspired by Knowt and Quizlet, built for personal practice (not commercial). One self-contained `index.html` — no build step, no server, with an independent account to save progress.
