@@ -7,12 +7,14 @@
 <link rel="icon" href="favicon.ico" sizes="any">
 <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
-<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://firestore.googleapis.com" crossorigin><link rel="preconnect" href="https://identitytoolkit.googleapis.com" crossorigin>
+<link rel="preload" as="script" href="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js">
+<link rel="preload" as="script" href="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js">
+<link rel="preload" as="script" href="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
 <style id="css">
-:root{--bg:#101112;--panel:#1c1e1f;--panel2:#252829;--line:#33373a;--line2:#454a4e;--text:#f1f3f4;--muted:#9ea4a9;--acc:#41d1c1;--accbg:rgba(65,209,193,.12);--good:#3ccf8a;--goodbg:rgba(60,207,138,.12);--bad:#ff6b6b;--badbg:rgba(255,107,107,.12);--warn:#f4b740;--r:18px}
+:root{--acc-t:#eef0f1;--on-acc:#111314;--green:#97b534;--green-t:#b2cf52;--yellow:#cea813;--yellow-t:#e3bf2c;--blue:#2a5892;--blue-t:#86aee6;--bg:#101112;--panel:#1c1e1f;--panel2:#252829;--line:#33373a;--line2:#454a4e;--text:#f1f3f4;--muted:#9ea4a9;--acc:#eef0f1;--accbg:rgba(255,255,255,.08);--good:#3ccf8a;--goodbg:rgba(60,207,138,.12);--bad:#ff6b6b;--badbg:rgba(255,107,107,.12);--warn:#f4b740;--r:18px}
 *{box-sizing:border-box}
 html,body{margin:0;background:var(--bg);color:var(--text);font-family:'Nunito',system-ui,-apple-system,sans-serif;-webkit-font-smoothing:antialiased}
 button{font:inherit;color:inherit;cursor:pointer;border:0;background:none;padding:0}
@@ -31,17 +33,17 @@ h3{font-size:19px;margin:0 0 12px;font-weight:800}
 .muted{color:var(--muted)} .sm{font-size:14px} .xs{font-size:12.5px}
 .btn{padding:10px 18px;border-radius:999px;font-weight:800;font-size:14px;background:var(--panel2);border:1px solid var(--line);transition:.15s;white-space:nowrap}
 .btn:hover{border-color:var(--line2);background:#2c3032}
-.btn.primary{background:var(--acc);color:#05231f;border-color:var(--acc)}
-.btn.primary:hover{background:#62e0d2}
+.btn.primary{background:var(--acc);color:var(--on-acc);border-color:var(--acc-t)}
+.btn.primary:hover{filter:brightness(1.12)}
 .btn.ghost{background:transparent}
 .btn.danger{color:var(--bad)}
 .btn.sm{padding:7px 13px;font-size:13px}
 .btn.big{padding:14px 30px;font-size:16px}
 .icon{min-width:38px;height:38px;border-radius:50%;display:inline-grid;place-items:center;font-size:17px;color:var(--muted);transition:.15s}
 .icon:hover{background:var(--panel2);color:var(--text)}
-.icon.on{color:var(--acc);background:var(--accbg)}
+.icon.on{color:var(--acc-t);background:var(--accbg)}
 .icon.sm{min-width:30px;height:30px;font-size:14px}
-.link{color:var(--acc);font-weight:800;font-size:14px}
+.link{color:var(--acc-t);font-weight:800;font-size:14px}
 .link:hover{text-decoration:underline}
 .row-between{display:flex;align-items:center;justify-content:space-between;gap:12px}
 .center{text-align:center}
@@ -51,7 +53,7 @@ h3{font-size:19px;margin:0 0 12px;font-weight:800}
 /* home */
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px}
 .tile{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:18px 18px 16px;text-align:left;transition:.15s;display:flex;flex-direction:column;gap:6px}
-.tile:hover{border-color:var(--acc);transform:translateY(-2px)}
+.tile:hover{border-color:var(--acc-t);transform:translateY(-2px)}
 .tile-t{font-weight:800;font-size:17px;line-height:1.3}
 .pbar{height:6px;border-radius:9px;background:var(--panel2);overflow:hidden;margin-top:8px}
 .pbar i{display:block;height:100%;background:var(--good);border-radius:9px}
@@ -62,8 +64,8 @@ h3{font-size:19px;margin:0 0 12px;font-weight:800}
 .meta{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:14px 0 22px}
 .modes{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px}
 .mode{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:16px;display:flex;align-items:center;gap:12px;font-weight:800;font-size:16px;transition:.15s}
-.mode:hover{border-color:var(--acc);background:#202324}
-.mode svg{width:26px;height:26px;color:var(--acc);flex:none}
+.mode:hover{border-color:var(--acc-t);background:#202324}
+.mode svg{width:26px;height:26px;color:var(--acc-t);flex:none}
 .opts-row{display:flex;flex-wrap:wrap;align-items:center;gap:16px;background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:12px 16px;margin-bottom:18px;font-size:14px;font-weight:700}
 select{background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:7px 10px;font-weight:700;font-size:14px;outline:none}
 .tog{display:inline-flex;align-items:center;gap:9px;cursor:pointer;user-select:none}
@@ -89,8 +91,8 @@ select{background:var(--panel2);border:1px solid var(--line);border-radius:10px;
 .fld{position:relative;display:flex;flex-direction:column-reverse;gap:6px;flex:1}
 .fld label{font-size:11px;font-weight:800;letter-spacing:.8px;color:var(--muted)}
 .fld input,.fld textarea{background:transparent;border:0;border-bottom:2px solid var(--line2);padding:8px 2px;outline:none;font-size:16px;resize:none;overflow:hidden;line-height:1.4;width:100%}
-.fld input:focus,.fld textarea:focus{border-bottom-color:var(--acc)}
-.fld input:focus+label,.fld textarea:focus+label{color:var(--acc)}
+.fld input:focus,.fld textarea:focus{border-bottom-color:var(--acc-t)}
+.fld input:focus+label,.fld textarea:focus+label{color:var(--acc-t)}
 .fld.big input{font-size:22px;font-weight:800}
 .fld.inline{flex:0 0 190px}
 .fld.inline input{font-size:15px;letter-spacing:2px}
@@ -102,7 +104,7 @@ select{background:var(--panel2);border:1px solid var(--line);border-radius:10px;
 .erow-h{display:flex;align-items:center;gap:4px;padding:8px 10px 0 18px;color:var(--muted);font-weight:800}
 .erow-b{display:flex;gap:28px;padding:6px 18px 18px}
 .addrow{width:100%;padding:22px;border-radius:16px;background:var(--panel);border:1px dashed var(--line2);font-weight:900;letter-spacing:1px;color:var(--muted);transition:.15s}
-.addrow:hover{color:var(--acc);border-color:var(--acc)}
+.addrow:hover{color:var(--acc-t);border-color:var(--acc-t)}
 .ed-foot{display:flex;justify-content:flex-end;margin-top:20px}
 .paste{background:var(--panel);border:1px solid var(--acc);border-radius:16px;padding:18px;margin-bottom:14px}
 .paste textarea{width:100%;background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:12px;margin:12px 0;outline:none;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:13px;resize:vertical}
@@ -110,14 +112,14 @@ select{background:var(--panel2);border:1px solid var(--line);border-radius:10px;
 .pgrid .lbl{font-weight:800;margin-bottom:6px}
 .pgrid label{display:flex;align-items:center;gap:7px;margin:4px 0;cursor:pointer}
 .pgrid input[type=text]{background:var(--panel2);border:1px solid var(--line);border-radius:8px;padding:4px 8px;width:90px}
-.pgrid input[type=radio]{accent-color:var(--acc)}
+.pgrid input[type=radio]{accent-color:var(--acc-t)}
 /* accent bar */
 .accbar{display:flex;flex-wrap:wrap;gap:8px}
 .acc-btn{width:36px;height:36px;border-radius:50%;border:1px solid var(--line2);display:grid;place-items:center;font-size:16px;font-weight:700;transition:.12s;background:var(--bg)}
-.acc-btn:hover{border-color:var(--acc);color:var(--acc)}
+.acc-btn:hover{border-color:var(--acc-t);color:var(--acc-t)}
 .acc-btn:active{transform:scale(.92)}
 .acc-btn.shift{color:var(--muted)}
-.acc-btn.shift.on{background:var(--acc);color:#05231f;border-color:var(--acc)}
+.acc-btn.shift.on{background:var(--acc);color:var(--on-acc);border-color:var(--acc-t)}
 /* study */
 .st-mode{font-weight:900;font-size:17px}
 .st-sub{font-weight:700;font-size:14px;margin-left:6px}
@@ -136,7 +138,7 @@ select{background:var(--panel2);border:1px solid var(--line);border-radius:10px;
 .ftxt.sm{font-size:23px} .ftxt.xs{font-size:17px}
 .fc-ctrl{display:flex;align-items:center;gap:12px;margin-top:20px}
 .circ{width:58px;height:46px;border-radius:999px;border:1px solid var(--line2);font-size:20px;display:grid;place-items:center;transition:.15s}
-.circ:hover{border-color:var(--acc);color:var(--acc)}
+.circ:hover{border-color:var(--acc-t);color:var(--acc-t)}
 .trk{display:flex;align-items:center;gap:10px;padding:10px 18px;border-radius:999px;font-weight:800;border:1px solid var(--line2);transition:.15s}
 .trk .cnt{min-width:30px;height:26px;padding:0 8px;border-radius:99px;display:grid;place-items:center;font-size:13px}
 .trk.no{color:#ffa1a1}.trk.no .cnt{background:var(--badbg);color:var(--bad)}
@@ -152,7 +154,7 @@ select{background:var(--panel2);border:1px solid var(--line);border-radius:10px;
 .opt{display:flex;align-items:center;gap:12px;text-align:left;padding:16px 18px;border-radius:14px;border:2px solid var(--line);font-weight:700;font-size:16px;transition:.12s;white-space:pre-wrap;line-height:1.3}
 .opt:hover:not([disabled]){border-color:var(--line2);background:#222527}
 .opt .num{flex:none;width:26px;height:26px;border-radius:50%;background:var(--panel2);display:grid;place-items:center;font-size:13px;color:var(--muted)}
-.opt.sel{border-color:var(--acc);background:var(--accbg)}
+.opt.sel{border-color:var(--acc-t);background:var(--accbg)}
 .opt.right{border-color:var(--good);background:var(--goodbg)}
 .opt.wrong{border-color:var(--bad);background:var(--badbg)}
 .opt[disabled]{cursor:default}
@@ -191,7 +193,7 @@ mark.miss{background:rgba(60,207,138,.3);color:#c9ffe5;text-decoration:underline
 .mgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
 .mtile{min-height:120px;padding:14px;border-radius:16px;background:var(--panel);border:2px solid var(--line);font-weight:700;font-size:15px;line-height:1.3;transition:border-color .12s,background .12s,opacity .3s,transform .3s;white-space:pre-wrap;word-break:break-word}
 .mtile:hover{border-color:var(--line2)}
-.mtile.sel{border-color:var(--acc);background:var(--accbg)}
+.mtile.sel{border-color:var(--acc-t);background:var(--accbg)}
 .mtile.ok{border-color:var(--good);background:var(--goodbg)}
 .mtile.bad{border-color:var(--bad);background:var(--badbg);animation:shake .35s}
 .mtile.gone{opacity:0;transform:scale(.9);pointer-events:none}
@@ -209,18 +211,39 @@ textarea.code{width:100%;height:240px;background:var(--panel2);border:1px solid 
 #toast{position:fixed;left:50%;bottom:28px;transform:translate(-50%,20px);background:#2b2f31;border:1px solid var(--line2);padding:11px 18px;border-radius:999px;font-weight:700;font-size:14px;opacity:0;pointer-events:none;transition:.25s;z-index:200}
 #toast.show{opacity:1;transform:translate(-50%,0)}
 @keyframes fade{from{opacity:0}}
-.kind{font-size:11px;font-weight:900;letter-spacing:1px;color:var(--acc);margin-bottom:2px}
-.kind.k-quiz{color:#a78bfa}.kind.k-note{color:#f4b740}
+body.th-cards{--acc:#97b534;--acc-t:#b2cf52;--on-acc:#1a2300;--accbg:rgba(151,181,52,.15)}
+body.th-quiz{--acc:#cea813;--acc-t:#e3bf2c;--on-acc:#251c00;--accbg:rgba(206,168,19,.15)}
+body.th-note{--acc:#2a5892;--acc-t:#86aee6;--on-acc:#ffffff;--accbg:rgba(42,88,146,.25)}
+.brand img{width:30px;height:30px;border-radius:8px;object-fit:cover;box-shadow:0 0 0 1px rgba(255,255,255,.08)}
+.kind svg{width:14px;height:14px;vertical-align:-2px;margin-right:5px}
+.tile{position:relative;overflow:hidden;padding-top:20px;min-height:150px}
+.tile:before{content:'';position:absolute;left:0;right:0;top:0;height:5px;background:var(--tc)}
+.tile:hover{border-color:var(--tc)}
+.tile.t-cards{--tc:var(--green)}.tile.t-quiz{--tc:var(--yellow)}.tile.t-note{--tc:var(--blue)}
+.tile.t-cards .pbar i{background:var(--green)}
+.ftabs{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 18px}
+.ftab{display:inline-flex;align-items:center;gap:7px;padding:8px 15px;border-radius:999px;border:1.5px solid var(--line);font-weight:800;font-size:14px;color:var(--muted);transition:.15s}
+.ftab:hover{color:var(--text);border-color:var(--line2)}
+.ftab .c{font-size:12px;opacity:.75}
+.ftab .d{width:9px;height:9px;border-radius:50%;background:var(--fc)}
+.ftab.on{background:var(--fc);border-color:var(--fc);color:var(--fon)}
+.ftab.f-all{--fc:#e9ecee;--fon:#111}.ftab.f-cards{--fc:var(--green);--fon:#1a2300}.ftab.f-quiz{--fc:var(--yellow);--fon:#251c00}.ftab.f-note{--fc:var(--blue);--fon:#fff}
+.cmenu button[data-m=cards] svg{color:var(--green-t)}.cmenu button[data-m=quiz] svg{color:var(--yellow-t)}.cmenu button[data-m=note] svg{color:var(--blue-t)}
+.cmenu button[data-m=cards]:hover{border-color:var(--green)}.cmenu button[data-m=quiz]:hover{border-color:var(--yellow)}.cmenu button[data-m=note]:hover{border-color:var(--blue)}
+.typehead{display:flex;align-items:center;gap:10px;margin-bottom:4px}
+
+.kind{font-size:11px;font-weight:900;letter-spacing:1px;color:var(--acc-t);margin-bottom:2px}
+.kind.k-cards{color:var(--green-t)}.kind.k-quiz{color:var(--yellow-t)}.kind.k-note{color:var(--blue-t)}
 .kind .shk{color:var(--muted)}
 .tile .prev{line-height:1.45;max-height:4.4em;overflow:hidden;margin-top:4px}
-.tag.sh{display:inline-flex;align-items:center;gap:5px;background:var(--accbg);color:var(--acc);margin-left:6px;white-space:nowrap}
+.tag.sh{display:inline-flex;align-items:center;gap:5px;background:var(--accbg);color:var(--acc-t);margin-left:6px;white-space:nowrap}
 .cmenu{display:flex;flex-direction:column;gap:10px}
 .cmenu button{display:flex;gap:14px;align-items:flex-start;text-align:left;padding:14px 16px;border-radius:14px;border:1px solid var(--line);background:var(--panel2);transition:.15s}
-.cmenu button:hover{border-color:var(--acc)}
+.cmenu button:hover{border-color:var(--acc-t)}
 .cmenu button.dz:hover{border-color:var(--bad)}
-.cmenu svg{width:26px;height:26px;color:var(--acc);flex:none;margin-top:2px}
+.cmenu svg{width:26px;height:26px;color:var(--acc-t);flex:none;margin-top:2px}
 .cmenu b{display:block;font-size:15px;margin-bottom:2px}
-.takecard{display:flex;align-items:center;justify-content:space-between;gap:16px;background:linear-gradient(135deg,rgba(167,139,250,.14),rgba(65,209,193,.1));border:1px solid var(--line);border-radius:18px;padding:20px 22px;margin-bottom:18px}
+.takecard{display:flex;align-items:center;justify-content:space-between;gap:16px;background:linear-gradient(135deg,rgba(206,168,19,.18),rgba(206,168,19,.04));border:1px solid var(--line);border-radius:18px;padding:20px 22px;margin-bottom:18px}
 .qv{padding:20px 22px;margin-bottom:12px}
 .qv .qtext{margin:0 0 12px}
 .qn{color:var(--muted);margin-right:4px}
@@ -231,7 +254,7 @@ textarea.code{width:100%;height:240px;background:var(--panel2);border:1px solid 
 .qvopt.right .num{background:var(--good);color:#06281a}
 .mcopts{display:flex;flex-direction:column;gap:10px}
 .mcopts .opt{width:100%}
-.mcopts .opt.sel .num{background:var(--acc);color:#05231f}
+.mcopts .opt.sel .num{background:var(--acc);color:var(--on-acc)}
 .mcopts .opt.right .num{background:var(--good);color:#06281a}
 .mcopts .opt.wrong .num{background:var(--bad);color:#2a0606}
 .why{margin-top:14px;background:var(--panel2);border-radius:12px;padding:12px 14px;font-size:14px;line-height:1.5}
@@ -247,17 +270,21 @@ textarea.code{width:100%;height:240px;background:var(--panel2);border:1px solid 
 /* notes */
 .note-top{gap:8px}
 .ntitle{background:transparent;border:1px solid transparent;border-radius:8px;padding:6px 8px;font-size:18px;font-weight:800;outline:none;min-width:120px;width:min(380px,40vw)}
-.ntitle:hover{border-color:var(--line)}.ntitle:focus{border-color:var(--acc)}
+.ntitle:hover{border-color:var(--line)}.ntitle:focus{border-color:var(--acc-t)}
 .toolbar{position:sticky;top:62px;z-index:20;display:flex;flex-wrap:wrap;align-items:center;gap:4px;padding:8px 14px;background:rgba(28,30,31,.97);border-bottom:1px solid var(--line)}
 .toolbar.ro{color:var(--muted);font-size:13px;font-weight:700;justify-content:center}
 .toolbar select{padding:5px 8px;font-size:13px}
 .tb{min-width:34px;height:32px;border-radius:8px;display:inline-grid;place-items:center;font-size:15px;color:#d5d9dc;padding:0 6px;transition:.12s}
 .tb:hover{background:var(--panel2)}
-.tb.on{background:var(--accbg);color:var(--acc)}
+.tb.on{background:var(--accbg);color:var(--acc-t)}
 .tsep{width:1px;height:22px;background:var(--line);margin:0 6px}
 .toolbar .accbar{gap:4px}
 .toolbar .acc-btn{width:30px;height:30px;font-size:14px}
 .hlb{background:rgba(244,183,64,.45);padding:0 4px;border-radius:3px}
+.nk{margin:0 4px 0 2px;white-space:nowrap}
+body.th-note .doc{border-top:4px solid var(--blue)}
+body.th-quiz .tq,body.th-quiz .qv{border-left:4px solid var(--yellow)}
+body.th-cards .face{border-top:4px solid var(--green)}
 .docwrap{max-width:860px;margin:26px auto 120px;padding:0 18px}
 .doc{min-height:70vh;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:48px 56px;font-size:16px;line-height:1.7;outline:none;box-shadow:0 18px 40px rgba(0,0,0,.3);word-wrap:break-word}
 .doc:focus{border-color:#3d4346}
@@ -272,10 +299,10 @@ textarea.code{width:100%;height:240px;background:var(--panel2);border:1px solid 
 .linkbox input{flex:1;min-width:0;background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:9px 12px;font-size:13px;outline:none;color:var(--muted)}
 .seg2{display:flex;flex-direction:column;gap:10px;margin:14px 0}
 .seg2 label{display:flex;gap:12px;align-items:flex-start;padding:12px 14px;border:1.5px solid var(--line);border-radius:12px;cursor:pointer}
-.seg2 label:has(input:checked){border-color:var(--acc);background:var(--accbg)}
-.seg2 input{accent-color:var(--acc);margin-top:3px}
+.seg2 label:has(input:checked){border-color:var(--acc-t);background:var(--accbg)}
+.seg2 input{accent-color:var(--acc-t);margin-top:3px}
 .seg2 b{display:block}
-.joinnote{background:var(--accbg);color:var(--acc);border-radius:12px;padding:10px 14px;font-weight:700;font-size:14px;margin:16px 0 0;text-align:center}
+.joinnote{background:var(--accbg);color:var(--acc-t);border-radius:12px;padding:10px 14px;font-weight:700;font-size:14px;margin:16px 0 0;text-align:center}
 @media(max-width:720px){.qvopts{grid-template-columns:1fr}.doc{padding:28px 20px}.takecard{flex-direction:column;align-items:flex-start}.ntitle{width:40vw}}
 
 #cloudbar{position:fixed;left:50%;top:70px;transform:translateX(-50%);width:min(680px,calc(100% - 24px));background:#3a2a12;border:1px solid rgba(244,183,64,.55);color:#ffe2a8;border-radius:14px;padding:12px 44px 12px 16px;font-size:14px;line-height:1.5;z-index:150;box-shadow:0 10px 30px rgba(0,0,0,.45)}
@@ -285,16 +312,16 @@ textarea.code{width:100%;height:240px;background:var(--panel2);border:1px solid 
 .auth-card{width:min(400px,100%);background:var(--panel);border:1px solid var(--line);border-radius:24px;padding:32px 28px}
 .atabs{display:flex;background:var(--panel2);border-radius:999px;padding:4px;margin:22px 0 20px}
 .atab{flex:1;padding:9px;border-radius:999px;font-weight:800;color:var(--muted);transition:.15s}
-.atab.on{background:var(--acc);color:#05231f}
+.atab.on{background:var(--acc);color:var(--on-acc)}
 .afld{margin-bottom:14px}
 .afld label{display:block;font-size:13px;font-weight:800;color:var(--muted);margin-bottom:6px}
 .afld input{width:100%;background:var(--panel2);border:1.5px solid var(--line);border-radius:12px;padding:12px 14px;font-size:16px;outline:none}
-.afld input:focus{border-color:var(--acc)}
+.afld input:focus{border-color:var(--acc-t)}
 .pw{position:relative}.pw input{padding-right:64px}.pw .link{position:absolute;right:14px;top:50%;transform:translateY(-50%)}
 .aerr{color:var(--bad);font-weight:700;font-size:14px;min-height:20px;margin-bottom:10px}
 .uchip{display:inline-flex;align-items:center;gap:8px;padding:4px 12px 4px 4px;border-radius:999px;border:1px solid var(--line);font-weight:800;font-size:14px;transition:.15s}
-.uchip:hover{border-color:var(--acc)}
-.uchip .av{width:28px;height:28px;border-radius:50%;background:var(--acc);color:#05231f;display:grid;place-items:center;font-weight:900}
+.uchip:hover{border-color:var(--acc-t)}
+.uchip .av{width:28px;height:28px;border-radius:50%;background:var(--acc);color:var(--on-acc);display:grid;place-items:center;font-weight:900}
 @media(max-width:720px){
  .modes{grid-template-columns:1fr 1fr}.opts{grid-template-columns:1fr}.mgrid{grid-template-columns:repeat(3,1fr)}
  .erow-b{flex-direction:column;gap:14px}.term{grid-template-columns:1fr auto}.term .td{grid-column:1}.term .tt{border:0}
@@ -350,9 +377,8 @@ function studyCards(s,sl){if(sl.starredOnly){var f=s.cards.filter(function(c){re
 /* ---------- cloud accounts (Firebase) ---------- */
 var FIREBASE_CONFIG={apiKey:"AIzaSyCwT7-cl1tKhMwCxfY30JbBpuozQNz2sQo",authDomain:"flashcard-f5dcd.firebaseapp.com",projectId:"flashcard-f5dcd",storageBucket:"flashcard-f5dcd.firebasestorage.app",messagingSenderId:"197478570894",appId:"1:197478570894:web:0ae016016948e55fad22df",measurementId:"G-QDCJ1M5KFP"};
 var USERNAME_DOMAIN='users.flashcard-f5dcd.app';
-var FB=null,auth=null,fs=null,AUTH='loading',unsubs=[],lastSynced={};
-try{FB=window.firebase;FB.initializeApp(FIREBASE_CONFIG);auth=FB.auth();fs=FB.firestore();fs.enablePersistence({synchronizeTabs:true}).catch(function(){})}catch(e){FB=null;AUTH='out'}
 function userRef(){return fs.collection('users').doc(UID)}
+function needCloud(fn){if(fs)return fn();toast('Connecting…');fbReady.then(function(ok){if(ok)fn();else toast('Can\'t reach the cloud right now')})}
 function toEmail(id){id=id.trim().toLowerCase();return id.indexOf('@')>=0?id:id+'@'+USERNAME_DOMAIN}
 function nameOf(u){return u.displayName||(u.email||'').replace('@'+USERNAME_DOMAIN,'')}
 function fbErr(e){var c=(e&&e.code)||'';return({
@@ -376,46 +402,81 @@ function showBanner(){var b=$('#cloudbar');if(!cloudErrMsg){if(b)b.remove();retu
  var perm=/permission|rules/i.test(cloudErrMsg)||/insufficient/i.test(cloudErrMsg);
  b.innerHTML='<b>⚠ Not synced to the cloud:</b> '+esc(cloudErrMsg)+'<br><span>'+(perm?'Fix: Firebase console → Firestore Database → <b>Rules</b> → paste the rules from <code>firestore.rules</code> → <b>Publish</b>. ':'')+'Your changes are kept on this device and will upload automatically once it works.</span><button class="icon sm" onclick="this.parentNode.style.display=\'none\'">✕</button>'}
 function stamp(){return FB.firestore.FieldValue.serverTimestamp()}
-function kvWrite(k){if(!UID)return;var j=JSON.stringify(MEM[k]===undefined?null:MEM[k]);cloudWrite('kv',k,j,userRef().collection('kv').doc(k).set({j:j,t:stamp()}))}
-function kvDel(k){if(!UID)return;cloudWrite('kv',k,null,userRef().collection('kv').doc(k).delete())}
-function persist(){DB.updatedAt=Date.now();if(!UID)return Promise.resolve();var col=userRef().collection('sets'),seen={};
+function kvWrite(k){if(!UID)return;var j=JSON.stringify(MEM[k]===undefined?null:MEM[k]);saveCache();
+ if(!fs){OB.kv[k]=j;saveOB();return}cloudWrite('kv',k,j,userRef().collection('kv').doc(k).set({j:j,t:stamp()}))}
+function kvDel(k){if(!UID)return;saveCache();if(!fs){OB.kv[k]=null;saveOB();return}cloudWrite('kv',k,null,userRef().collection('kv').doc(k).delete())}
+function persist(){DB.updatedAt=Date.now();if(!UID)return Promise.resolve();saveCache();var seen={};
+ if(!fs){ /* cloud not loaded yet: queue in the outbox, sent as soon as it connects */
+  DB.sets.forEach(function(x){seen[x.id]=1;var j=JSON.stringify(x);if(lastSynced[x.id]!==j)OB.sets[x.id]=j});
+  Object.keys(lastSynced).forEach(function(id){if(!seen[id])OB.sets[id]=null});saveOB();return Promise.resolve()}
+ var col=userRef().collection('sets');
  DB.sets.forEach(function(x){seen[x.id]=1;var j=JSON.stringify(x);if(lastSynced[x.id]!==j){lastSynced[x.id]=j;cloudWrite('sets',x.id,j,col.doc(x.id).set({j:j,t:stamp()}))}});
  Object.keys(lastSynced).forEach(function(id){if(!seen[id]){delete lastSynced[id];cloudWrite('sets',id,null,col.doc(id).delete())}});
  pushShared();syncSharedSubs();
  return Promise.resolve()}
+/* ---- instant start: last library kept on this device ---- */
+var cacheT=null;
+function saveCache(){if(!UID)return;clearTimeout(cacheT);cacheT=setTimeout(writeCache,250)}
+function writeCache(){clearTimeout(cacheT);cacheT=null;if(!UID||!MEM)return;dev.set('fc_cache_'+UID,{sets:DB.sets,mem:MEM,synced:lastSynced,t:Date.now()});dev.set('fc_last',{uid:UID,name:USER})}
+function dropCache(uid){if(uid){dev.del('fc_cache_'+uid);dev.del('fc_outbox_'+uid)}dev.del('fc_last')}
+window.addEventListener('pagehide',function(){if(cacheT)writeCache()});
 /* changes from another browser: refresh the home / set page only (never interrupt studying or editing) */
 function softRender(){syncSharedSubs();if(remoteHook)remoteHook();var h=location.hash.slice(1);if(!(h===''||/^(set|quiz)-/.test(h)))return;if($('#modal-root .ov'))return;var ae=document.activeElement;if(ae&&/INPUT|TEXTAREA|SELECT/.test(ae.tagName))return;var y=window.scrollY;render();window.scrollTo(0,y)}
-function onSets(snap,initial){var remote=false;snap.docChanges().forEach(function(ch){var d=ch.doc,id=d.id;if(d.metadata.hasPendingWrites&&!initial)return;remote=true;
-  if(ch.type==='removed'){delete lastSynced[id];var ex=getSet(id);if(ex)DB.sets.splice(DB.sets.indexOf(ex),1);return}
-  var j=d.data().j,data;try{data=JSON.parse(j)}catch(e){return}lastSynced[id]=j;var ex2=getSet(id);
+function onSets(snap,initial){var remote=false;snap.docChanges().forEach(function(ch){var d=ch.doc,id=d.id;if(d.metadata.hasPendingWrites&&!initial)return;
+  if(ch.type==='removed'){delete lastSynced[id];var ex=getSet(id);if(ex){DB.sets.splice(DB.sets.indexOf(ex),1);remote=true}return}
+  var j=d.data().j,data;if(lastSynced[id]===j&&getSet(id))return;try{data=JSON.parse(j)}catch(e){return}lastSynced[id]=j;remote=true;var ex2=getSet(id);
   if(ex2){Object.keys(ex2).forEach(function(k){delete ex2[k]});Object.assign(ex2,data)}else DB.sets.push(data)});
  return remote}
-function onKV(snap,initial){var remote=false;snap.docChanges().forEach(function(ch){var d=ch.doc;if(d.metadata.hasPendingWrites&&!initial)return;remote=true;
-  if(ch.type==='removed'){delete MEM[d.id];return}try{MEM[d.id]=JSON.parse(d.data().j)}catch(e){}});return remote}
-var pendingName=null;
-function startCloud(user){UID=user.uid;loadOB();USER=user.displayName||pendingName||nameOf(user);pendingName=null;MEM={};DB={updatedAt:0,sets:[]};lastSynced={};
- var st={sets:0,kv:0},done=false;
- function check(force){if(done)return;if(!(st.sets&&st.kv)&&!force)return;done=true;
-  /* re-apply and re-send anything that never reached the cloud */
-  var pend=OB;OB={sets:{},kv:{}};
+function onKV(snap,initial){var remote=false;snap.docChanges().forEach(function(ch){var d=ch.doc;if(d.metadata.hasPendingWrites&&!initial)return;
+  if(ch.type==='removed'){if(d.id in MEM){delete MEM[d.id];remote=true}return}var j=d.data().j;if(JSON.stringify(MEM[d.id])===j)return;try{MEM[d.id]=JSON.parse(j);remote=true}catch(e){}});return remote}
+/* the server's full list wins over the device copy (except changes still waiting to upload) */
+function reconcile(name,snap){if(!snap.docs)return false;var ids={};(snap.docs||[]).forEach(function(d){ids[d.id]=1});var gone=false;
+ if(name==='sets'){DB.sets=DB.sets.filter(function(x){var keep=ids[x.id]||OB.sets[x.id]!==undefined;if(!keep){delete lastSynced[x.id];gone=true}return keep})}
+ else Object.keys(MEM).forEach(function(k){if(!ids[k]&&OB.kv[k]===undefined){delete MEM[k];gone=true}});
+ return gone}
+var pendingName=null,PRELOADED=false;
+function startCloud(user,keep){UID=user.uid;USER=user.displayName||pendingName||USER||nameOf(user);pendingName=null;
+ if(!keep){loadOB();MEM={};DB={updatedAt:0,sets:[]};lastSynced={}}
+ var srv={sets:0,kv:0},cache={sets:0,kv:0},done=!!keep,seeded=false;
+ function flushOutbox(){var pend=OB;OB={sets:{},kv:{}};Object.keys(pend.sets).forEach(function(id){delete lastSynced[id]});
   Object.keys(pend.sets).forEach(function(id){var j=pend.sets[id],ex=getSet(id);if(j===null){if(ex)DB.sets.splice(DB.sets.indexOf(ex),1)}else{try{var d=JSON.parse(j);if(ex){Object.keys(ex).forEach(function(k){delete ex[k]});Object.assign(ex,d)}else DB.sets.push(d)}catch(e){}}});
   Object.keys(pend.kv).forEach(function(k){var j=pend.kv[k];if(j===null)delete MEM[k];else try{MEM[k]=JSON.parse(j)}catch(e){}});
-  OB=pend;if(Object.keys(pend.sets).length)persist();Object.keys(pend.kv).forEach(function(k){pend.kv[k]===null?kvDel(k):kvWrite(k)});
-  if(st.sets===1&&st.kv===1&&!MEM.fc_meta){if(!DB.sets.length){DB=seedDB();persist()}ls.set('fc_meta',{seeded:true})}
-  AUTH='in';syncSharedSubs();render()}
- setTimeout(function(){check(true)},7000); /* offline: show cached cards */
+  OB=pend;if(Object.keys(pend.sets).length)persist();Object.keys(pend.kv).forEach(function(k){pend.kv[k]===null?kvDel(k):kvWrite(k)})}
+ function maybeSeed(){if(seeded||srv.sets!==1||srv.kv!==1)return;seeded=true;
+  if(!MEM.fc_meta){if(!DB.sets.length){DB=seedDB();persist();if(AUTH==='in')softRender()}ls.set('fc_meta',{seeded:true})}}
+ function finish(){if(done)return;done=true;flushOutbox();AUTH='in';syncSharedSubs();render();writeCache()}
+ if(keep)flushOutbox();
+ var to=setTimeout(finish,5000); /* offline: show what this device has */
  function sub(name,handler){unsubs.push(userRef().collection(name).onSnapshot({includeMetadataChanges:true},function(snap){
-   var r=handler(snap,!done);if(!done){if(!snap.metadata.fromCache){st[name]=1;check()}}else if(r&&AUTH==='in')softRender()},
-  function(e){saveErr(e);st[name]=2;check()}))}
+   var r=handler(snap,!done);
+   if(snap.metadata.fromCache)cache[name]=1;else if(!srv[name]){srv[name]=1;if(reconcile(name,snap))r=true}
+   if(!done){if((srv.sets&&srv.kv)||(cache.sets&&cache.kv&&MEM.fc_meta)){clearTimeout(to);finish()}}
+   else if(r&&AUTH==='in')softRender();
+   maybeSeed();if(r)saveCache()},
+  function(e){saveErr(e);srv[name]=2;if(!done&&srv.sets&&srv.kv)finish()}))}
  sub('sets',onSets);sub('kv',onKV);
 }
-if(auth)auth.onAuthStateChanged(function(u){clearSharedSubs();unsubs.forEach(function(f){try{f()}catch(e){}});unsubs=[];
- cloudErrMsg=null;showBanner();
- if(u){AUTH='loading';render();startCloud(u)}else{UID=USER=MEM=null;OB={sets:{},kv:{}};DB={updatedAt:0,sets:[]};lastSynced={};AUTH='out';render()}});
-function logout(){history.replaceState(null,'',location.pathname+location.search);auth.signOut()}
-function reauth(pw){var u=auth.currentUser;return u.reauthenticateWithCredential(FB.auth.EmailAuthProvider.credential(u.email,pw))}
+function onAuth(u){clearSharedSubs();unsubs.forEach(function(f){try{f()}catch(e){}});unsubs=[];cloudErrMsg=null;showBanner();
+ if(u&&PRELOADED&&u.uid===UID){PRELOADED=false;startCloud(u,true);return}
+ if(PRELOADED){PRELOADED=false;if(!u)dropCache(UID)}
+ if(u){AUTH='loading';render();startCloud(u)}else{UID=USER=MEM=null;OB={sets:{},kv:{}};DB={updatedAt:0,sets:[]};lastSynced={};AUTH='out';render()}}
+function logout(){history.replaceState(null,'',location.pathname+location.search);var id=UID;clearTimeout(cacheT);cacheT=null;dropCache(id);
+ if(auth)auth.signOut();else{UID=USER=MEM=null;DB={updatedAt:0,sets:[]};lastSynced={};AUTH='out';render()}}
+var FB=null,auth=null,fs=null,AUTH='loading',unsubs=[],lastSynced={};
+var FB_BASE='https://www.gstatic.com/firebasejs/10.12.2/',fbResolve,fbReady=new Promise(function(r){fbResolve=r});
+function loadScript(src){return new Promise(function(res,rej){var el=document.createElement('script');el.src=src;el.onload=res;el.onerror=rej;document.head.appendChild(el)})}
+function initFirebase(){try{FB=window.firebase;FB.initializeApp(FIREBASE_CONFIG);auth=FB.auth();fs=FB.firestore();fs.enablePersistence({synchronizeTabs:true}).catch(function(){})}catch(e){FB=auth=fs=null}
+ fbResolve(!!fs);
+ if(auth)auth.onAuthStateChanged(onAuth);
+ else{if(AUTH==='loading')AUTH='out';render();if(AUTH==='in'){cloudErrMsg='Couldn\'t reach the cloud — showing the copy saved on this device';showBanner()}}}
+function bootFirebase(){loadScript(FB_BASE+'firebase-app-compat.js').then(function(){return Promise.all([loadScript(FB_BASE+'firebase-auth-compat.js'),loadScript(FB_BASE+'firebase-firestore-compat.js')])}).then(initFirebase,initFirebase)}
+/* open instantly with the library saved on this device; the cloud syncs in behind it */
+(function(){var last=dev.get('fc_last'),c=last&&last.uid?dev.get('fc_cache_'+last.uid):null;
+ if(c&&Array.isArray(c.sets)){UID=last.uid;USER=last.name;DB={updatedAt:0,sets:c.sets};MEM=c.mem||{};lastSynced=c.synced||{};loadOB();AUTH='in';PRELOADED=true}
+ else if(!last)AUTH='out'})();
+function reauth(pw){if(!auth||!auth.currentUser)return Promise.reject({message:'Still connecting — try again in a moment'});var u=auth.currentUser;return u.reauthenticateWithCredential(FB.auth.EmailAuthProvider.credential(u.email,pw))}
 function updateStatus(){var el=$('#status');if(!el)return;el.innerHTML=USER?'<button class="uchip" data-a="user" title="Account"><span class="av">'+esc(USER.charAt(0).toUpperCase())+'</span>'+esc(USER)+'</button>':''}
-function userMenu(){var em=auth.currentUser&&auth.currentUser.email||'',isMail=em.indexOf('@'+USERNAME_DOMAIN)<0;
+function userMenu(){var em=auth&&auth.currentUser&&auth.currentUser.email||'',isMail=em.indexOf('@'+USERNAME_DOMAIN)<0;
  modal('<div class="row-between"><h3 style="margin:0">'+esc(USER)+'</h3><span class="muted xs">'+DB.sets.length+' set'+(DB.sets.length===1?'':'s')+'</span></div><p class="muted sm">☁ Synced to the cloud. Log in on any browser to see the same cards.'+(isMail?'<br>'+esc(em):'')+'</p>'+
  '<div style="display:flex;flex-direction:column;gap:10px;margin-top:16px"><button class="btn" data-m="backup">Export all (backup file)</button><button class="btn" data-m="pw">Change password</button><button class="btn primary" data-m="out">Log out</button><button class="btn ghost danger" data-m="del">Delete account</button></div>',
  {backup:function(){closeModal();exportAll()},pw:changePwModal,out:function(){closeModal();logout()},del:deleteModal})}
@@ -427,10 +488,10 @@ function deleteModal(){modal('<h3>Delete account “'+esc(USER)+'”?</h3><p cla
  {ok:function(b){var err=$('#d-err');b.disabled=true;
   reauth($('#d-pw').value).then(function(){var ref=userRef();unsubs.forEach(function(f){try{f()}catch(e){}});unsubs=[];
    return Promise.all(['sets','kv'].map(function(c){return ref.collection(c).get().then(function(q){return Promise.all(q.docs.map(function(d){return d.ref.delete()}))})}))})
-  .then(function(){return auth.currentUser.delete()}).then(function(){closeModal();history.replaceState(null,'',location.pathname+location.search);toast('Account deleted')},function(e){b.disabled=false;err.textContent=fbErr(e)})}})}
-function viewLoading(){app.innerHTML='<div class="auth"><div class="center"><div class="brand" style="justify-content:center"><i></i>My Flashcards</div><p class="muted sm">Loading your cards…</p></div></div>'}
+  .then(function(){var id=UID;clearTimeout(cacheT);cacheT=null;dropCache(id);return auth.currentUser.delete()}).then(function(){closeModal();history.replaceState(null,'',location.pathname+location.search);toast('Account deleted')},function(e){b.disabled=false;err.textContent=fbErr(e)})}})}
+function viewLoading(){app.innerHTML='<div class="auth"><div class="center"><div class="brand" style="justify-content:center"><img src="apple-touch-icon.png" alt="">My Flashcards</div><p class="muted sm">Loading your cards…</p></div></div>'}
 function viewLogin(mode){mode=mode||'login';var su=mode==='signup';
- app.innerHTML='<div class="auth"><div class="auth-card"><div class="brand" style="justify-content:center"><i></i>My Flashcards</div><p class="muted sm center" style="margin:8px 0 0">Your cards sync to every browser you log in on.</p>'+
+ app.innerHTML='<div class="auth"><div class="auth-card"><div class="brand" style="justify-content:center"><img src="apple-touch-icon.png" alt="">My Flashcards</div><p class="muted sm center" style="margin:8px 0 0">Your cards sync to every browser you log in on.</p>'+
  '<div class="atabs"><button class="atab'+(su?'':' on')+'" data-a="mlogin">Log in</button><button class="atab'+(su?' on':'')+'" data-a="msignup">Sign up</button></div>'+
  (/^join-/.test(location.hash.slice(1))?'<p class="joinnote">'+ICON.share+' Log in or sign up to open the shared link.</p>':'')+
  '<form id="af" novalidate><div class="afld"><label for="a-user">Username or email</label><input id="a-user" name="username" autocomplete="username" autocapitalize="off" spellcheck="false" maxlength="64"></div>'+
@@ -439,14 +500,14 @@ function viewLogin(mode){mode=mode||'login';var su=mode==='signup';
  '<div id="a-err" class="aerr"></div><button id="a-go" class="btn primary big" style="width:100%" type="submit">'+(su?'Create account':'Log in')+'</button></form>'+
  (su?'<p class="muted xs" style="margin:16px 0 0">Tip: sign up with an <b>email</b> if you want “Forgot password?” to work. Accounts made with just a username can\'t reset a forgotten password.</p>':'<div class="row-between" style="margin-top:16px"><button class="link" data-a="forgot">Forgot password?</button><span class="muted xs">New here? <b>Sign up</b></span></div>')+
  '</div></div>';
- var err=$('#a-err');if(!auth)err.textContent='Couldn\'t load the cloud service. Check your internet connection and refresh.';
+ var err=$('#a-err');
  $('#a-user').focus();
  A.mlogin=function(){viewLogin('login')};A.msignup=function(){viewLogin('signup')};
  A.showpw=function(b){$$('#af input[type=password],#af input.shown').forEach(function(i){var show=i.type==='password';i.type=show?'text':'password';i.classList.toggle('shown',show)});b.textContent=b.textContent==='Show'?'Hide':'Show'};
- A.forgot=function(){var id=$('#a-user').value.trim();err.style.color='';
+ A.forgot=function(){if(!auth)return;var id=$('#a-user').value.trim();err.style.color='';
   if(id.indexOf('@')<0)return err.textContent='Type the email you signed up with, then click “Forgot password?”. (Username-only accounts can\'t be reset.)';
   auth.sendPasswordResetEmail(id).then(function(){err.style.color='var(--good)';err.textContent='Reset email sent — check your inbox.'},function(e){err.textContent=fbErr(e)})};
- $('#af').addEventListener('submit',function(e){e.preventDefault();if(!auth)return;err.style.color='';
+ $('#af').addEventListener('submit',function(e){e.preventDefault();if(!auth){err.style.color='';err.textContent='Connecting…';fbReady.then(function(ok){if(ok)$('#af').requestSubmit();else err.textContent='Couldn\'t load the cloud service. Check your internet and refresh.'});return}err.style.color='';
   var id=$('#a-user').value.trim(),pw=$('#a-pw').value,go=$('#a-go');err.textContent='';
   if(id.indexOf('@')<0&&!/^[A-Za-z0-9_.\-]{3,24}$/.test(id))return err.textContent='Username: 3–24 letters, numbers, _ . or -';
   if(pw.length<6)return err.textContent='Password needs at least 6 characters';
@@ -598,7 +659,8 @@ app.addEventListener('input',function(e){if(A._input)A._input(e)});
 document.addEventListener('keydown',function(e){if($('#modal-root .ov')){if(e.key==='Escape')closeModal();return}if(viewKey)viewKey(e)});
 function go(h){if(location.hash.slice(1)===h)render();else location.hash=h}
 window.addEventListener('hashchange',render);
-function render(){if(leaveHook){var lh=leaveHook;leaveHook=null;lh()}remoteHook=null;noteSelHook=null;A={};viewKey=null;timers.forEach(function(t){clearInterval(t);clearTimeout(t)});timers=[];closeModal();window.scrollTo(0,0);
+function setTheme(t){document.body.className=t?'th-'+t:''}
+function render(){setTheme('');if(leaveHook){var lh=leaveHook;leaveHook=null;lh()}remoteHook=null;noteSelHook=null;A={};viewKey=null;timers.forEach(function(t){clearInterval(t);clearTimeout(t)});timers=[];closeModal();window.scrollTo(0,0);
  if(AUTH!=='in')return AUTH==='loading'?viewLoading():viewLogin();
  var h=location.hash.slice(1),m=h.match(/^(set|edit|cards|learn|test|match|quiz|qedit|take|note|join)-([a-z0-9]+)$/);
  if(m){var r=m[1],id=m[2];
@@ -606,7 +668,7 @@ function render(){if(leaveHook){var lh=leaveHook;leaveHook=null;lh()}remoteHook=
   if(r==='edit'&&id==='new')return viewEdit(null);
   if(r==='qedit'&&id==='new')return viewQuizEdit(null);
   var s=getSet(id);
-  if(s){var t=typ(s);
+  if(s){var t=typ(s);setTheme(t);
    if(t==='quiz'){if(r==='qedit'&&canEdit(s))return viewQuizEdit(s);if(r==='take')return viewTake(s);if(r!=='quiz')history.replaceState(null,'','#quiz-'+id);return viewQuizPage(s)}
    if(t==='note'){if(r!=='note')history.replaceState(null,'','#note-'+id);return viewNote(s)}
    if(r==='edit'&&!canEdit(s)){r='set';history.replaceState(null,'','#set-'+id)}
@@ -622,15 +684,18 @@ function tileHTML(s){var t=typ(s),body;
  if(t==='quiz'){var qn=(s.qs||[]).length,q=ls.get('fc_q_'+s.id,{});body='<div class="muted sm">'+qn+' question'+(qn===1?'':'s')+'</div><div class="muted xs" style="margin-top:auto">'+(q.last?'Last score: '+q.last.score+' / '+q.last.total:'Not taken yet')+'</div>'}
  else if(t==='note'){var tx=htmlText(s.html||'').trim().slice(0,110);body='<div class="muted xs prev">'+esc(tx||'Empty page')+'</div>'}
  else{var sl=SL(s.id),n=(s.cards||[]).length,m=s.cards.filter(function(c){return(sl.learn[c.id]||0)>=2}).length;body='<div class="muted sm">'+n+' term'+(n===1?'':'s')+'</div><div class="pbar"><i style="width:'+(n?m/n*100:0)+'%"></i></div><div class="muted xs">'+m+' / '+n+' mastered</div>'}
- return '<button class="tile" data-a="open" data-id="'+s.id+'"><div class="kind k-'+t+'">'+(t==='quiz'?'QUIZ':t==='note'?'NOTES':'FLASHCARDS')+(s.shareId?' · <span class="shk">'+(s.role==='owner'?'SHARED':'SHARED WITH YOU')+'</span>':'')+'</div><div class="tile-t">'+esc(s.title)+'</div>'+body+'</button>'}
+ return '<button class="tile t-'+t+'" data-a="open" data-id="'+s.id+'"><div class="kind k-'+t+'">'+(t==='quiz'?ICON.test+'QUIZ':t==='note'?ICON.note+'NOTES':ICON.cards+'FLASHCARDS')+(s.shareId?' · <span class="shk">'+(s.role==='owner'?'SHARED':'SHARED WITH YOU')+'</span>':'')+'</div><div class="tile-t">'+esc(s.title)+'</div>'+body+'</button>'}
+var homeFilter='all';
 function viewHome(){
- var sets=DB.sets.slice().sort(function(a,b){return(b.updated||0)-(a.updated||0)});
- app.innerHTML='<header class="top"><div class="brand"><i></i>My Flashcards</div><div class="sp"></div><span id="status"></span><button class="icon" data-a="grading" title="Grading settings">⚙</button><button class="btn ghost sm" data-a="import">Import</button><button class="btn ghost sm" data-a="backup">Export all</button><button class="btn primary sm" data-a="new">+ Create</button></header>'+
- '<main class="wrap"><div class="row-between"><h2>Your library</h2><span class="muted sm">'+sets.length+' item'+(sets.length===1?'':'s')+'</span></div>'+
- (sets.length?'<div class="grid">'+sets.map(tileHTML).join('')+'</div>'
- :'<div class="empty"><p class="muted">Nothing here yet.</p><button class="btn primary" data-a="new">+ Create your first set</button></div>')+
+ var sets=DB.sets.slice().sort(function(a,b){return(b.updated||0)-(a.updated||0)}),shown=homeFilter==='all'?sets:sets.filter(function(x){return typ(x)===homeFilter});
+ app.innerHTML='<header class="top"><div class="brand"><img src="apple-touch-icon.png" alt="">My Flashcards</div><div class="sp"></div><span id="status"></span><button class="icon" data-a="grading" title="Grading settings">⚙</button><button class="btn ghost sm" data-a="import">Import</button><button class="btn ghost sm" data-a="backup">Export all</button><button class="btn primary sm" data-a="new">+ Create</button></header>'+
+ '<main class="wrap"><div class="row-between"><h2>Your library</h2></div>'+
+ '<div class="ftabs">'+[['all','All'],['cards','Flashcards'],['quiz','Quizzes'],['note','Notes']].map(function(f){var c=f[0]==='all'?sets.length:sets.filter(function(x){return typ(x)===f[0]}).length;return '<button class="ftab f-'+f[0]+(homeFilter===f[0]?' on':'')+'" data-a="filter" data-f="'+f[0]+'">'+(f[0]==='all'?'':'<span class="d"></span>')+f[1]+' <span class="c">'+c+'</span></button>'}).join('')+'</div>'+
+ (shown.length?'<div class="grid">'+shown.map(tileHTML).join('')+'</div>'
+ :'<div class="empty"><p class="muted">'+(sets.length?'Nothing in this section yet.':'Nothing here yet.')+'</p><button class="btn primary" data-a="'+(homeFilter==='all'?'new':'newtype')+'">+ Create '+({all:'your first set',cards:'a flashcard set',quiz:'a quiz',note:'notes'})[homeFilter]+'</button></div>')+
  '<div class="note"><b>Good to know</b><ul><li>Everything is saved to <b>your account in the cloud</b> — log in on any browser or device to get the same library.</li><li><b>Share</b> any flashcard set, quiz or notes page with a link. Choose <i>can view</i> or <i>can edit</i>; edits sync live for everyone.</li><li><b>Export all</b> downloads a <code>.json</code> backup; <b>Import</b> loads one back, or a <code>.txt/.csv</code> list with one “term⇥definition” per line.</li></ul></div></main>';
  updateStatus();
+ A.filter=function(b){homeFilter=b.dataset.f;viewHome()};A.newtype=function(){createMenu();var b=$('#modal-root [data-m="'+homeFilter+'"]');if(b)b.click()};
  A.new=createMenu;A.open=function(b){var x=getSet(b.dataset.id);if(x)go(itemPath(x))};A.import=function(){fileIn.click()};A.backup=exportAll;A.grading=gradingModal;
 }
 
@@ -640,7 +705,7 @@ function viewSet(s){
  var m=s.cards.filter(function(c){return lv(c)>=2}).length,f=s.cards.filter(function(c){return lv(c)===1}).length;
  var mode=function(k,t){return '<button class="mode" data-a="mode" data-m2="'+k+'">'+ICON[k]+t+'</button>'};
  app.innerHTML='<header class="top"><button class="icon" data-a="home" title="Back">←</button><div class="brand sm">Your library</div><div class="sp"></div><span id="status"></span></header>'+
- '<main class="wrap"><div class="kind k-cards">FLASHCARDS</div><h1>'+esc(s.title)+'</h1>'+(s.desc?'<p class="muted" style="margin:4px 0 0">'+esc(s.desc)+'</p>':'')+
+ '<main class="wrap"><div class="kind k-cards">'+ICON.cards+'FLASHCARDS</div><h1>'+esc(s.title)+'</h1>'+(s.desc?'<p class="muted" style="margin:4px 0 0">'+esc(s.desc)+'</p>':'')+
  metaBar(s,n+' term'+(n===1?'':'s'))+
  '<div class="modes">'+mode('cards','Flashcards')+mode('learn','Learn')+mode('test','Test')+mode('match','Match')+'</div>'+
  '<div class="opts-row"><span>Answer with '+dirSelect('o-dir',sl.dir)+'</span><label class="tog"><input type="checkbox" id="o-star"'+(sl.starredOnly?' checked':'')+'><span></span>Starred only (<b id="nstar">'+sl.stars.filter(function(id){return s.cards.some(function(c){return c.id===id})}).length+'</b>)</label><div class="sp"></div><button class="btn sm ghost" data-a="grading">Grading settings</button></div>'+
@@ -935,7 +1000,7 @@ function parseQuiz(text){var out=[],cur=null;
 function viewQuizPage(s){var qp=qPrefs(s.id),show=false;
  function draw(){var qs=s.qs||[];
   app.innerHTML='<header class="top"><button class="icon" data-a="home" title="Back">←</button><div class="brand sm">Your library</div><div class="sp"></div><span id="status"></span></header>'+
-  '<main class="wrap"><div class="kind k-quiz">MULTIPLE-CHOICE QUIZ</div><h1>'+esc(s.title)+'</h1>'+(s.desc?'<p class="muted" style="margin:4px 0 0">'+esc(s.desc)+'</p>':'')+
+  '<main class="wrap"><div class="kind k-quiz">'+ICON.test+'MULTIPLE-CHOICE QUIZ</div><h1>'+esc(s.title)+'</h1>'+(s.desc?'<p class="muted" style="margin:4px 0 0">'+esc(s.desc)+'</p>':'')+
   metaBar(s,qs.length+' question'+(qs.length===1?'':'s'))+
   '<div class="takecard"><div><h2 style="margin:0 0 4px">Take the test</h2><div class="muted sm">'+(qp.last?'Last score <b>'+qp.last.score+' / '+qp.last.total+'</b>'+(qp.best!=null?' · Best <b>'+qp.best+'%</b>':''):'Answer every question, then submit to see your score.')+'</div></div><button class="btn primary big" data-a="take"'+(qs.length?'':' disabled')+'>Start test</button></div>'+
   '<div class="opts-row"><label class="tog"><input type="checkbox" id="q-sq"'+(qp.shufQ?' checked':'')+'><span></span>Shuffle questions</label><label class="tog"><input type="checkbox" id="q-so"'+(qp.shufO?' checked':'')+'><span></span>Shuffle answer choices</label><div class="sp"></div><label class="tog"><input type="checkbox" id="q-show"'+(show?' checked':'')+'><span></span>Show answers</label></div>'+
@@ -1041,7 +1106,7 @@ function setCaret(el,off){var w=document.createTreeWalker(el,NodeFilter.SHOW_TEX
 var HILITE='rgba(244, 183, 64, 0.35)';
 function viewNote(s){var ed=canEdit(s),timer=null,saved=null;
  function tb(cmd,label,title){return '<button type="button" class="tb" data-cmd="'+cmd+'" title="'+title+'">'+label+'</button>'}
- app.innerHTML='<header class="top note-top"><button class="icon" data-a="home" title="Back">←</button><input id="n-title" class="ntitle" value="'+esc(s.title)+'"'+(ed?'':' readonly')+' spellcheck="false" placeholder="Untitled notes"><span id="n-status" class="muted xs"></span><div class="sp"></div>'+sharedBadge(s)+'<button class="btn sm" data-a="share">'+ICON.share+' Share</button><button class="icon" data-a="more" title="More">⋯</button></header>'+
+ app.innerHTML='<header class="top note-top"><button class="icon" data-a="home" title="Back">←</button><span class="kind k-note nk">'+ICON.note+'NOTES</span><input id="n-title" class="ntitle" value="'+esc(s.title)+'"'+(ed?'':' readonly')+' spellcheck="false" placeholder="Untitled notes"><span id="n-status" class="muted xs"></span><div class="sp"></div>'+sharedBadge(s)+'<button class="btn sm" data-a="share">'+ICON.share+' Share</button><button class="icon" data-a="more" title="More">⋯</button></header>'+
  (ed?'<div class="toolbar"><select id="n-block" title="Text style"><option value="p">Normal text</option><option value="h1">Heading 1</option><option value="h2">Heading 2</option><option value="h3">Heading 3</option></select><span class="tsep"></span>'+
   tb('bold','<b>B</b>','Bold (Ctrl+B)')+tb('italic','<i>I</i>','Italic (Ctrl+I)')+tb('underline','<u>U</u>','Underline (Ctrl+U)')+tb('strikeThrough','<s>S</s>','Strikethrough')+tb('hilite','<span class="hlb">A</span>','Highlight')+'<span class="tsep"></span>'+
   tb('insertUnorderedList','<svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M9 6h11M9 12h11M9 18h11"/><circle cx="4.5" cy="6" r="1.2" fill="currentColor"/><circle cx="4.5" cy="12" r="1.2" fill="currentColor"/><circle cx="4.5" cy="18" r="1.2" fill="currentColor"/></svg>','Bulleted list')+
@@ -1101,7 +1166,7 @@ var sharedSubs={},lastShared={};
 function sref(sid){return fs.collection('shared').doc(sid)}
 function shareContent(s){var t=typ(s),o={type:t,title:s.title||'',desc:s.desc||'',chars:s.chars||DEFAULT_CHARS};if(t==='note')o.html=s.html||'';else if(t==='quiz')o.qs=s.qs||[];else o.cards=s.cards||[];return JSON.stringify(o)}
 function itemByShare(sid){for(var i=0;i<DB.sets.length;i++)if(DB.sets[i].shareId===sid)return DB.sets[i];return null}
-function pushShared(){if(!UID)return;DB.sets.forEach(function(s){if(!s.shareId||s.role==='view')return;var sid=s.shareId;if(lastShared[sid]===undefined)return;var cj=shareContent(s);
+function pushShared(){if(!UID||!fs)return;DB.sets.forEach(function(s){if(!s.shareId||s.role==='view')return;var sid=s.shareId;if(lastShared[sid]===undefined)return;var cj=shareContent(s);
  if(lastShared[sid]!==cj){lastShared[sid]=cj;sref(sid).update({j:cj,t:stamp(),by:USER}).catch(saveErr)}})}
 function syncSharedSubs(){if(!UID||!fs)return;var want={};DB.sets.forEach(function(s){if(s.shareId)want[s.shareId]=1});
  Object.keys(sharedSubs).forEach(function(sid){if(!want[sid])unsubShared(sid)});
@@ -1131,7 +1196,7 @@ function shareModal(s){
   modal('<h3>Shared with you</h3><p class="muted sm">“'+esc(s.title)+'” was shared by <b>'+esc(s.sharedBy||'someone')+'</b>. You can '+(s.role==='edit'?'<b>view and edit</b> it — changes sync to everyone who has it.':'<b>view and study</b> it, but not change it.')+'</p>'+linkBox(link)+'<p class="muted xs">Anyone you send this link to can open it after logging in.</p><div class="mfoot"><button class="btn primary" data-m="close">Done</button></div>',{copy:copyLinkFn(link)});return}
  if(!s.shareId){
   modal('<h3>Share “'+esc(s.title)+'”</h3><p class="muted sm">Anyone with the link can open it after logging in. What can they do?</p><div class="seg2"><label><input type="radio" name="sm" value="view" checked><div><b>Can view</b><span class="muted xs">Read and study it, but not change it</span></div></label><label><input type="radio" name="sm" value="edit"><div><b>Can edit</b><span class="muted xs">Collaborate — everyone\'s changes sync live</span></div></label></div><div id="sh-err" class="aerr"></div><div class="mfoot"><button class="btn" data-m="close">Cancel</button><button class="btn primary" data-m="create">Create link</button></div>',
-  {create:function(b){var mode=$('input[name=sm]:checked').value,sid=uid()+uid(),cj=shareContent(s);b.disabled=true;b.textContent='Creating…';
+  {create:function(b){if(!fs)return toast('Still connecting — try again in a moment');var mode=$('input[name=sm]:checked').value,sid=uid()+uid(),cj=shareContent(s);b.disabled=true;b.textContent='Creating…';
    sref(sid).set({owner:UID,ownerName:USER,mode:mode,j:cj,t:stamp(),by:USER}).then(function(){s.shareId=sid;s.role='owner';s.mode=mode;lastShared[sid]=cj;persist();render();shareModal(s)},
     function(e){b.disabled=false;b.textContent='Create link';$('#sh-err').textContent=e&&e.code==='permission-denied'?'Sharing is blocked by your Firestore rules — publish the new firestore.rules first.':fbErr(e)})}});return}
  var link2=shareLink(s.shareId);
@@ -1139,7 +1204,8 @@ function shareModal(s){
  {copy:copyLinkFn(link2),stop:function(){confirmBox('Stop sharing?','People with the link will lose access. Anyone who already added it keeps their own copy.','Stop sharing',function(){var sid=s.shareId;sref(sid).delete().then(function(){unsubShared(sid);delete s.shareId;delete s.role;delete s.mode;persist();toast('Stopped sharing');render()},function(e){toast(fbErr(e))})},true)}},
  function(ov){$('#sm-mode',ov).addEventListener('change',function(e){var v=e.target.value;sref(s.shareId).update({mode:v}).then(function(){s.mode=v;persist();render();shareModal(s);toast(v==='edit'?'People with the link can now edit':'People with the link can now only view')},function(er){toast(fbErr(er))})})})}
 function viewJoin(sid){var ex=itemByShare(sid);if(ex){history.replaceState(null,'','#'+itemPath(ex));return render()}
- app.innerHTML='<div class="auth"><div class="center"><div class="brand" style="justify-content:center"><i></i>My Flashcards</div><p class="muted sm">Opening shared link…</p></div></div>';
+ if(!fs){app.innerHTML='<div class="auth"><div class="center"><div class="brand" style="justify-content:center"><img src="apple-touch-icon.png" alt="">My Flashcards</div><p class="muted sm">Opening shared link…</p></div></div>';fbReady.then(function(){if(location.hash.slice(1)==='join-'+sid)render()});return}
+ app.innerHTML='<div class="auth"><div class="center"><div class="brand" style="justify-content:center"><img src="apple-touch-icon.png" alt="">My Flashcards</div><p class="muted sm">Opening shared link…</p></div></div>';
  function fail(msg){app.innerHTML='<div class="auth"><div class="auth-card center"><h3>Can\'t open this link</h3><p class="muted sm">'+msg+'</p><button class="btn primary" data-a="home">Go to my library</button></div></div>';A.home=function(){go('')}}
  sref(sid).get().then(function(d){if(location.hash.slice(1)!=='join-'+sid)return;
   if(!d.exists)return fail('It may have been deleted, or the owner stopped sharing it.');
@@ -1149,7 +1215,7 @@ function viewJoin(sid){var ex=itemByShare(sid);if(ex){history.replaceState(null,
   lastShared[sid]=data.j;DB.sets.push(it);persist();toast(mine?'Restored your shared item':'Added “'+it.title+'” to your library');history.replaceState(null,'','#'+itemPath(it));render()},
  function(e){fail(e&&e.code==='permission-denied'?'Sharing isn\'t set up on this site yet (the Firestore rules need updating).':fbErr(e))})}
 
-render();
+render();bootFirebase();
 })();
 </script>
 </body>
