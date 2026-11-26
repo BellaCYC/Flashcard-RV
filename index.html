@@ -211,6 +211,35 @@ textarea.code{width:100%;height:240px;background:var(--panel2);border:1px solid 
 #toast{position:fixed;left:50%;bottom:28px;transform:translate(-50%,20px);background:#2b2f31;border:1px solid var(--line2);padding:11px 18px;border-radius:999px;font-weight:700;font-size:14px;opacity:0;pointer-events:none;transition:.25s;z-index:200}
 #toast.show{opacity:1;transform:translate(-50%,0)}
 @keyframes fade{from{opacity:0}}
+/* SAT dark mode */
+body.sat-on.sat-dark{background:#14161b}
+.sat.dark{--sblue:#5b7cfa;--sblue-bg:rgba(91,124,250,.16);--sline:#363b47;--sgreen:#4cc38a;--sgreenbg:rgba(76,195,138,.14);--sred:#ff7b72;--sredbg:rgba(255,123,114,.14);--sink:#e6e8ec;--smuted:#9aa1ad}
+.sat.dark .sh,.sat.dark .sf,.sat.dark .smod,.sat.dark .sres-card,.sat.dark .sexp{background:#1c1f26}
+.sat.dark .sopt,.sat.dark .sbtn,.sat.dark .scell,.sat.dark .selim,.sat.dark .sabc,.sat.dark .sl{background:#1f232b}
+.sat.dark .sopt{border-color:#3a404d}.sat.dark .sopt:hover:not([disabled]){border-color:#6c7486}
+.sat.dark .sopt.sel{background:var(--sblue-bg)}.sat.dark .sopt.right{background:var(--sgreenbg)}.sat.dark .sopt.wrong{background:var(--sredbg)}
+.sat.dark .sopt.sel .sl{background:var(--sblue)}.sat.dark .sopt.right .sl{background:var(--sgreen);color:#0c1f14}.sat.dark .sopt.wrong .sl{background:var(--sred);color:#2a0b08}
+.sat.dark .sl{border-color:#c9ced8}
+.sat.dark .sopt.out .sl{border-color:#5d6472;color:#5d6472}.sat.dark .sopt.out .stx{color:#6b7280}
+.sat.dark .sqn,.sat.dark .snav{background:#e6e8ec;color:#14161b!important}
+.sat.dark .sprog{background:#2a2e37}
+.sat.dark .slink,.sat.dark .smark,.sat.dark .selim,.sat.dark .slegend,.sat.dark .smod-f,.sat.dark .skeys,.sat.dark .sp-text{color:#c3c8d2!important}
+.sat.dark .slink:hover{background:#262a33}
+.sat.dark .schip{background:#232731;border-color:var(--sline)}
+.sat.dark .sbtn-p[disabled]{background:#34406b;color:#8d97b8!important}
+.sat.dark .sres-ring b{background:#1c1f26}
+.sat.dark .scell.ans{background:var(--sblue-bg)}.sat.dark .scell.ok{background:var(--sgreenbg)}.sat.dark .scell.no{background:var(--sredbg)}
+.sat.dark .smark.on svg{fill:#f0b400;color:#f0b400}
+.sat.dark .sabc.on{background:var(--sblue);color:#fff!important}
+.sat.dark .scell.cur{outline-color:#e6e8ec}
+.sat.dark .sov{background:rgba(0,0,0,.6)}
+.sdark{display:inline-flex;align-items:center;gap:6px}
+.ssrc{font-size:13px;color:var(--smuted);margin:-4px 0 12px}
+.sq-line{border-bottom:2px dashed var(--sline);margin-bottom:20px}
+.spass .ptitle,.tpass .ptitle{font-family:Inter,-apple-system,'Segoe UI',Roboto,sans-serif;font-weight:800;font-size:15px;margin:18px 0 6px}
+.spass .ptitle:first-child,.tpass .ptitle:first-child{margin-top:0}
+.qsrc{font-size:12px;font-weight:800;letter-spacing:.4px;color:var(--muted);margin-bottom:6px}
+
 body.sat-on{background:#f2f3f7}
 .sat{min-height:100vh;color:#1b1f2a;font-family:Inter,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;--sblue:#2b45b4;--sblue-bg:#e7ecfb;--sline:#d5d9e2;--sgreen:#1f7a44;--sgreenbg:#e2f2e7;--sred:#b3261e;--sredbg:#fbe7e5;--sink:#1b1f2a;--smuted:#5b6270}
 .sat button{color:inherit}
@@ -232,7 +261,7 @@ body.sat-on{background:#f2f3f7}
 .spass p{margin:0 0 14px}.spass ul{margin:0 0 14px;padding-left:22px}.spass li{margin-bottom:8px}
 .sdiv{background:var(--sline)}
 .sq{padding-left:44px}.smain.single .sq{padding-left:0}
-.sq-top{display:flex;align-items:center;gap:16px;padding-bottom:12px;border-bottom:2px dashed var(--sline);margin-bottom:20px}
+.sq-top{display:flex;align-items:center;gap:16px;padding-bottom:12px}
 .sqn{background:var(--sink);color:#fff;font-weight:700;min-width:36px;height:32px;border-radius:4px;display:grid;place-items:center;font-size:15px;padding:0 9px}
 .smark{display:flex;align-items:center;gap:6px;font-size:15px;color:#3d4452!important}.smark svg{width:17px;height:17px}
 .smark.on{font-weight:700;color:var(--sink)!important}.smark.on svg{fill:#e0a800;color:#b58600}
@@ -746,7 +775,14 @@ document.addEventListener('keydown',function(e){if($('#modal-root .ov')){if(e.ke
 function go(h){if(location.hash.slice(1)===h)render();else location.hash=h}
 window.addEventListener('hashchange',render);
 function setTheme(t){document.body.className=t?'th-'+t:''}
-function render(){setTheme('');if(leaveHook){var lh=leaveHook;leaveHook=null;lh()}remoteHook=null;noteSelHook=null;A={};viewKey=null;timers.forEach(function(t){clearInterval(t);clearTimeout(t)});timers=[];closeModal();window.scrollTo(0,0);
+/* remember how far you scrolled on each page (home, a set's term list, a quiz, a notes page) */
+var SCROLL=dev.get('fc_scroll')||{},scrollT=null;
+function pageKey(){var h=location.hash.slice(1);return /^(cards|learn|test|match|take|sat|join|edit|qedit)-/.test(h)?null:(h||'home')}
+window.addEventListener('scroll',function(){var k=pageKey(),y=Math.round(window.scrollY);if(!k||AUTH!=='in')return;clearTimeout(scrollT);
+ scrollT=setTimeout(function(){if(y)SCROLL[k]=y;else delete SCROLL[k];var ks=Object.keys(SCROLL);if(ks.length>300)delete SCROLL[ks[0]];dev.set('fc_scroll',SCROLL)},200)},{passive:true});
+function render(){renderView();var k=pageKey(),y=k&&AUTH==='in'?SCROLL[k]:0;
+ if(y){window.scrollTo(0,y);requestAnimationFrame(function(){if(pageKey()===k)window.scrollTo(0,y)})}}
+function renderView(){setTheme('');if(leaveHook){var lh=leaveHook;leaveHook=null;lh()}remoteHook=null;noteSelHook=null;A={};viewKey=null;timers.forEach(function(t){clearInterval(t);clearTimeout(t)});timers=[];closeModal();window.scrollTo(0,0);
  if(AUTH!=='in')return AUTH==='loading'?viewLoading():viewLogin();
  var h=location.hash.slice(1),m=h.match(/^(set|edit|cards|learn|test|match|quiz|qedit|take|sat|note|join)-([a-z0-9]+)$/);
  if(m){var r=m[1],id=m[2];
@@ -1094,7 +1130,7 @@ function viewQuizPage(s){var qp=qPrefs(s.id),show=false;
   metaBar(s,qs.length+' question'+(qs.length===1?'':'s'))+
   '<div class="takecard"><div><h2 style="margin:0 0 4px">Take the test</h2><div class="muted sm">'+(qp.last?'Last score <b>'+qp.last.score+' / '+qp.last.total+'</b>'+(qp.best!=null?' · Best <b>'+qp.best+'%</b>':''):'Answer every question, then submit to see your score.')+'</div></div><div class="tk-btns"><button class="btn big satbtn" data-a="sat"'+(qs.length?'':' disabled')+'>'+(satOn?'Resume SAT practice':'SAT-style practice')+'</button><button class="btn primary big" data-a="take"'+(qs.length?'':' disabled')+'>Start test</button></div></div>'+
   '<div class="opts-row"><label class="tog"><input type="checkbox" id="q-sq"'+(qp.shufQ?' checked':'')+'><span></span>Shuffle questions</label><label class="tog"><input type="checkbox" id="q-so"'+(qp.shufO?' checked':'')+'><span></span>Shuffle answer choices</label><div class="sp"></div><label class="tog"><input type="checkbox" id="q-show"'+(show?' checked':'')+'><span></span>Show answers</label></div>'+
-  '<h2>Questions ('+qs.length+')</h2>'+(qs.length?qs.map(function(q,k){return '<div class="qcard qv">'+(q.p?'<div class="qvp">'+esc(q.p)+'</div>':'')+'<div class="qtext xs"><b class="qn">'+(k+1)+'.</b> '+esc(q.q)+'</div><div class="qvopts">'+q.opts.map(function(o,j){return '<div class="qvopt'+(show&&j===q.ans?' right':'')+'"><span class="num">'+LET[j]+'</span><span>'+esc(o)+'</span></div>'}).join('')+'</div>'+(show&&q.why?'<p class="muted sm" style="margin:10px 0 0"><b>Why:</b> '+esc(q.why)+'</p>':'')+'</div>'}).join('')
+  '<h2>Questions ('+qs.length+')</h2>'+(qs.length?qs.map(function(q,k){return '<div class="qcard qv">'+(function(){var P=qParts(q);return(P.src?'<div class="qsrc">'+esc(srcLabel(P.src))+'</div>':'')+(P.p?'<div class="qvp">'+esc(P.p.replace(/§/g,''))+'</div>':'')+'<div class="qtext xs"><b class="qn">'+(k+1)+'.</b> '+esc(P.q)+'</div>'})()+'<div class="qvopts">'+q.opts.map(function(o,j){return '<div class="qvopt'+(show&&j===q.ans?' right':'')+'"><span class="num">'+LET[j]+'</span><span>'+esc(o)+'</span></div>'}).join('')+'</div>'+(show&&q.why?'<p class="muted sm" style="margin:10px 0 0"><b>Why:</b> '+esc(q.why)+'</p>':'')+'</div>'}).join('')
    :'<div class="empty"><p class="muted">No questions yet.</p>'+(canEdit(s)?'<button class="btn primary" data-a="edit">Add questions</button>':'')+'</div>')+'</main>';
   updateStatus()}
  A.home=function(){go('')};A.edit=function(){go('qedit-'+s.id)};A.take=function(){go('take-'+s.id)};A.sat=function(){go('sat-'+s.id)};A.share=function(){shareModal(s)};A.export=function(){exportSet(s)};A.delete=function(){deleteItemBox(s)};
@@ -1116,7 +1152,7 @@ function viewQuizEdit(set){
  function redrawRow(i,focusSel){var el=$('#qr'+i);if(!el)return;el.outerHTML=qHTML(draft.qs[i],i);$$('#qr'+i+' textarea').forEach(autoGrow);if(focusSel){var f=$(focusSel);if(f)f.focus()}}
  app.innerHTML='<header class="top"><button class="icon" data-a="cancel" title="Back">←</button><div class="st-mode">'+(isNew?'Create a multiple-choice quiz':'Edit quiz')+'</div><div class="sp"></div><button class="btn primary" data-a="save">'+(isNew?'Create':'Save')+'</button></header>'+
  '<main class="wrap"><div class="ehead"><div class="fld big"><input id="f-title" placeholder="Enter a title, like “Biology Unit 3 Quiz”" value="'+esc(draft.title)+'"><label>TITLE</label></div><div class="fld"><textarea id="f-desc" rows="1" placeholder="Add a description…">'+esc(draft.desc)+'</textarea><label>DESCRIPTION</label></div></div>'+
- '<div class="ed-tools"><button class="btn sm" data-a="paste">+ Import questions</button><div class="sp"></div><div class="fld inline"><input id="f-chars" value="'+esc(draft.chars)+'" spellcheck="false"><label>ACCENT KEYS</label></div></div>'+
+ '<div class="ed-tools"><button class="btn sm" data-a="paste">+ Import questions</button><button class="btn sm" data-a="autofmt" title="Split long questions into passage, bullet notes and question">✨ Auto-format passages</button><div class="sp"></div><div class="fld inline"><input id="f-chars" value="'+esc(draft.chars)+'" spellcheck="false"><label>ACCENT KEYS</label></div></div>'+
  '<div id="paste"></div><div class="sticky-acc">'+accBar(draft.chars)+'</div><div id="rows"></div><button class="addrow" data-a="add">+ ADD QUESTION</button><div class="ed-foot"><button class="btn primary big" data-a="save">'+(isNew?'Create':'Save')+'</button></div></main>';
  drawRows();autoGrow($('#f-desc'));if(isNew)$('#f-title').focus();
  function drawPaste(){var el=$('#paste');if(!showPaste){el.innerHTML='';return}
@@ -1138,6 +1174,7 @@ function viewQuizEdit(set){
  A.add=function(){draft.qs.push(blankQ());dirty=true;var i=draft.qs.length-1;$('#rows').insertAdjacentHTML('beforeend',qHTML(draft.qs[i],i));var t=$('#qr'+i+' textarea');t.focus();t.scrollIntoView({block:'center',behavior:'smooth'})};
  A.del=function(b){draft.qs.splice(+b.dataset.i,1);if(!draft.qs.length)draft.qs.push(blankQ());dirty=true;drawRows()};
  A.up=function(b){var i=+b.dataset.i;if(!i)return;var t=draft.qs[i];draft.qs[i]=draft.qs[i-1];draft.qs[i-1]=t;dirty=true;drawRows()};
+ A.autofmt=function(){var n=0;draft.qs.forEach(function(q){if((q.p||'').trim())return;var P=qParts(q);if(P.p){q.p=P.p.replace(/§/g,'');q.q=(P.src?'['+P.src+'] ':'')+P.q;n++}});dirty=dirty||n>0;drawRows();toast(n?'Formatted '+n+' question'+(n>1?'s':'')+' — check them, then Save':'Nothing to format')};
  A.paste=function(){showPaste=!showPaste;drawPaste()};A.pcancel=function(){showPaste=false;drawPaste()};
  A.pimport=function(){var qs=parseQuiz($('#p-text').value);if(!qs.length)return toast('No questions found — check the format');
   draft.qs=draft.qs.filter(function(q){return q.q.trim()||q.opts.some(function(o){return o.trim()})}).concat(qs);dirty=true;showPaste=false;drawPaste();drawRows();toast('Imported '+qs.length+' question'+(qs.length>1?'s':''))};
@@ -1160,7 +1197,7 @@ function viewTake(s){var qp=qPrefs(s.id),all=(s.qs||[]).filter(function(q){retur
  function nAns(){return Object.keys(ans).length}
  function correct(){return items.filter(function(it,k){return ans[k]===it.q.ans}).length}
  function card(it,k){var q=it.q,ok=ans[k]===q.ans,res=done?'<span class="tag '+(ok?'ok':'no')+'">'+(ok?'CORRECT':ans[k]==null?'NO ANSWER':'INCORRECT')+'</span>':'';
-  return '<div class="qcard tq'+(done?(ok?' res-ok':' res-no'):'')+'" id="tk'+k+'"><div class="row-between"><span class="qlabel">Question '+(k+1)+' of '+items.length+'</span>'+res+'</div>'+(q.p?'<div class="tpass">'+fmtPassage(q.p)+'</div>':'')+'<div class="qtext sm">'+esc(q.q)+'</div><div class="mcopts">'+
+  return '<div class="qcard tq'+(done?(ok?' res-ok':' res-no'):'')+'" id="tk'+k+'"><div class="row-between"><span class="qlabel">Question '+(k+1)+' of '+items.length+'</span>'+res+'</div>'+(function(){var P=qParts(q);return(P.src?'<div class="qsrc">'+esc(srcLabel(P.src))+'</div>':'')+(P.p?'<div class="tpass">'+fmtPassage(P.p)+'</div>':'')+'<div class="qtext sm">'+esc(P.q)+'</div>'})()+'<div class="mcopts">'+
   it.ord.map(function(j,pos){var c='';if(done){c=j===q.ans?' right':ans[k]===j?' wrong':' dim'}else if(ans[k]===j)c=' sel';return '<button class="opt'+c+'" data-a="pick" data-k="'+k+'" data-j="'+j+'"'+(done?' disabled':'')+'><span class="num">'+LET[pos]+'</span><span>'+esc(q.opts[j])+'</span></button>'}).join('')+'</div>'+
   (done&&q.why?'<div class="why"><b>Explanation:</b> '+esc(q.why)+'</div>':'')+'</div>'}
  function scoreCard(){var r=correct(),n=items.length,f=r/n;return '<div class="qcard"><div class="score">'+ring(f)+'<div><h2 style="margin:0 0 6px">'+(r===n?'Perfect score!':f>=.8?'Great job!':f>=.5?'Keep it up!':'Keep practicing — you\'ll get there!')+'</h2><div class="muted"><b style="color:var(--good)">'+r+' correct</b> · <b style="color:var(--bad)">'+(n-r)+' incorrect</b>'+(full?'':' · <i>missed-questions retake</i>')+'</div><div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap"><button class="btn primary sm" data-a="retake">Retake test</button>'+(r<n?'<button class="btn sm" data-a="missed">Retake missed ('+(n-r)+')</button>':'')+'<button class="btn sm" data-a="close">Back to quiz</button></div></div></div></div>'}
@@ -1306,9 +1343,29 @@ function viewJoin(sid){var ex=itemByShare(sid);if(ex){history.replaceState(null,
   lastShared[sid]=data.j;DB.sets.push(it);persist();toast(mine?'Restored your shared item':'Added “'+it.title+'” to your library');history.replaceState(null,'','#'+itemPath(it));render()},
  function(e){fail(e&&e.code==='permission-denied'?'Sharing isn\'t set up on this site yet (the Firestore rules need updating).':fbErr(e))})}
 
+/* ===== question formatting: split "passage + notes + question" pasted as one block, like the printed test ===== */
+var STEM_RE=/(?:^|[.!?:"”’)\]_…]\s+)(The student wants|Which choice|Which finding|Which quotation|Which statement|Which of the following|Which option|Which word|Which sentence|Which claim|Which detail|Which evidence|Based on the texts?|Based on the (?:passage|table|graph|chart|data|figure)|According to the (?:text|passage|table|graph|chart)|What does the text|What is the main|What is most likely|How would the author|How does|As used in the text|It can most reasonably be inferred|The text most strongly suggests|Which (?:[a-z]+ )?most)/g;
+function srcLabel(tag){var m=String(tag).match(/PT\s*(\d+)\s*M\s*(\d+)\s*Q\s*(\d+)/i);return m?'Practice Test '+m[1]+' · Module '+m[2]+' · Question '+m[3]:tag}
+function tidyPassage(p){return String(p||'')
+ .replace(/\s*[•●▪◦]\s*/g,'\n- ')                                  /* inline bullets → one per line */
+ .replace(/(^|[\s.!?:”"])(Text\s?[12])\s*(?=[A-Z“"‘])/g,'$1\n§$2\n') /* Text 1 / Text 2 headings */
+ .replace(/\n{2,}/g,'\n').replace(/^\n+/,'').trim()}
+function qParts(q){var t=String(q.q||'').trim(),src='',p=String(q.p||'').trim(),m;
+ if((m=t.match(/^\[([^\]]{1,40})\]\s*/))){src=m[1];t=t.slice(m[0].length)}
+ if((m=p.match(/^\[([^\]]{1,40})\]\s*/))){src=src||m[1];p=p.slice(m[0].length)}
+ if(!p&&t.length>140){
+  var arrow=t.lastIndexOf('→');
+  if(arrow>30){p=t.slice(0,arrow);t=t.slice(arrow+1).trim()}
+  else{var idx=-1,hits=[];STEM_RE.lastIndex=0;while((m=STEM_RE.exec(t))){var start=m.index+m[0].length-m[1].length;hits.push({i:start,w:m[1]})}
+   if(hits.length){var last=hits[hits.length-1];idx=last.i;
+    for(var k=hits.length-2;k>=0;k--){if(/^The student wants/.test(hits[k].w)&&t.slice(hits[k].i,last.i).indexOf('•')<0&&last.i-hits[k].i<400){idx=hits[k].i;break}}}
+   if(idx>40){p=t.slice(0,idx);t=t.slice(idx).trim()}}}
+ return{src:src,p:tidyPassage(p),q:t.replace(/^\s*[→]\s*/,'')}}
+
 /* ================= SAT-style practice (Bluebook-like) ================= */
 var FLAG='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M5 21V4h12l-2.5 4L17 12H5"/></svg>';
-function fmtPassage(p){var out='',list=null;String(p||'').split('\n').forEach(function(line){var l=line.trim(),m=l.match(/^[-•*]\s+(.*)$/);
+function fmtPassage(p){var out='',list=null;String(p||'').split('\n').forEach(function(line){var l=line.trim(),m=l.match(/^[-•*]\s+(.*)$/),tt=l.match(/^§?(Text\s?[12])$/);
+  if(tt){if(list){out+='<ul>'+list.join('')+'</ul>';list=null}out+='<p class="ptitle">'+esc(tt[1])+'</p>';return}
   if(m){if(!list){list=[];}list.push('<li>'+esc(m[1])+'</li>');return}
   if(list){out+='<ul>'+list.join('')+'</ul>';list=null}
   if(l)out+='<p>'+esc(l)+'</p>'});
@@ -1323,7 +1380,7 @@ function viewSat(s){
   order.forEach(function(id){var o=byId[id].opts.map(function(_,j){return j});co[id]=so?shuffle(o):o});
   return{order:order,co:co,ans:{},chk:{},mark:{},elim:{},mode:mode||'check',cur:0,el:0,done:false,sub:!!subset,hide:false}}
  var st=ls.get('fc_sat_'+s.id,null);if(!valid(st))st=fresh();
- var abc=false,overlay=null,base=st.el||0,t0=Date.now(),saveT=null,view=st.done?'results':'q';
+ var dark=!!ls.get('fc_sat_dark',false),abc=false,overlay=null,base=st.el||0,t0=Date.now(),saveT=null,view=st.done?'results':'q';
  function elapsed(){return st.done?st.el:base+Math.floor((Date.now()-t0)/1000)}
  function save(now){clearTimeout(saveT);var f=function(){if(!st.done)st.el=elapsed();ls.set('fc_sat_'+s.id,st)};if(now)f();else saveT=setTimeout(f,900)}
  leaveHook=function(){clearTimeout(saveT);if(!st.done)st.el=elapsed();ls.set('fc_sat_'+s.id,st)};
@@ -1335,11 +1392,11 @@ function viewSat(s){
  function revealed(id){return st.done||(st.mode==='check'&&st.chk[id])}
  function header(){var sc=chkStats();
   return '<header class="sh"><div class="sh-row"><div class="sh-l"><div class="sh-t">'+esc(s.title)+'</div><div class="sh-s">Multiple-choice quiz · '+N+' question'+(N===1?'':'s')+(st.sub?' · missed questions':'')+(st.mode==='test'?' · Test mode':' · Check each question')+'</div></div><div class="sp"></div>'+
-  '<div class="sh-r"><span class="timer" id="sat-time">'+(st.hide?'':fmtTime(elapsed()))+'</span><button class="slink" data-a="hidet">'+(st.hide?'Show':'Hide')+'</button>'+
+  '<div class="sh-r"><button class="slink sdark" data-a="dark" title="Switch light / dark">'+(dark?'☀ Light':'☾ Dark')+'</button><span class="timer" id="sat-time">'+(st.hide?'':fmtTime(elapsed()))+'</span><button class="slink" data-a="hidet">'+(st.hide?'Show':'Hide')+'</button>'+
   (st.mode==='check'&&!st.done?'<span class="schip">Score <b>'+sc[0]+'/'+sc[1]+'</b></span>':'')+
   (st.done?'':'<button class="sbtn hm" data-a="mode">Answer mode</button><button class="sbtn hm" data-a="shuf">New shuffle</button>')+'<button class="sbtn" data-a="exit">Exit</button></div></div>'+
   '<div class="sprog"><i style="width:'+(N?(st.done?100:nAns()/N*100):0)+'%"></i></div></header>'}
- function qView(){var i=st.cur,id=st.order[i],q=byId[id],sel=st.ans[id],rv=revealed(id),el=st.elim[id]||{},mk=!!st.mark[id],last=i===N-1;
+ function qView(){var i=st.cur,id=st.order[i],q=byId[id],P=qParts(q),sel=st.ans[id],rv=revealed(id),el=st.elim[id]||{},mk=!!st.mark[id],last=i===N-1;
   var opts=st.co[id].map(function(j,pos){var c='';
    if(rv){if(j===q.ans)c=' right';else if(sel===j)c=' wrong'}else if(sel===j)c=' sel';
    if(el[j]&&!rv&&sel!==j)c+=' out';
@@ -1350,9 +1407,10 @@ function viewSat(s){
    fb='<div class="sfb '+(ok?'ok':'no')+'"><span class="sfi">'+(ok?'✓':'✕')+'</span>'+(ok?'Correct!':sel==null?'Not answered. The answer is '+cl+'.':'Not quite. The answer is '+cl+'.')+'</div>'+(q.why?'<div class="sexp"><div class="sexp-h">EXPLANATION</div>'+esc(q.why)+'</div>':'')}
   else if(st.mode==='check')fb='<div class="scheck"><button class="sbtn-p" data-a="check"'+(sel==null?' disabled':'')+'>Check answer</button><span class="shint">'+(sel==null?'Pick an answer, then check it.':'Press Enter to check.')+'</span></div>';
   var nextLbl=last?(st.done?'Results':(st.mode==='test'?'Finish':'See results')):'Next';
-  return header()+'<main class="smain'+(q.p?'':' single')+'">'+(q.p?'<section class="spass">'+fmtPassage(q.p)+'</section><div class="sdiv"></div>':'')+
+  return header()+'<main class="smain'+(P.p?'':' single')+'">'+(P.p?'<section class="spass">'+fmtPassage(P.p)+'</section><div class="sdiv"></div>':'')+
    '<section class="sq"><div class="sq-top"><span class="sqn">'+(i+1)+'</span><button class="smark'+(mk?' on':'')+'" data-a="mark">'+FLAG+'Mark for Review</button><div class="sp"></div>'+(rv?'':'<button class="sabc'+(abc?' on':'')+'" data-a="abc" title="Answer eliminator — cross out choices">ABC</button>')+'</div>'+
-   '<div class="sq-q">'+esc(q.q)+'</div><div class="sopts">'+opts+'</div>'+fb+'</section></main>'+
+   (P.src?'<div class="ssrc">From '+esc(srcLabel(P.src))+'</div>':'')+'<div class="sq-line"></div>'+
+   '<div class="sq-q">'+esc(P.q)+'</div><div class="sopts">'+opts+'</div>'+fb+'</section></main>'+
    '<footer class="sf"><button class="sbtn" data-a="back"'+(i?'':' disabled')+'>Back</button><button class="snav" data-a="nav">Question <b>'+(i+1)+'</b> of <b>'+N+'</b> <span class="car">▴</span></button><button class="sbtn-p" data-a="next">'+nextLbl+'</button></footer>'}
  function resultsView(){var r=st.order.filter(isRight).length,pc=Math.round(r/N*100),wrong=N-r;
   return header()+'<main class="sres"><div class="sres-card"><div class="sres-top"><div><div class="sres-lbl">YOUR SCORE</div><div class="sres-big">'+r+'<span> / '+N+'</span></div><div class="sres-sub">'+pc+'% correct · '+fmtTime(st.el)+' · '+(st.mode==='test'?'Test mode':'Check each question')+(st.sub?' · missed questions':'')+'</div></div>'+
@@ -1370,7 +1428,7 @@ function viewSat(s){
   '<label class="smode'+(st.mode==='test'?' on':'')+'" data-a="setmode" data-m3="test"><input type="radio" name="smd"'+(st.mode==='test'?' checked':'')+'><div><b>Test mode</b><span>No feedback until you finish. Change answers freely, then score the whole set.</span></div></label>'+
   '<div class="skeys"><div class="sexp-h">KEYBOARD</div>A–D or 1–4 pick a choice · Enter checks or moves on · ← → move between questions · M marks for review</div></div></div>'}
  function confirmOverlay(title,text,okLbl,act){return '<div class="sov" data-a="ovbg"><div class="smod narrow"><div class="smod-h"><b>'+esc(title)+'</b><button class="slink" data-a="close">Close</button></div><p class="sp-text">'+esc(text)+'</p><div class="sres-btns"><button class="sbtn-p" data-a="'+act+'">'+esc(okLbl)+'</button><button class="sbtn" data-a="close">Keep going</button></div></div></div>'}
- function draw(){var y=window.scrollY;app.innerHTML='<div class="sat">'+(view==='results'?resultsView():qView())+(overlay||'')+'</div>'}
+ function draw(){document.body.classList.toggle('sat-dark',dark);app.innerHTML='<div class="sat'+(dark?' dark':'')+'">'+(view==='results'?resultsView():qView())+(overlay||'')+'</div>'}
  function go2(i){if(i<0||i>=N)return;st.cur=i;view='q';overlay=null;save();draw();window.scrollTo(0,0)}
  function finish(){if(!st.done){st.el=elapsed();st.done=true;
    if(!st.sub){var r=st.order.filter(isRight).length,qp=qPrefs(s.id);qp.last={score:r,total:N,date:Date.now()};qp.best=Math.max(qp.best||0,Math.round(r/N*100));ls.set('fc_q_'+s.id,qp)}}
@@ -1382,6 +1440,7 @@ function viewSat(s){
   var un=N-nAns();if(st.mode==='test'&&un){overlay=confirmOverlay('Finish the test?','You have '+un+' unanswered question'+(un>1?'s':'')+'. They\'ll be scored as wrong.','Finish and see score','finish');return draw()}finish()}
  A.exit=function(){save(true);go('quiz-'+s.id)};
  A.hidet=function(){st.hide=!st.hide;save();draw()};
+ A.dark=function(){dark=!dark;ls.set('fc_sat_dark',dark);draw()};
  A.mode=function(){overlay=modeOverlay();draw()};
  A.setmode=function(b,e){e.preventDefault();st.mode=b.dataset.m3;overlay=null;save();draw()};
  A.shuf=function(){overlay=confirmOverlay('Start a new shuffle?','All '+all.length+' questions come back in a new order with new choice orders. Your current answers are cleared.','Shuffle all '+all.length,'doshuf');draw()};
